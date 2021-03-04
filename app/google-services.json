@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "796371651239",
+    "project_id": "old-stock-trade",
+    "storage_bucket": "old-stock-trade.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:796371651239:android:65f1bc20e1638236bc6982",
+        "android_client_info": {
+          "package_name": "com.example.oldstocktrade"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "796371651239-p561d66sjpbq6bnde3fplj10pe44i95t.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDtIj9y4cEquJpoRQjQiGj3JmtAj_M89BU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "796371651239-p561d66sjpbq6bnde3fplj10pe44i95t.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
