@@ -55,7 +55,7 @@ public class RegisterActivity extends AppCompatActivity {
             }
         });
     }
-    private void register(String username, String email, String password){
+    private void register(String txt_username, String email, String password){
         auth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
@@ -64,11 +64,11 @@ public class RegisterActivity extends AppCompatActivity {
                             FirebaseUser user = auth.getCurrentUser();
                             String userid = user.getUid();
 
-                            reference = FirebaseDatabase.getInstance().getReference("Users").child(userid);
+                            reference = FirebaseDatabase.getInstance("https://old-stock-trade-default-rtdb.firebaseio.com/").getReference("Users").child(userid);
 
                             HashMap<String,String> hashMap =  new HashMap<>();
                             hashMap.put("id", userid);
-                            hashMap.put("username", username);
+                            hashMap.put("username", txt_username);
                             hashMap.put("imageURL","default");
 
                             reference.setValue(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
