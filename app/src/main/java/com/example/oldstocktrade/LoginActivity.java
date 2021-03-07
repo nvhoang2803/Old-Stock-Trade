@@ -5,11 +5,16 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Spannable;
 import android.text.TextUtils;
+import android.text.method.MovementMethod;
+import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.textservice.TextInfo;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -42,6 +47,16 @@ public class LoginActivity extends AppCompatActivity {
 
             }
         });
+        TextView txt_signup = findViewById(R.id.txt_signup);
+        txt_signup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(LoginActivity.this, RegisterActivity.class);
+                startActivity(i);
+            }
+        });
+        // TextView txt_forgotpw = findViewById(R.id.txt_forgotpw);
+
     }
     private void Login(String email, String password) {
         auth.signInWithEmailAndPassword(email, password)

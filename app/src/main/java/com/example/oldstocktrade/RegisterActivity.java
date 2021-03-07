@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -52,6 +53,15 @@ public class RegisterActivity extends AppCompatActivity {
                     }
                     else
                         register(txt_username,txt_email,txt_password);
+            }
+        });
+        TextView txt_signin = findViewById(R.id.txt_signin);
+        txt_signin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(RegisterActivity.this, LoginActivity.class);
+                startActivity(i);
+                finish();
             }
         });
     }
