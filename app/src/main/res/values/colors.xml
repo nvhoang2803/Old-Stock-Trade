@@ -10,5 +10,6 @@
     <color name="brown">#8A6632</color>
     <color name="background">#E9F0FB</color>
     <color name="btn">#3E4685</color>
-    3E4685
+    <color name="background_left">#ccd4d9</color>
+    <color name="background_right">#bedbed</color>
 </resources>
