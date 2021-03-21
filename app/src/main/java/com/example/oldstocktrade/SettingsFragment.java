@@ -15,13 +15,14 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 public class SettingsFragment extends Fragment {
-    Button btnSignout,btnPost;
+    Button btnSignout,btnPost,btnMap;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
             View view =  inflater.inflate(R.layout.fragment_settings, container, false);
             btnSignout = view.findViewById(R.id.btnSignout);
             btnPost = view.findViewById(R.id.btnPost);
+            btnMap = view.findViewById(R.id.btnMap);
             btnSignout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -34,7 +35,14 @@ public class SettingsFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
                     startActivity(new Intent(getActivity(),PostActivity.class));
-                    getActivity().finish();
+
+                }
+            });
+            btnMap.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startActivity(new Intent(getActivity(),MapsActivity.class));
+
                 }
             });
             return view;

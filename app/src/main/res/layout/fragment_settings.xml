@@ -15,4 +15,11 @@
         android:id="@+id/btnPost"
 
         android:text="POST"></Button>
+    <Button
+        android:layout_toEndOf="@id/btnPost"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/btnMap"
+
+        android:text="MAP"></Button>
 </RelativeLayout>

@@ -8,8 +8,10 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.webkit.MimeTypeMap;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -29,27 +31,39 @@ import com.google.firebase.storage.StorageTask;
 import java.util.HashMap;
 
 public class PostActivity extends AppCompatActivity {
-    private static final int IMAGE_REQUEST = 2;
+    private static final int IMAGE_REQUEST = 2,REQUEST_CODE_LOCATION= 3;
     private ImageView close;
     private ImageView imageAdded;
     private TextView post;
-    EditText description;
+    EditText description, address;
     Uri imageUri;
     private String imageUrl;
+    Button btnLocation;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post);
         close = findViewById(R.id.btnClose);
+        btnLocation = findViewById(R.id.btnLocation);
         imageAdded = findViewById(R.id.image_added);
         post = findViewById(R.id.post);
         description = findViewById(R.id.description);
+        address = findViewById(R.id.addressPost);
+
         close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(PostActivity.this,MainActivity.class));
                 finish();
+            }
+        });
+        btnLocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(PostActivity.this,MapsActivity.class);
+                startActivityForResult(intent,REQUEST_CODE_LOCATION);
             }
         });
         imageAdded.setOnClickListener(new View.OnClickListener() {
@@ -78,14 +92,29 @@ public class PostActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == IMAGE_REQUEST&&resultCode==RESULT_OK){
-            imageUri = data.getData();
-            imageAdded.setImageURI(imageUri);
+        if (requestCode == REQUEST_CODE_LOCATION) {
+            if (resultCode == RESULT_OK) {
 
-        }else{
-            Toast.makeText(this,"Try again!",Toast.LENGTH_SHORT).show();
-            startActivity(new Intent(PostActivity.this,MainActivity.class));
-            finish();
+                // Get String data from Intent
+                String location = data.getStringExtra("location");
+                String straddress = data.getStringExtra("address");
+                // Set text view with string
+                Log.d("Location", "onActivityResult: "+location);;//split location bang - se ra longitude va latitude roi luu vao db
+                address.setText(straddress);
+            }
+        }
+        if(requestCode == IMAGE_REQUEST){
+            if(resultCode==RESULT_OK){
+                imageUri = data.getData();
+                imageAdded.setImageURI(imageUri);
+
+            }
+            else{
+                Toast.makeText(this,"Try again!",Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(PostActivity.this,MainActivity.class));
+                finish();
+            }
+
         }
     }
 
