@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -49,13 +50,18 @@ public class MessageActivity extends AppCompatActivity {
     MessageAdapter messageAdapter;
     List<Chat> mChats;
     private String imageURL;
+    ImageView img_on;
+    ImageView img_off;
 
+    ValueEventListener valueEventListener;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_message);
         // Set up
+        img_on = findViewById(R.id.img_on);
+        img_off = findViewById(R.id.img_off);
         profile_image = findViewById(R.id.profile_image);
         txt_username = findViewById(R.id.username);
         btn_send = findViewById(R.id.btn_send);
@@ -74,7 +80,10 @@ public class MessageActivity extends AppCompatActivity {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //reference.removeEventListener(valueEventListener);
                 finish();
+                //startActivity(new Intent(MessageActivity.this,MainActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+
             }
         });
 
@@ -86,7 +95,7 @@ public class MessageActivity extends AppCompatActivity {
 
         fuser = FirebaseAuth.getInstance().getCurrentUser();
         reference = FirebaseDatabase.getInstance().getReference("Users").child(userid);
-        reference.addValueEventListener(new ValueEventListener() {
+        valueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 User user = snapshot.getValue(User.class);
@@ -95,14 +104,21 @@ public class MessageActivity extends AppCompatActivity {
                 if (imageURL.equals("default"))
                     profile_image.setImageResource(R.mipmap.ic_launcher_round);
                 else Glide.with(MessageActivity.this).load(imageURL).into(profile_image);
-
+                if (user.getStatus().equals("online")){
+                    img_on.setVisibility(View.VISIBLE);
+                    img_off.setVisibility(View.GONE);
+                }else {
+                    img_off.setVisibility(View.VISIBLE);
+                    img_on.setVisibility(View.GONE);
+                }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
 
             }
-        });
+        };
+        //reference.addValueEventListener(valueEventListener);
 
         // Find conversation between 2 users
         findConversationId(fuser.getUid(),userid);
@@ -180,5 +196,17 @@ public class MessageActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        reference.addValueEventListener(valueEventListener);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        reference.removeEventListener(valueEventListener);
     }
 }

@@ -46,6 +46,7 @@ public class ContactFragment extends Fragment {
             reference.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    mUsers.clear();
                     for(DataSnapshot contact : snapshot.getChildren()){
                         User user = contact.getValue(User.class);
                         if (!user.getId().equals(firebaseUser.getUid()))
