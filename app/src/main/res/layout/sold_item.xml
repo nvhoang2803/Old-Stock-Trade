@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <ImageView
+        android:layout_width="130dp"
+        android:layout_height="130dp"
+        android:layout_margin="10dp"
+        android:src="@drawable/bicycle"></ImageView>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Xe Đạp"
+            android:textSize="35dp"
+            android:textStyle="bold"
+            android:textColor="@color/black"></TextView>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="500000Đ"
+            android:textSize="30dp"
+            android:textColor= "@color/black"></TextView>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/baseline_history_black_18dp"></ImageView>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="26/3/2021"
+                android:textSize="30dp"
+                android:textColor="@color/black"></TextView>
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>
