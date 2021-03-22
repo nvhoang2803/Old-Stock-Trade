@@ -1,6 +1,5 @@
 package com.example.oldstocktrade;
 
-import android.app.Fragment;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -21,6 +20,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.widget.SearchView;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.fragment.app.Fragment;
 
 import com.example.oldstocktrade.Adapter.ListViewAdapter;
 import com.example.oldstocktrade.Adapter.SearchFillAdapter;

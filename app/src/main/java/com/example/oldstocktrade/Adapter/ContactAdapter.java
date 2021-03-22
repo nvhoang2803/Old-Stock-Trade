@@ -10,13 +10,27 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.oldstocktrade.MessageActivity;
+import com.example.oldstocktrade.Model.Chat;
+import com.example.oldstocktrade.Model.Conversation;
 import com.example.oldstocktrade.Model.User;
 import com.example.oldstocktrade.R;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
+import org.w3c.dom.Text;
+
+import java.util.HashMap;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -51,6 +65,48 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
             holder.img_on.setVisibility(View.VISIBLE);
             holder.img_off.setVisibility(View.GONE);
         }
+
+        FirebaseUser fuser = FirebaseAuth.getInstance().getCurrentUser();
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Conversations");
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                DatabaseReference conversation_reference = null;
+                for(DataSnapshot data : snapshot.getChildren()){
+                    Conversation conversation = data.getValue(Conversation.class);
+                    if ((conversation.getUser1().equals(fuser.getUid()) && conversation.getUser2().equals(user.getId())) || conversation.getUser1().equals(user.getId()) && conversation.getUser2().equals(fuser.getUid())){
+                        conversation_reference = data.getRef();
+                        break;
+                    }
+                }
+
+                if (conversation_reference != null){
+                    conversation_reference.child("Chats").addValueEventListener(new ValueEventListener() {
+                        String last_message = "";
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            for(DataSnapshot data : snapshot.getChildren()){
+                                Chat chat = data.getValue(Chat.class);
+                                last_message = chat.getMessage();
+                            }
+                            holder.last_msg.setText(last_message.split("\n")[0]);
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
+                        }
+                    });
+                }
+                else holder.last_msg.setText("");
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -71,6 +127,7 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
         public ImageView profile_image;
         public ImageView img_on;
         public ImageView img_off;
+        public TextView last_msg;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -79,6 +136,7 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
             profile_image = itemView.findViewById(R.id.ImgID);
             img_on = itemView.findViewById(R.id.img_on);
             img_off = itemView.findViewById(R.id.img_off);
+            last_msg = itemView.findViewById(R.id.last_msg);
         }
     }
 }
