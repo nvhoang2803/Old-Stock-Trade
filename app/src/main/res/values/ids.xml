@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="bottomsheet_coment" type="id" />
+    <item name="current_user_image" type="id" />
+    <item name="bottomsheet_commend_send" type="id" />
+    <item name="constraintLayout7" type="id" />
+    <item name="bottomshett_comment_container" type="id" />
+    <item name="textView6" type="id" />
+</resources>

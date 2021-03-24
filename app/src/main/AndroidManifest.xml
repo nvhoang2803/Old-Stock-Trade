@@ -34,7 +34,6 @@
         <activity
             android:name=".MapsActivity"
             android:label="@string/title_activity_maps"></activity>
-        <activity android:name=".NewFeedActivity" />
         <activity android:name=".PostActivity" />
         <activity android:name=".LoginActivity">
             <intent-filter>

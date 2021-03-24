@@ -5,13 +5,11 @@ public class User {
     private String username;
     private String imageURL;
     private String status;
+    private int type;
+    private String phone;
+    private String address;
 
-    public User(String id, String username, String imageURL, String status) {
-        this.id = id;
-        this.username = username;
-        this.imageURL = imageURL;
-        this.status = status;
-    }
+
     public User(){
 
     }
@@ -20,13 +18,55 @@ public class User {
         return id;
     }
 
+    public void setId(String id) {
+        this.id = id;
+    }
+
     public String getUsername() {
         return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getImageURL() {
         return imageURL;
     }
 
-    public String getStatus() {return  status;}
+    public void setImageURL(String imageURL) {
+        this.imageURL = imageURL;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
 }

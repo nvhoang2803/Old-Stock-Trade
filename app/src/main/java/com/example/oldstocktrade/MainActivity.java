@@ -81,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
             Fragment selectedFragment = null;
             switch (item.getItemId()) {
                 case R.id.nav_home:
-                    selectedFragment = new HomeFragment();
+                    selectedFragment = new HomeFragment(MainActivity.this);
                     break;
                 case R.id.nav_history:
                     selectedFragment = new HistoryFragment();

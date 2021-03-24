@@ -1,5 +1,6 @@
 package com.example.oldstocktrade;
 
+import android.app.Activity;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -23,8 +24,16 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 
 import com.example.oldstocktrade.Adapter.ListViewAdapter;
+import com.example.oldstocktrade.Adapter.ListViewCommentAdapter;
 import com.example.oldstocktrade.Adapter.SearchFillAdapter;
+import com.example.oldstocktrade.Model.Comment;
 import com.example.oldstocktrade.Model.Product;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
@@ -36,30 +45,32 @@ public class HomeFragment extends Fragment {
     ListView listViewProduct;
     ArrayList<String> searcharr;
     //
-    SeekBar priceSlider;
-    SeekBar distanceSlider;
-    SeekBar ratingSlider;
+    SearchFillAdapter searchfillAdapter;
+
+    Activity curActivity;
+
+    DatabaseReference mReference = FirebaseDatabase.getInstance().getReference();
+
+    public HomeFragment(Activity act){
+        curActivity = act;
+    }
 
     public void setSearchFill(View view){
         searchView = view.findViewById(R.id.searchView);
         searchView.setQueryHint("Search View");
-        searcharr  = new ArrayList<String>();
-        searcharr.add("N");
-        searcharr.add("A");
-        searcharr.add("B");
-        searcharr.add("D");
         //
 
         //
-        final SearchFillAdapter searchfillAdapter = new SearchFillAdapter(searcharr);
+
         searchFill = view.findViewById(R.id.searchFill);
         //
+        searchfillAdapter = new SearchFillAdapter(searcharr);
         searchFill.setAdapter(searchfillAdapter);
         //Handle on click on search
         searchFill.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
+                //Intent = new Intent
             }
         });
 
@@ -100,14 +111,11 @@ public class HomeFragment extends Fragment {
         closeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                searchView.setVisibility(View.INVISIBLE);
+                searchView.setVisibility(View.GONE);
             }
         });
         //
         searchView.setBackgroundColor(Color.WHITE);
-        searchView.setVisibility(View.INVISIBLE);
-        searchFill.bringToFront();
-        searchFill.setVisibility(View.INVISIBLE);
     }
 
     public void handleSearch(View view){
@@ -116,103 +124,75 @@ public class HomeFragment extends Fragment {
         bntSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                searchView = view.findViewById(R.id.searchView);
-                searchView.setIconifiedByDefault(false);
-                searchView.setFocusable(true);
-                searchView.setIconified(false);
-                searchView.requestFocusFromTouch();
-                searchView.setVisibility(View.VISIBLE);
-                searchView.bringToFront();
-            }
-        });
-    }
+                mReference.child("Products").addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        searcharr.clear();
+                        for (DataSnapshot ds: snapshot.getChildren()){
+                            Product tmp = ds.getValue(Product.class);
+                            searcharr.add(tmp.getName());
+                        }
+                        searchfillAdapter = new SearchFillAdapter(searcharr);
+                        searchFill.setAdapter(searchfillAdapter);
+                        searchView = view.findViewById(R.id.searchView);
+                        searchView.setIconifiedByDefault(false);
+                        searchView.setFocusable(true);
+                        searchView.setIconified(false);
+                        searchView.requestFocusFromTouch();
+                        searchView.setVisibility(View.VISIBLE);
 
-    public void sortProductView(){
-        listViewProduct.notifyAll();
-    }
+                        searchView.bringToFront();
+                        searchFill.setVisibility(View.VISIBLE);
+                        searchFill.bringToFront();
+                    }
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    public void handleSort(View view){
-        final ConstraintLayout sortView = view.findViewById(R.id.sortView);
-        ImageView bntSort = view.findViewById(R.id.bntSort);
-        bntSort.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sortView.setVisibility(View.VISIBLE);
-            }
-        });
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
 
-        Button btnSort = view.findViewById(R.id.Sort);
-        Button btnClose = view.findViewById(R.id.Close);
-
-        btnClose.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sortView.setVisibility(View.INVISIBLE);
-            }
-        });
-        btnSort.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //Call function and invisible view
-                sortView.setVisibility(View.INVISIBLE);
-            }
-        });
-
-        priceSlider = view.findViewById(R.id.sliderPrice);
-        TextView txtPrice = view.findViewById(R.id.priceValue);
-        //
-        distanceSlider = view.findViewById(R.id.sliderDistance);
-        TextView txtDistance = view.findViewById(R.id.distanceValue);
-        //
-        ratingSlider = view.findViewById(R.id.sliderRating);
-        TextView txtRating = view.findViewById(R.id.ratingValue);
-        handleSliderInput(priceSlider,txtPrice,200000,50000000,"$");
-        handleSliderInput(distanceSlider,txtDistance,2,100,"km");
-        handleSliderInput(ratingSlider,txtRating,0,5,"");
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    public void handleSliderInput(SeekBar seekBar, final TextView txtValue, int min, int max, final String text){
-        seekBar.setMax(max);
-        seekBar.setMin(min);
-        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            int progressValue;
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                progressValue = progress;
-                txtValue.setText(progress+ text);
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
+                    }
+                });
 
             }
         });
     }
+
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.activity_new_feed, container, false);
-
         arr = new ArrayList<>();
-        arr.add(new Product("KO oc tidlsds",4));
-        arr.add(new Product("KOdsdsds fdewfeg dd",4));
+        searcharr = new ArrayList<>();
         //Display list product view
-        listViewProduct = view.findViewById(R.id.listViewProduct);
-        //Display adapter product
-        ListViewAdapter listViewProductAdapter = new ListViewAdapter(arr);
-        listViewProduct.setAdapter(listViewProductAdapter);
+        mReference.child("Products").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot ds: snapshot.getChildren()){
+                    Product tmp = ds.getValue(Product.class);
+                    arr.add(tmp);
+                    //searcharr.add(tmp.getName());
+                }
+                listViewProduct = view.findViewById(R.id.listViewProduct);
+                //Display adapter product
+                ListViewAdapter listViewProductAdapter = new ListViewAdapter(arr,curActivity);
+                listViewProduct.setAdapter(listViewProductAdapter);
 
-        handleSearch(view);
-        handleSort(view);
+                listViewProduct.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                    }
+                });
+                handleSearch(view);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
 
 
         return view;
