@@ -75,11 +75,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:id="@+id/messageBox">
+        android:id="@+id/messageBox"
+        android:padding="8dp">
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_toLeftOf="@+id/btn_send"
+            android:layout_toLeftOf="@+id/btn_img"
             android:background="@android:color/transparent"
             android:hint="Text here"
             android:layout_centerVertical="true"
@@ -88,9 +89,17 @@
         <ImageButton
             android:layout_width="40dp"
             android:layout_height="40dp"
+            android:id="@+id/btn_img"
+            android:background="@drawable/ic_image"
+            android:layout_toLeftOf="@+id/btn_send"
+            android:layout_margin="2dp"/>
+        <ImageButton
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:layout_alignParentEnd="true"
             android:id="@+id/btn_send"
-            android:background="@drawable/ic_send"/>
+            android:background="@drawable/ic_send"
+            android:layout_margin="2dp"/>
 
 
     </RelativeLayout>

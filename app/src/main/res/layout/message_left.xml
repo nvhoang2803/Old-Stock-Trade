@@ -19,7 +19,15 @@
             android:padding="8dp"
             android:background="@drawable/background_left"
             android:layout_marginLeft="5dp"
-            android:id="@+id/message"/>
+            android:id="@+id/message"
+            android:visibility="gone"/>
+        <ImageView
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/profile_image"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="5dp"
+            android:id="@+id/imageMsg"/>
 
     </RelativeLayout>
 </RelativeLayout>

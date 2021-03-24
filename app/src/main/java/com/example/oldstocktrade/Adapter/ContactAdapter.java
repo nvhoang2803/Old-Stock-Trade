@@ -85,11 +85,21 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
                         String last_message = "";
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            Chat chat = null;
                             for(DataSnapshot data : snapshot.getChildren()){
-                                Chat chat = data.getValue(Chat.class);
+                                chat = data.getValue(Chat.class);
                                 last_message = chat.getMessage();
                             }
-                            holder.last_msg.setText(last_message.split("\n")[0]);
+                            if (chat != null){
+                                if (chat.getType().equals("text"))
+                                    holder.last_msg.setText(last_message.split("\n")[0]);
+                                else if(chat.getType().equals("image")){
+                                    if (chat.getSender().equals(fuser.getUid()))
+                                        holder.last_msg.setText("You sent an image");
+                                    else holder.last_msg.setText("You received an image");
+                                }
+                            }
+
                         }
 
                         @Override

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.oldstocktrade">
+
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
          Google Maps Android API v2, but you must specify either coarse or fine
@@ -17,8 +18,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.OldStockTrade">
-        <activity android:name=".HistoryActivity"></activity>
-        <activity android:name=".MessageActivity"></activity>
+        <activity
+            android:name=".FullscreenActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/title_activity_fullscreen"
+            android:theme="@style/Theme.OldStockTrade.Fullscreen"></activity>
+        <activity android:name=".ProfileActivity" />
+        <activity android:name=".HistoryActivity" />
+        <activity android:name=".MessageActivity" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -33,7 +40,12 @@
 
         <activity
             android:name=".MapsActivity"
+<<<<<<< Updated upstream
             android:label="@string/title_activity_maps"></activity>
+=======
+            android:label="@string/title_activity_maps" />
+        <activity android:name=".NewFeedActivity" />
+>>>>>>> Stashed changes
         <activity android:name=".PostActivity" />
         <activity android:name=".LoginActivity">
             <intent-filter>
