@@ -12,7 +12,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/toolbar">
             <RelativeLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content">
                 <de.hdodenhof.circleimageview.CircleImageView
                     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -55,8 +55,15 @@
                     android:id="@+id/username"
                     android:layout_marginLeft="10dp"
                     android:layout_centerVertical="true"/>
+                <ImageButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/ic_telephone"
+                    android:id="@+id/btn_call"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerInParent="true"
+                    android:layout_marginRight="10dp"/>
             </RelativeLayout>
-
 
         </androidx.appcompat.widget.Toolbar>
     </com.google.android.material.appbar.AppBarLayout>
@@ -80,12 +87,19 @@
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_toLeftOf="@+id/btn_img"
+            android:layout_toLeftOf="@+id/btn_location"
             android:background="@android:color/transparent"
             android:hint="Text here"
             android:layout_centerVertical="true"
             android:padding="8px"
             android:id="@+id/txt_msg"/>
+        <ImageButton
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:id="@+id/btn_location"
+            android:background="@drawable/ic_location"
+            android:layout_toLeftOf="@+id/btn_img"
+            android:layout_margin="2dp"/>
         <ImageButton
             android:layout_width="40dp"
             android:layout_height="40dp"

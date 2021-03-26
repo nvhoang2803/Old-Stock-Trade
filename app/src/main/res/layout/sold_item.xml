@@ -1,44 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
-    <ImageView
-        android:layout_width="130dp"
-        android:layout_height="130dp"
-        android:layout_margin="10dp"
-        android:src="@drawable/bicycle"></ImageView>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="180dp"
+    android:layout_height="260dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardCornerRadius="5dp"
+    android:layout_margin="15dp">
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Xe Đạp"
-            android:textSize="35dp"
-            android:textStyle="bold"
-            android:textColor="@color/black"></TextView>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="500000Đ"
-            android:textSize="30dp"
-            android:textColor= "@color/black"></TextView>
+        <androidx.cardview.widget.CardView
+            android:layout_width="160dp"
+            android:layout_height="160dp"
+            android:layout_margin="10dp"
+            app:cardCornerRadius="14dp">
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/bicycle"
+                ></ImageView>
+        </androidx.cardview.widget.CardView>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_marginHorizontal="10dp">
+        <TextView
+            android:layout_width="140dp"
+            android:layout_height="wrap_content"
+            android:text="Old Hill Climbing Bicycle"
+            android:textStyle="bold"
+            android:textSize="15dp"></TextView>
             <ImageView
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/baseline_history_black_18dp"></ImageView>
+                android:layout_height="20dp"
+                android:src="@drawable/baseline_delete_outline_black_18dp"></ImageView>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp">
+            <ImageView
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:src="@drawable/baseline_history_black_18dp">
+            </ImageView>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="26/3/2021"
-                android:textSize="30dp"
-                android:textColor="@color/black"></TextView>
+                android:text="12/03/2021"
+                android:textSize="10dp"></TextView>
         </LinearLayout>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:textColor="@color/purple_700"
+            android:text="500000"></TextView>
     </LinearLayout>
-</LinearLayout>
+
+</androidx.cardview.widget.CardView>
