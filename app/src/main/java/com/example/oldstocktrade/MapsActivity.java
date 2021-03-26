@@ -64,6 +64,18 @@ public class MapsActivity extends FragmentActivity {
         rlp.setMargins(0, 180, 180, 0);
         client = LocationServices.getFusedLocationProviderClient(this);
         if (ActivityCompat.checkSelfPermission(MapsActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            mapFragment.getMapAsync(new OnMapReadyCallback() {
+                @Override
+                public void onMapReady(GoogleMap googleMap) {
+                    mMap = googleMap;
+                    mMap.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
+                        @Override
+                        public boolean onMyLocationButtonClick() {
+                            getCurrentLocation();
+                            return false;
+                        }
+                    });
+                }});
             getCurrentLocation();
         } else {
             ActivityCompat.requestPermissions(MapsActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 44);
@@ -78,6 +90,7 @@ public class MapsActivity extends FragmentActivity {
                 finish();
             }
         });
+
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -95,7 +108,7 @@ public class MapsActivity extends FragmentActivity {
                         Address address = addressList.get(0);
                         LatLng latLng = new LatLng(address.getLatitude(), address.getLongitude());
                         mMap.addMarker(new MarkerOptions().position(latLng).title(address.getAddressLine(0)));
-                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 17));
+                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
                         txtAddress.setText(address.getAddressLine(0));
                         txtTude.setText(Double.toString(address.getLatitude())+"-"+Double.toString(address.getLongitude()));
 
@@ -131,18 +144,13 @@ public class MapsActivity extends FragmentActivity {
             @Override
             public void onSuccess(Location location) {
                 if (location != null) {
-                    mapFragment.getMapAsync(new OnMapReadyCallback() {
-                        @Override
-                        public void onMapReady(GoogleMap googleMap) {
-                            mMap = googleMap;
+//                    mapFragment.getMapAsync(new OnMapReadyCallback() {
+//                        @Override
+//                        public void onMapReady(GoogleMap googleMap) {
+//                            mMap = googleMap;
 
                             setMyLocation();
-                            mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-                                @Override
-                                public boolean onMarkerClick(Marker marker) {
-                                    return false;
-                                }
-                            });
+
                             LatLng pos = new LatLng(location.getLatitude(),location.getLongitude());
                             ArrayList<Address> addresses = null;
                             try {
@@ -150,18 +158,16 @@ public class MapsActivity extends FragmentActivity {
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
-                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(pos,20));
+                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(pos,15));
                             mMap.addMarker(new MarkerOptions().position(pos).title("You're here"));
                             if (addresses.size() != 0) {
                                 Address address = addresses.get(0);
                                 txtAddress.setText(address.getAddressLine(0));
-                                txtTude.setText(Double.toString(location.getLatitude())+"-"+Double.toString(location.getLongitude()));
+                                txtTude.setText(Double.toString(location.getLatitude()) + "-" + Double.toString(location.getLongitude()));
 
 
                             }
 
-                        }
-                    });
                 }
             }
         });
