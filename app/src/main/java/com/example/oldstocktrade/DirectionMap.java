@@ -44,8 +44,8 @@ public class DirectionMap extends FragmentActivity implements OnMapReadyCallback
                 .findFragmentById(R.id.directionMap);
                 // (MapFragment) getFragmentManager().findFragmentById(R.id.directionMap);
         mapFragment.getMapAsync(this);
-        source = new MarkerOptions().position(new LatLng(10.7704246,106.6724038));
-        dest = new MarkerOptions().position(new LatLng(10.762397,106.682752));
+        source = new MarkerOptions().position(new LatLng(10.762397,106.682752));
+        dest = new MarkerOptions().position(new LatLng(10.7704246,106.6724038));
         LatLng origin = source.getPosition();
         LatLng des = dest.getPosition();
         strOrigin = origin.latitude+","+origin.longitude;
@@ -87,20 +87,17 @@ public class DirectionMap extends FragmentActivity implements OnMapReadyCallback
 
                     map.addPolyline(polylineOptions);
                     LatLngBounds.Builder builder = new LatLngBounds.Builder();
-                    /*
-                     * for (Marker marker : markers) {
-                     * builder.include(marker.getPosition()); }
-                     */
+
                     for (LatLng point : route.points) {
                         builder.include(point);
                     }
 
                     LatLngBounds bounds = builder.build();
-                    int padding = 30; // offset from edges of the map in pixels
+                    int padding = 20; //
                     CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds,
                             padding);
                     map.moveCamera(cu);
-                    map.animateCamera(cu, 2000, null);
+                    map.animateCamera(cu, 1800, null);
                 }
             }
         },strOrigin,strDest);

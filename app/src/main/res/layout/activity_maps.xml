@@ -11,16 +11,36 @@
         android:layout_height="match_parent"
         tools:context="com.example.oldstocktrade.MapsActivity"
         />
-    <SearchView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/svLocation"
-        android:queryHint="Search..."
-        android:iconifiedByDefault="false"
         android:layout_margin="10dp"
-        android:elevation="5dp"
-        android:background="@drawable/bg_round"
-        />
+        android:orientation="vertical"
+        android:background="@drawable/bg_roundinfo">
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/svLocation"
+            android:hint="Search..."
+            android:iconifiedByDefault="false"
+            android:elevation="5dp"
+            android:textSize="16sp"
+            android:padding="10dp"
+            android:background="@drawable/bg_round"
+
+            />
+
+
+<!--        <androidx.recyclerview.widget.RecyclerView-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:id="@+id/listLocation"/>-->
+<!--        <ListView-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:id="@+id/listLocation"/>-->
+    </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="150dp"

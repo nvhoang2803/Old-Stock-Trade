@@ -1,6 +1,7 @@
 package com.example.oldstocktrade;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentActivity;
 
@@ -13,11 +14,15 @@ import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.SearchView;
 import android.widget.TextView;
 
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdate;
@@ -30,20 +35,32 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.widget.Autocomplete;
+import com.google.android.libraries.places.widget.AutocompleteActivity;
+import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
+
+import javax.net.ssl.SSLEngineResult;
 
 public class MapsActivity extends FragmentActivity {
 
     private GoogleMap mMap;
     SupportMapFragment mapFragment;
-    SearchView searchView;
+    EditText searchView;
     FusedLocationProviderClient client;
     Button btnConfirm;
     TextView txtAddress,txtTude;
     Geocoder geocoder;
+//    List<String> listResult = null;
+//    ListView listLocation;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,6 +73,12 @@ public class MapsActivity extends FragmentActivity {
         btnConfirm = findViewById(R.id.btnConfirm);
         txtAddress = findViewById(R.id.address);
         txtTude = findViewById(R.id.tude);
+        //listLocation = findViewById(R.id.listLocation);
+//        listResult = new LinkedList<>();
+//        ArrayAdapter<String> adapter = new ArrayAdapter<String>(MapsActivity.this, android.R.layout.simple_list_item_1,listResult);
+//        listLocation.setAdapter(adapter);
+        Places.initialize(getApplicationContext(),getString(R.string.google_maps_key));
+
         View locationButton = ((View) findViewById(Integer.parseInt("1")).getParent()).findViewById(Integer.parseInt("2"));
         RelativeLayout.LayoutParams rlp = (RelativeLayout.LayoutParams) locationButton.getLayoutParams();
 // position on right bottom
@@ -90,40 +113,61 @@ public class MapsActivity extends FragmentActivity {
                 finish();
             }
         });
-
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        searchView.setFocusable(false);
+        searchView.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onQueryTextSubmit(String query) {
-                String location = searchView.getQuery().toString();
-                List<Address> addressList = null;
-                if (location != null || !location.equals("")) {
-
-                    try {
-                        addressList = geocoder.getFromLocationName(location, 1);
-
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    if (addressList.size() != 0) {
-                        Address address = addressList.get(0);
-                        LatLng latLng = new LatLng(address.getLatitude(), address.getLongitude());
-                        mMap.addMarker(new MarkerOptions().position(latLng).title(address.getAddressLine(0)));
-                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
-                        txtAddress.setText(address.getAddressLine(0));
-                        txtTude.setText(Double.toString(address.getLatitude())+"-"+Double.toString(address.getLongitude()));
-
-                    }
-
-
-                }
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                return false;
+            public void onClick(View v) {
+                Log.d("Onclick Search View", "onClick: ");
+                List<Place.Field> fieldList = Arrays.asList(Place.Field.ADDRESS
+                        ,Place.Field.LAT_LNG,Place.Field.NAME);
+                Intent intent = new Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN,fieldList).setCountry("VN").build(MapsActivity.this);
+                startActivityForResult(intent, 100);
             }
         });
+
+////        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+////            @Override
+////            public boolean onQueryTextSubmit(String query) {
+////
+//////                String location = searchView.getQuery().toString();
+//////                List<Address> listAddress = null;
+//////                listResult.clear();
+//////                listResult = new ArrayList<>();
+//////                if (location != null || !location.equals("")) {
+//////
+//////                    try {
+//////                        listAddress = geocoder.getFromLocationName(location, 5);
+//////                        for(Address x:listAddress){
+//////                            listResult.add(x.getAddressLine(0).toString());
+//////                        }
+//////                        Log.d("Result", "onQueryTextSubmit: "+listResult);
+//////                        adapter.notifyDataSetChanged();
+//////
+//////                    } catch (IOException e) {
+//////                        e.printStackTrace();
+//////                    }
+//////
+////////                    if (addressList.size() != 0) {
+////////
+//////////                        Address address = addressList.get(0);
+//////////                        LatLng latLng = new LatLng(address.getLatitude(), address.getLongitude());
+//////////                        mMap.addMarker(new MarkerOptions().position(latLng).title(address.getAddressLine(0)));
+//////////                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
+//////////                        txtAddress.setText(address.getAddressLine(0));
+//////////                        txtTude.setText(Double.toString(address.getLatitude())+"-"+Double.toString(address.getLongitude()));
+////////
+////////                    }
+//////
+//////
+//////                }
+//////                return false;
+////            }
+//
+//            @Override
+//            public boolean onQueryTextChange(String newText) {
+//                return false;
+//            }
+//        });
         //mapFragment.getMapAsync(this);
     }
 
@@ -192,6 +236,25 @@ public class MapsActivity extends FragmentActivity {
             if(grantResults.length>0 &&grantResults[0] == PackageManager.PERMISSION_GRANTED){
                 getCurrentLocation();
             }
+        }
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == 100 && resultCode == RESULT_OK){
+            Place place = Autocomplete.getPlaceFromIntent(data);
+
+            LatLng latLng = place.getLatLng();
+            mMap.addMarker(new MarkerOptions().position(latLng).title(place.getName()));
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
+            txtAddress.setText(place.getAddress());
+            txtTude.setText(Double.toString(latLng.latitude)+"-"+Double.toString(latLng.longitude));
+
+        }else if(resultCode == AutocompleteActivity.RESULT_ERROR){
+            Status status = Autocomplete.getStatusFromIntent(data);
+            Log.d("Error Status", "onActivityResult: "+status.getStatusMessage());
         }
     }
 }
