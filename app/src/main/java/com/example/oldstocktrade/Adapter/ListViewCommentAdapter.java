@@ -1,5 +1,7 @@
 package com.example.oldstocktrade.Adapter;
 
+import android.content.Context;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -7,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.oldstocktrade.Model.Comment;
@@ -20,59 +23,35 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
-public class ListViewCommentAdapter extends BaseAdapter {
+public class ListViewCommentAdapter extends RecyclerView.Adapter<ListViewCommentAdapter.ViewHolder> {
     DatabaseReference mReference = FirebaseDatabase.getInstance().getReference();
     ArrayList<Comment> arr;
+    Context context;
 
-    public ListViewCommentAdapter(ArrayList<Comment> arrComment) {
+    public ListViewCommentAdapter(ArrayList<Comment> arrComment,Context context) {
         this.arr = arrComment;
+        this.context = context;
+    }
+
+    @NonNull
+    @Override
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(context).inflate(R.layout.comment_view,parent,false);
+        return new ListViewCommentAdapter.ViewHolder(view);
     }
 
     @Override
-    public int getCount() {
-        return arr.size();
-    }
-
-    @Override
-    public Object getItem(int position) {
-        return arr.get(position);
-    }
-
-    @Override
-    public long getItemId(int position) {
-        return 0;
-    }
-
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        TextView commentUsername;
-        TextView commentContent;
-        TextView commentTime;
-        ImageView userImage;
-
-        View commentView;
-
-        if (convertView == null){
-            commentView = View.inflate(parent.getContext(), R.layout.comment_view ,null);
-        }else{
-            commentView = convertView;
-        }
-
-        commentTime = commentView.findViewById(R.id.comment_view_time);
-        commentUsername = commentView.findViewById(R.id.comment_view_username);
-        commentContent = commentView.findViewById(R.id.comment_view_conten);
-        userImage = commentView.findViewById(R.id.comment_view_userimage);
-
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         mReference.child("Users").orderByChild("id").equalTo(arr.get(position).getUserID())
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         for (DataSnapshot ds: snapshot.getChildren()){
                             User tmp = ds.getValue(User.class);
-                            System.out.println(tmp.getUsername());
-                            commentUsername.setText(tmp.getUsername());
-                            Glide.with(userImage).load(tmp.getImageURL())
-                                    .into(userImage);
+
+                            holder.commentUsername.setText(tmp.getUsername());
+                            Glide.with( holder.userImage).load(tmp.getImageURL())
+                                    .into( holder.userImage);
                         }
                     }
                     @Override
@@ -81,7 +60,7 @@ public class ListViewCommentAdapter extends BaseAdapter {
                     }
                 });
 
-        commentContent.setText(arr.get(position).getContent());
+        holder.commentContent.setText(arr.get(position).getContent());
         long time = System.currentTimeMillis() - arr.get(position).getTimestamp();
         String timeD = "";
         time = time /1000;
@@ -92,8 +71,27 @@ public class ListViewCommentAdapter extends BaseAdapter {
         }else{
             timeD = time / (60) + " min";
         }
-        commentTime.setText(timeD);
+        holder.commentTime.setText(timeD);
+    }
 
-        return commentView;
+    @Override
+    public int getItemCount() {
+        return arr.size();
+    }
+
+    public class ViewHolder extends RecyclerView.ViewHolder {
+        TextView commentUsername;
+        TextView commentContent;
+        TextView commentTime;
+        ImageView userImage;
+
+        public ViewHolder(@NonNull View itemView) {
+            super(itemView);
+
+            commentTime = itemView.findViewById(R.id.comment_view_time);
+            commentUsername = itemView.findViewById(R.id.comment_view_username);
+            commentContent = itemView.findViewById(R.id.comment_view_conten);
+            userImage = itemView.findViewById(R.id.comment_view_userimage);
+        }
     }
 }

@@ -22,6 +22,8 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.widget.SearchView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.oldstocktrade.Adapter.ListViewAdapter;
 import com.example.oldstocktrade.Adapter.ListViewCommentAdapter;
@@ -45,7 +47,7 @@ public class HomeFragment extends Fragment {
     ArrayList<Product> arr;
     SearchView searchView;
     ListView searchFill;
-    ListView listViewProduct;
+    RecyclerView listViewProduct;
     ArrayList<String> searcharr;
     //
     SearchFillAdapter searchfillAdapter;
@@ -198,12 +200,8 @@ public class HomeFragment extends Fragment {
 
                                 ListViewAdapter listViewProductAdapter = new ListViewAdapter(arr,curActivity,curUser,userLike);
                                 listViewProduct.setAdapter(listViewProductAdapter);
-                                listViewProduct.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                                    @Override
-                                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                listViewProduct.setLayoutManager(new LinearLayoutManager(curActivity));
 
-                                    }
-                                });
                                 handleSearch(view);
                             }
                             @Override

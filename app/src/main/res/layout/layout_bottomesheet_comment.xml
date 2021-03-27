@@ -7,14 +7,14 @@
     android:layout_height="match_parent"
     android:background="#FFFFFf">
 
-    <ListView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/bottomsheet_coment"
         android:layout_width="match_parent"
         android:layout_height="450dp"
         app:layout_constraintTop_toBottomOf="@+id/constraintLayout7"
         tools:layout_editor_absoluteX="0dp">
 
-    </ListView>
+    </androidx.recyclerview.widget.RecyclerView>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout7"
