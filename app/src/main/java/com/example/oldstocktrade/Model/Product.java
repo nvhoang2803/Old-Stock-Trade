@@ -14,6 +14,8 @@ public class Product {
     String Seller;
     int Status;
     long Timestamp;
+    boolean VisibleToSeller;
+    boolean VisibleToBuyer;
 
     public String getAddress() {
         return Address;
