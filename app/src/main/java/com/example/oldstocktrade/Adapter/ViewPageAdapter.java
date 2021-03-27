@@ -1,4 +1,4 @@
-package com.example.oldstocktrade;
+package com.example.oldstocktrade.Adapter;
 
 import android.os.Bundle;
 
@@ -48,7 +48,7 @@ public class ViewPageAdapter extends FragmentPagerAdapter {
     }
 
     public void addFragment (Fragment fragment, String title){
-         lstFragment.add(fragment);
-         lstTitles.add(title);
+        lstFragment.add(fragment);
+        lstTitles.add(title);
     }
 }

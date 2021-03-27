@@ -15,6 +15,8 @@ public class Product {
     int Status;
     long Timestamp;
     String userImageURL;
+    boolean VisibleToSeller = true;
+    boolean VisibleToBuyer = true;
 
     public String getAddress() {
         return Address;
@@ -136,6 +138,14 @@ public class Product {
         this.rate = rate;
     }
 
+    public boolean isVisibleToSeller() {
+        return VisibleToSeller;
+    }
+
+    public boolean isVisibleToBuyer() {
+        return VisibleToBuyer;
+    }
+
     public Product(){
 
     }
@@ -156,6 +166,8 @@ public class Product {
         Timestamp = timestamp;
         this.userImageURL = userImageURL;
         this.rate = rate;
+        VisibleToSeller = true;
+        VisibleToBuyer = true;
     }
 
     float rate;
