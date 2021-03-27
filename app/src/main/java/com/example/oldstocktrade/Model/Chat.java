@@ -5,6 +5,7 @@ public class Chat {
     private String receiver;
     private String message;
     private String type;
+    private String id;
 
     public String getSender() {
         return sender;
@@ -20,5 +21,9 @@ public class Chat {
 
     public String getType() {
         return type;
+    }
+
+    public String getId() {
+        return id;
     }
 }

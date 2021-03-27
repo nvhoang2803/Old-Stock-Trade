@@ -15,7 +15,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 public class SettingsFragment extends Fragment {
-    Button btnSignout,btnPost,btnMap,btnDirection;
+    Button btnSignout,btnPost,btnMap,btnDirection,btn_profile;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -51,6 +51,13 @@ public class SettingsFragment extends Fragment {
                 public void onClick(View v) {
                     startActivity(new Intent(getActivity(),MapsActivity.class));
 
+                }
+            });
+            btn_profile = view.findViewById(R.id.btn_profile);
+            btn_profile.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startActivity(new Intent(getActivity(),ProfileActivity.class).addFlags(Intent.FLAG_ACTIVITY_FORWARD_RESULT));
                 }
             });
             return view;

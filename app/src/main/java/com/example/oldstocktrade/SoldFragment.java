@@ -69,12 +69,14 @@ public class SoldFragment extends Fragment {
 
             }
 
+
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
             }
         });
 
         return v;
+
     }
 
 //    public void onCreate(Bundle saveInstanceState) {

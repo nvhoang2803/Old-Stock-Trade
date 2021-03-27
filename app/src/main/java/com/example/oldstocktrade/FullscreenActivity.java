@@ -3,16 +3,23 @@ package com.example.oldstocktrade;
 import android.annotation.SuppressLint;
 
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.ContactsContract;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -98,7 +105,7 @@ public class FullscreenActivity extends AppCompatActivity {
             return false;
         }
     };
-
+    DatabaseReference ref;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -110,6 +117,9 @@ public class FullscreenActivity extends AppCompatActivity {
         mContentView = findViewById(R.id.fullscreen_content);
         String i = getIntent().getStringExtra("image");
         Glide.with(this).load(i).into((ImageView) mContentView);
+         //ref = getIntent().getExtras().getParcelable("conversation_ref");
+
+
 
 
         // Set up the user interaction to manually show or hide the system UI.
@@ -124,6 +134,26 @@ public class FullscreenActivity extends AppCompatActivity {
         // operations to prevent the jarring behavior of controls going away
         // while interacting with the UI.
         findViewById(R.id.dummy_button).setOnTouchListener(mDelayHideTouchListener);
+        findViewById(R.id.btn_delete).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog dialog = new AlertDialog.Builder(FullscreenActivity.this)
+                        .setTitle("Delete image")
+                        .setMessage("Do you want to remove image?")
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                // Remove image
+                                //StorageReference sto_ref = FirebaseStorage.getInstance().getReferenceFromUrl(i);
+                                //String name = sto_ref.getName();
+                                //Toast.makeText(FullscreenActivity.this,name,Toast.LENGTH_SHORT);
+                            }
+                        })
+                        .setNegativeButton("No",null)
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .show();
+            }
+        });
     }
 
     @Override

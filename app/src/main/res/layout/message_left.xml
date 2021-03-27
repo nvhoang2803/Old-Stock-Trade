@@ -5,7 +5,7 @@
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/block_message">
+        android:id="@+id/chat_box">
         <de.hdodenhof.circleimageview.CircleImageView
             android:layout_width="40dp"
             android:layout_height="40dp"
@@ -31,4 +31,12 @@
             android:id="@+id/imageMsg"/>
 
     </RelativeLayout>
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/ic_delete"
+        android:layout_toRightOf="@+id/chat_box"
+        android:layout_centerVertical="true"
+        android:visibility="gone"
+        android:id="@+id/btn_delete"/>
 </RelativeLayout>
