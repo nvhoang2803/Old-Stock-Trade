@@ -15,7 +15,6 @@ public class Product {
     int Status;
     long Timestamp;
 
-
     public String getAddress() {
         return Address;
     }
@@ -130,6 +129,14 @@ public class Product {
         this.rate = rate;
     }
 
+    public boolean isVisibleToSeller() {
+        return VisibleToSeller;
+    }
+
+    public boolean isVisibleToBuyer() {
+        return VisibleToBuyer;
+    }
+
     public Product(){
 
     }
@@ -149,6 +156,8 @@ public class Product {
         Status = status;
         Timestamp = timestamp;
         this.rate = rate;
+        VisibleToSeller = true;
+        VisibleToBuyer = true;
     }
 
     float rate;
