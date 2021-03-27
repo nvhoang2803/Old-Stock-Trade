@@ -7,13 +7,10 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 
-import com.example.oldstocktrade.Adapter.ListViewAdapter;
 import com.example.oldstocktrade.Adapter.RecyclerViewAdapter;
 import com.example.oldstocktrade.Model.Product;
 import com.google.firebase.auth.FirebaseAuth;
@@ -23,11 +20,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import com.example.oldstocktrade.Model.Product;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,7 +54,7 @@ public class SoldFragment extends Fragment {
                         lstProduct.add(tmp);
                     }
                 }
-                myrecycleview = (RecyclerView) v.findViewById(R.id.sold_recyclerview);
+                myrecycleview = (RecyclerView) v.findViewById(R.id.history_recyclerview);
                 RecyclerViewAdapter recyclerAdapter = new RecyclerViewAdapter(getContext(),lstProduct);
                 myrecycleview.setLayoutManager(new GridLayoutManager(getActivity(),2));
                 myrecycleview.setAdapter(recyclerAdapter);
@@ -76,14 +68,6 @@ public class SoldFragment extends Fragment {
 
         return v;
     }
-
-//    public void onCreate(Bundle saveInstanceState) {
-//        super.onCreate(saveInstanceState);
-//
-//        lstProduct.add(new Product("String address","None","None", "String imageURL",1 ,1 ,"Smart TV",50000,"1",0,"1",1,36,"username",5));
-//        lstProduct.add(new Product("String address","None","None", "String imageURL",1 ,1 ,"Smart TV",50000,"1",0,"1",1,36,"username",5));
-//        lstProduct.add(new Product("String address","None","None", "String imageURL",1 ,1 ,"Smart TV",50000,"1",0,"1",1,36,"username",5));
-//    }
 
 
 }
