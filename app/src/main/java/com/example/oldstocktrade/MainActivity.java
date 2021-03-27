@@ -1,6 +1,7 @@
 package com.example.oldstocktrade;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
@@ -9,10 +10,12 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -73,6 +76,8 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
+                new HomeFragment(MainActivity.this)).commit();
     }
 
     private BottomNavigationView.OnNavigationItemSelectedListener navListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -131,6 +136,18 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    public void hideKeyboard() {
+        InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+        //Find the currently focused view, so we can grab the correct window token from it.
+        View view = getCurrentFocus();
+        //If no view currently has focus, create a new one, just so we can grab a window token from it
+        if (view == null) {
+            view = new View(this);
+        }
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
     public void getLocation() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
@@ -148,7 +165,7 @@ public class MainActivity extends AppCompatActivity {
                             //10.762397,106.682752
                             Log.d("location", "onSuccess: "+location.toString());//vi tri hien tai
                             //test khoang cach tai vi tri hien tai den mot vi tri bat ki
-                            Log.d("distance", "onSuccess: "+BasicFunctions.calDistance(longitude,latitude,10.7704246,106.6724038));
+                            Log.d("distance", "onSuccess: ");
                         }
                     }
                 });
