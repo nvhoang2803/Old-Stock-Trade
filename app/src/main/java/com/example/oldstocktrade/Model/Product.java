@@ -14,9 +14,8 @@ public class Product {
     String Seller;
     int Status;
     long Timestamp;
-    String userImageURL;
-    boolean VisibleToSeller = true;
-    boolean VisibleToBuyer = true;
+    boolean VisibleToSeller;
+    boolean VisibleToBuyer;
 
     public String getAddress() {
         return Address;
@@ -122,13 +121,7 @@ public class Product {
         Timestamp = timestamp;
     }
 
-    public String getUserImageURL() {
-        return userImageURL;
-    }
 
-    public void setUserImageURL(String userImageURL) {
-        this.userImageURL = userImageURL;
-    }
 
     public float getRate() {
         return rate;
@@ -164,7 +157,6 @@ public class Product {
         Seller = seller;
         Status = status;
         Timestamp = timestamp;
-        this.userImageURL = userImageURL;
         this.rate = rate;
         VisibleToSeller = true;
         VisibleToBuyer = true;

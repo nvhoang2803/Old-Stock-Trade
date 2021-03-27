@@ -22,13 +22,18 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.widget.SearchView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.oldstocktrade.Adapter.ListViewAdapter;
 import com.example.oldstocktrade.Adapter.ListViewCommentAdapter;
 import com.example.oldstocktrade.Adapter.SearchFillAdapter;
 import com.example.oldstocktrade.Model.Comment;
+import com.example.oldstocktrade.Model.MyProduct;
 import com.example.oldstocktrade.Model.Product;
+import com.example.oldstocktrade.Model.User;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -42,7 +47,7 @@ public class HomeFragment extends Fragment {
     ArrayList<Product> arr;
     SearchView searchView;
     ListView searchFill;
-    ListView listViewProduct;
+    RecyclerView listViewProduct;
     ArrayList<String> searcharr;
     //
     SearchFillAdapter searchfillAdapter;
@@ -50,6 +55,7 @@ public class HomeFragment extends Fragment {
     Activity curActivity;
 
     DatabaseReference mReference = FirebaseDatabase.getInstance().getReference();
+    User curUser;
 
     public HomeFragment(Activity act){
         curActivity = act;
@@ -70,7 +76,7 @@ public class HomeFragment extends Fragment {
         searchFill.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                //Intent = new Intent
+                String currQuerySearch = searcharr.get(position);
             }
         });
 
@@ -87,8 +93,6 @@ public class HomeFragment extends Fragment {
                 return true;
             }
         });
-
-
 
         searchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -164,27 +168,54 @@ public class HomeFragment extends Fragment {
         View view = inflater.inflate(R.layout.activity_new_feed, container, false);
         arr = new ArrayList<>();
         searcharr = new ArrayList<>();
-        //Display list product view
-        mReference.child("Products").addListenerForSingleValueEvent(new ValueEventListener() {
+        mReference.child("Users").orderByChild("id")
+                .equalTo(FirebaseAuth.getInstance().getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot ds: snapshot.getChildren()){
-                    Product tmp = ds.getValue(Product.class);
-                    arr.add(tmp);
-                    //searcharr.add(tmp.getName());
+                    curUser = ds.getValue(User.class);
                 }
-                listViewProduct = view.findViewById(R.id.listViewProduct);
-                //Display adapter product
-                ListViewAdapter listViewProductAdapter = new ListViewAdapter(arr,curActivity);
-                listViewProduct.setAdapter(listViewProductAdapter);
-
-                listViewProduct.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                mReference.child("Products").limitToLast(10).
+                        addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        Product tmp;
+                        for (DataSnapshot ds: snapshot.getChildren()){
+                            tmp = ds.getValue(Product.class);
+                            if (tmp.getStatus() == 1){
+                                arr.add(tmp);
+                            }
+                        }
+                        mReference.child("MyProducts").orderByChild("userID").
+                                equalTo(curUser.getId()).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                ArrayList<String> userLike = new ArrayList();
+                                for (DataSnapshot appleSnapshot: snapshot.getChildren()) {
+                                    MyProduct yP = appleSnapshot.getValue(MyProduct.class);
+                                    userLike.add(yP.getProID());
+                                }
+                                listViewProduct = view.findViewById(R.id.listViewProduct);
+                                //Display adapter product
+
+                                ListViewAdapter listViewProductAdapter = new ListViewAdapter(arr,curActivity,curUser,userLike);
+                                listViewProduct.setAdapter(listViewProductAdapter);
+                                listViewProduct.setLayoutManager(new LinearLayoutManager(curActivity));
+
+                                handleSearch(view);
+                            }
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
 
                     }
                 });
-                handleSearch(view);
             }
 
             @Override
@@ -192,6 +223,9 @@ public class HomeFragment extends Fragment {
 
             }
         });
+
+        //Display list product view
+
 
 
 
