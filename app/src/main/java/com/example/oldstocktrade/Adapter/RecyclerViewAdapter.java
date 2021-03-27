@@ -1,8 +1,6 @@
 package com.example.oldstocktrade.Adapter;
 
 import android.content.Context;
-import android.media.Image;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,7 +31,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     @Override
     public RecyclerViewAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v;
-        v = LayoutInflater.from(mContext).inflate(R.layout.sold_item,parent,false);
+        v = LayoutInflater.from(mContext).inflate(R.layout.history_item,parent,false);
         MyViewHolder vHolder = new MyViewHolder(v);
         return vHolder;
     }
@@ -53,7 +51,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             super(itemView);
             proImage = (ImageView) itemView.findViewById(R.id.proImage);
             proName = (TextView) itemView.findViewById(R.id.proName);
-            proDate = (TextView) itemView.findViewById(R.id.proSoldDate);
+            proDate = (TextView) itemView.findViewById(R.id.proTransactedDate);
             proPrice = (TextView) itemView.findViewById(R.id.proPrice);
         }
     }

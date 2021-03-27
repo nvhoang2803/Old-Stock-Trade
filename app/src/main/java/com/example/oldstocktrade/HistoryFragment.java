@@ -35,8 +35,8 @@ public class HistoryFragment extends Fragment {
         viewPager = (ViewPager) view.findViewById(R.id.viewpager_id);
         adapter = new ViewPageAdapter(getChildFragmentManager());
 
-        adapter.addFragment(new SoldFragment(), "Sold History");
-        adapter.addFragment(new BoughtFragment(), "Bought History");
+        adapter.addFragment(new SoldFragment(), getString(R.string.title_history_sold));
+        adapter.addFragment(new BoughtFragment(), getString(R.string.title_history_bought));
         viewPager.setAdapter(adapter);
         tabLayout.setupWithViewPager(viewPager);
     }
