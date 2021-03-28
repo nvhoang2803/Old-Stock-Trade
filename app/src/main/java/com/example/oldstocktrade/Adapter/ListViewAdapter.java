@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -16,6 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.ViewPager;
 
 import com.bumptech.glide.Glide;
 import com.example.oldstocktrade.MainActivity;
@@ -186,10 +188,47 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ViewHo
         dis = Math.floor(dis);
         holder.productDistance.setText((int) dis + "km");
         holder.userName.setText(productArrayList.get(position).getName());
-        Glide.with(holder.productImage).load(productArrayList.get(position).getImageURL())
-                .into(holder.productImage);
+        //Handle ImageSlider
+        String[] arrImage = productArrayList.get(position).getImageURL().split(",");
+        ImageSlider imgSliderAdapter = new ImageSlider(curActivity,arrImage);
+        holder.productImage.setAdapter(imgSliderAdapter);
+        //Handle ImageSlider Dot
 
+        if (arrImage.length > 1){
+            holder.productImageDotSlider.removeAllViews();
+            ImageView[] dots = new ImageView[arrImage.length];
+            for (int i=0;i< arrImage.length;i++){
+                dots[i] = new ImageView(curActivity);
+                dots[i].setImageResource(R.drawable.ic_circle_nonactive);
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT);
+                params.setMargins(8,0,8,0);
+
+                holder.productImageDotSlider.addView(dots[i],params);
+            }
+            dots[0].setImageResource(R.drawable.ic_circle);
+            holder.productImage.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+                @Override
+                public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                }
+                @Override
+                public void onPageSelected(int position) {
+                    for (int i=0;i< arrImage.length;i++){
+                        dots[i].setImageResource(R.drawable.ic_circle_nonactive);
+                    }
+                    dots[position].setImageResource(R.drawable.ic_circle);
+                }
+                @Override
+                public void onPageScrollStateChanged(int state) {
+
+                }
+            });
+        }
+
+
+        //Hanlde product like behavior
         holder.productLike.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             @Override
             public void onClick(View v) {
                 if(holder.productLike.getDrawable().getConstantState()==
@@ -261,13 +300,14 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ViewHo
     public class ViewHolder extends RecyclerView.ViewHolder {
         TextView userName;
         ImageView userImage;
-        ImageView productImage;
+        ViewPager productImage;
         TextView productAddress;
         TextView productDistance;
         TextView productDetail;
         ImageView productComment;
         ImageView productLike;
         TextView productTime;
+        LinearLayout productImageDotSlider;
 
 
         public ViewHolder(@NonNull View itemView) {
@@ -282,6 +322,7 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ViewHo
             productComment = itemView.findViewById(R.id.product_comment);
             productLike = itemView.findViewById(R.id.product_like);
             productTime = itemView.findViewById(R.id.productTime);
+            productImageDotSlider = itemView.findViewById(R.id.productImageDotSlider);
         }
     }
 }

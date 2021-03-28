@@ -229,6 +229,7 @@ public class HomeFragment extends Fragment {
         pullToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                arr.clear();
                 mReference.child("Products").limitToLast(10).
                         addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
@@ -273,10 +274,6 @@ public class HomeFragment extends Fragment {
         });
 
         //Display list product view
-
-
-
-
         return view;
     }
 }
