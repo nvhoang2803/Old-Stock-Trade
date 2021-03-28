@@ -1,10 +1,12 @@
 package com.example.oldstocktrade.Model;
 
+import java.util.ArrayList;
+
 public class Product {
     String Address;
     String Buyer;
     String Description;
-    String ImageURL;
+    ArrayList<String> ImageURL;
     long Latitude;
     long Longtitude;
     String Name;
@@ -41,11 +43,11 @@ public class Product {
         Description = description;
     }
 
-    public String getImageURL() {
+    public ArrayList<String> getImageURL() {
         return ImageURL;
     }
 
-    public void setImageURL(String imageURL) {
+    public void setImageURL(ArrayList<String> imageURL) {
         ImageURL = imageURL;
     }
 
@@ -151,7 +153,8 @@ public class Product {
 
     }
 
-    public Product(String address, String buyer, String description, String imageURL, long latitude, long longtitude, String name, double price, String proID, int report, String seller, int status, long timestamp, String userImageURL, float rate) {
+    public Product(String address, String buyer, String description, ArrayList<String> imageURL, long latitude, long longtitude, String name, double price, String proID, int report,
+                   String seller, int status, long timestamp, String userImageURL, float rate) {
         Address = address;
         Buyer = buyer;
         Description = description;

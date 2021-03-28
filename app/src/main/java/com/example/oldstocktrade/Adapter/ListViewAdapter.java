@@ -189,7 +189,7 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ViewHo
         holder.productDistance.setText((int) dis + "km");
         holder.userName.setText(productArrayList.get(position).getName());
         //Handle ImageSlider
-        String[] arrImage = productArrayList.get(position).getImageURL().split(",");
+        String[] arrImage = productArrayList.get(position).getImageURL().toArray(new String[0]);
         ImageSlider imgSliderAdapter = new ImageSlider(curActivity,arrImage);
         holder.productImage.setAdapter(imgSliderAdapter);
         //Handle ImageSlider Dot
