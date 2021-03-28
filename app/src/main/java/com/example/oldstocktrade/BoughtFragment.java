@@ -33,7 +33,7 @@ public class BoughtFragment extends Fragment {
     View v;
     private RecyclerView myrecycleview;
     private List<Product> lstProduct;
-    DatabaseReference mReference = FirebaseDatabase.getInstance().getReference();
+    private DatabaseReference mReference = FirebaseDatabase.getInstance().getReference();
     private FirebaseUser fuser;
     private String userID;
     public BoughtFragment(){
@@ -55,7 +55,7 @@ public class BoughtFragment extends Fragment {
                     }
                 }
                 myrecycleview = (RecyclerView) v.findViewById(R.id.history_recyclerview);
-                RecyclerViewAdapter recyclerAdapter = new RecyclerViewAdapter(getContext(),lstProduct);
+                RecyclerViewAdapter recyclerAdapter = new RecyclerViewAdapter(getContext(),lstProduct,"bought");
                 myrecycleview.setLayoutManager(new GridLayoutManager(getActivity(),2));
                 myrecycleview.setAdapter(recyclerAdapter);
 

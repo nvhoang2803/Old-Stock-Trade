@@ -139,6 +139,14 @@ public class Product {
         return VisibleToBuyer;
     }
 
+    public void setVisibleToSeller(boolean visibleToSeller) {
+        VisibleToSeller = visibleToSeller;
+    }
+
+    public void setVisibleToBuyer(boolean visibleToBuyer) {
+        VisibleToBuyer = visibleToBuyer;
+    }
+
     public Product(){
 
     }
