@@ -91,8 +91,12 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
                                 last_message = chat.getMessage();
                             }
                             if (chat != null){
-                                if (chat.getType().equals("text"))
-                                    holder.last_msg.setText(last_message.split("\n")[0]);
+                                if (chat.getType().equals("text")){
+                                    String recentMsg = last_message.split("\n")[0];
+                                    if (recentMsg.length() > 20)
+                                        recentMsg = recentMsg.substring(0,20) + "...";
+                                    holder.last_msg.setText(recentMsg);
+                                }
                                 else if(chat.getType().equals("image")){
                                     if (chat.getSender().equals(fuser.getUid()))
                                         holder.last_msg.setText("You sent an image");
