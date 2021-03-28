@@ -7,7 +7,6 @@ import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
 import android.Manifest;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Build;
@@ -16,17 +15,11 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
-import android.widget.TextView;
 
-import com.example.oldstocktrade.Model.User;
-import com.example.oldstocktrade.utils.BasicFunctions;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -92,8 +85,8 @@ public class MainActivity extends AppCompatActivity {
                 case R.id.nav_history:
                     selectedFragment = new HistoryFragment();
                     break;
-                case R.id.nav_cart:
-                    selectedFragment = new CartFragment();
+                case R.id.nav_storage:
+                    selectedFragment = new StorageFragment();
                     break;
                 case R.id.nav_contact:
                     selectedFragment = new ContactFragment();
