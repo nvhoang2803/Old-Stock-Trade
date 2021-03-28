@@ -48,7 +48,6 @@ public class ListViewCommentAdapter extends RecyclerView.Adapter<ListViewComment
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         for (DataSnapshot ds: snapshot.getChildren()){
                             User tmp = ds.getValue(User.class);
-
                             holder.commentUsername.setText(tmp.getUsername());
                             Glide.with( holder.userImage).load(tmp.getImageURL())
                                     .into( holder.userImage);
@@ -56,7 +55,6 @@ public class ListViewCommentAdapter extends RecyclerView.Adapter<ListViewComment
                     }
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
-
                     }
                 });
 

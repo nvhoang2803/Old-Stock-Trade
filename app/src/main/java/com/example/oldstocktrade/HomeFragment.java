@@ -24,6 +24,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.oldstocktrade.Adapter.ListViewAdapter;
 import com.example.oldstocktrade.Adapter.ListViewCommentAdapter;
@@ -41,6 +42,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 
 public class HomeFragment extends Fragment {
 
@@ -186,6 +188,7 @@ public class HomeFragment extends Fragment {
                                 arr.add(tmp);
                             }
                         }
+                        arr.sort(Comparator.comparing(Product::getTimestamp));
                         mReference.child("MyProducts").orderByChild("userID").
                                 equalTo(curUser.getId()).addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
@@ -197,7 +200,6 @@ public class HomeFragment extends Fragment {
                                 }
                                 listViewProduct = view.findViewById(R.id.listViewProduct);
                                 //Display adapter product
-
                                 ListViewAdapter listViewProductAdapter = new ListViewAdapter(arr,curActivity,curUser,userLike);
                                 listViewProduct.setAdapter(listViewProductAdapter);
                                 listViewProduct.setLayoutManager(new LinearLayoutManager(curActivity));
@@ -217,10 +219,56 @@ public class HomeFragment extends Fragment {
                     }
                 });
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
 
+            }
+        });
+
+        final SwipeRefreshLayout pullToRefresh = view.findViewById(R.id.refreshProductView);
+        pullToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                mReference.child("Products").limitToLast(10).
+                        addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                Product tmp;
+                                for (DataSnapshot ds: snapshot.getChildren()){
+                                    tmp = ds.getValue(Product.class);
+                                    if (tmp.getStatus() == 1){
+                                        arr.add(tmp);
+                                    }
+                                }
+                                arr.sort(Comparator.comparing(Product::getTimestamp));
+                                mReference.child("MyProducts").orderByChild("userID").
+                                        equalTo(curUser.getId()).addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                        ArrayList<String> userLike = new ArrayList();
+                                        for (DataSnapshot appleSnapshot: snapshot.getChildren()) {
+                                            MyProduct yP = appleSnapshot.getValue(MyProduct.class);
+                                            userLike.add(yP.getProID());
+                                        }
+                                        listViewProduct = view.findViewById(R.id.listViewProduct);
+                                        //Display adapter product
+                                        ListViewAdapter listViewProductAdapter = new ListViewAdapter(arr,curActivity,curUser,userLike);
+                                        listViewProduct.setAdapter(listViewProductAdapter);
+                                        listViewProduct.setLayoutManager(new LinearLayoutManager(curActivity));
+                                        pullToRefresh.setRefreshing(false);
+                                    }
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError error) {
+
+                                    }
+                                });
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        });
             }
         });
 

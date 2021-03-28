@@ -96,12 +96,13 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ViewHo
         }
         double price = productArrayList.get(position).getPrice();
 
-        if (price / (1000 * 1000) > 0){
-            priceD = ((int) (price / (1000 * 1000)))  + " Bilion";
-        }else if (price / (1000) > 0){
-            priceD = ((int) (price / (1000)))  + " Milion";
+
+        if (Math.floor(price / (1000 * 1000 * 1000)) > 0){
+            priceD = Math.floor(price / (1000 * 1000 * 1000))  + " Bilion";
+        }else if (Math.floor(price / (1000 * 1000)) > 0){
+            priceD = Math.floor(price / (1000 * 100))  + " Milion";
         }else{
-            priceD =((int) price) + " K";
+            priceD =Math.floor(price / (1000)) + " K";
         }
 
         //
@@ -163,10 +164,10 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ViewHo
                                 tmp.getId());
                         mReference.child("Comments").child(mKey).setValue(newCommet);
                         ((TextView) bottomShettView.findViewById(R.id.current_user_comment)).setText("");
-                        hanldeComment(bottomShettView);
+                        hanldeComment(bottomShettView,productArrayList.get(position).getProID());
                     }
                 });
-                hanldeComment(bottomShettView);
+                hanldeComment(bottomShettView,productArrayList.get(position).getProID());
                 bottomSheetDialog.setContentView(bottomShettView);
                 bottomSheetDialog.show();
             }
@@ -223,8 +224,9 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ViewHo
 
     }
 
-    public void hanldeComment(View bottomShettView){
-        mReference.child("Comments").addListenerForSingleValueEvent(new ValueEventListener() {
+    public void hanldeComment(View bottomShettView,String proID){
+        mReference.child("Comments").orderByChild("proID").equalTo(proID).
+                addListenerForSingleValueEvent(new ValueEventListener() {
             @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
