@@ -3,9 +3,18 @@ package com.example.oldstocktrade;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentActivity;
 
+import android.annotation.SuppressLint;
+import android.content.Intent;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.oldstocktrade.DirectionHelpers.DirectionFinder;
@@ -35,7 +44,9 @@ public class DirectionMap extends FragmentActivity implements OnMapReadyCallback
     MarkerOptions source, dest;
     Polyline currentPolyline;
     String strOrigin,strDest;
-
+    TextView tvAddress;
+    ImageView btnGMap;
+    @SuppressLint("WrongViewCast")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,13 +55,34 @@ public class DirectionMap extends FragmentActivity implements OnMapReadyCallback
                 .findFragmentById(R.id.directionMap);
                 // (MapFragment) getFragmentManager().findFragmentById(R.id.directionMap);
         mapFragment.getMapAsync(this);
-        source = new MarkerOptions().position(new LatLng(10.762397,106.682752));
-        dest = new MarkerOptions().position(new LatLng(10.7704246,106.6724038));
+
+        int height =150;
+        int width = 150;
+        BitmapDrawable bitmapdraw = (BitmapDrawable)getResources().getDrawable(R.drawable.icon_marker3);
+        Bitmap b = bitmapdraw.getBitmap();
+        Bitmap smallMarker = Bitmap.createScaledBitmap(b, 130, 130, false);
+
+        BitmapDrawable bitmapdraw1 = (BitmapDrawable)getResources().getDrawable(R.drawable.icon_marker);
+        Bitmap b1 = bitmapdraw1.getBitmap();
+        Bitmap smallMarker1 = Bitmap.createScaledBitmap(b1, width, height, false);
+        double lat1=10.762397,long1=106.682752,lat2=10.7704246,long2=106.6724038;
+        source = new MarkerOptions().position(new LatLng(lat1,long1)).icon(BitmapDescriptorFactory.fromBitmap(smallMarker));
+        dest = new MarkerOptions().position(new LatLng(lat2,long2)).icon(BitmapDescriptorFactory.fromBitmap(smallMarker1));
         LatLng origin = source.getPosition();
         LatLng des = dest.getPosition();
         strOrigin = origin.latitude+","+origin.longitude;
         strDest = des.latitude+","+des.longitude;
-
+        tvAddress = findViewById(R.id.tvAddress);
+        tvAddress.setText("255 Ba tháng hai, P10, Q10, TP HCM");
+        btnGMap = findViewById(R.id.btnGMap);
+        btnGMap.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
+                Uri.parse("http://maps.google.com/maps?saddr="+Double.toString(lat1)+","+Double.toString(long1)+"&daddr="+Double.toString(lat2)+","+Double.toString(long2)));
+                startActivity(intent);
+            }
+        });
         DirectionFinder directionFinder = new DirectionFinder(new DirectionFinderListener() {
             @Override
             public void onDirectionFinderStart() {
@@ -93,11 +125,11 @@ public class DirectionMap extends FragmentActivity implements OnMapReadyCallback
                     }
 
                     LatLngBounds bounds = builder.build();
-                    int padding = 20; //
+                    int padding = 50; //
                     CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds,
                             padding);
                     map.moveCamera(cu);
-                    map.animateCamera(cu, 1800, null);
+                    map.animateCamera(cu, 2000, null);
                 }
             }
         },strOrigin,strDest);
