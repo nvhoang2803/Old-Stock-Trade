@@ -3,6 +3,8 @@
     <string name="title_activity_maps">Map</string>
     <string name="title_history_sold">Sold</string>
     <string name="title_history_bought">Bought</string>
+    <string name="title_storage_selling">Selling</string>
+    <string name="title_storage_wishlist">Wish List</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_fullscreen">FullscreenActivity</string>

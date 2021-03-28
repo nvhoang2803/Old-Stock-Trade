@@ -11,7 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.oldstocktrade.Adapter.RecyclerViewAdapter;
+import com.example.oldstocktrade.Adapter.HistoryAdapter;
 import com.example.oldstocktrade.Model.Product;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -55,7 +55,7 @@ public class BoughtFragment extends Fragment {
                     }
                 }
                 myrecycleview = (RecyclerView) v.findViewById(R.id.history_recyclerview);
-                RecyclerViewAdapter recyclerAdapter = new RecyclerViewAdapter(getContext(),lstProduct,"bought");
+                HistoryAdapter recyclerAdapter = new HistoryAdapter(getContext(),lstProduct,"bought");
                 myrecycleview.setLayoutManager(new GridLayoutManager(getActivity(),2));
                 myrecycleview.setAdapter(recyclerAdapter);
 

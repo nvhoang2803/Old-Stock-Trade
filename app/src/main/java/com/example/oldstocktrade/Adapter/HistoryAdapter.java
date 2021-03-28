@@ -6,36 +6,28 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.example.oldstocktrade.BoughtFragment;
 import com.example.oldstocktrade.Model.Product;
 import com.example.oldstocktrade.R;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.List;
 
-public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.MyViewHolder> {
+public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.MyViewHolder> {
     Context mContext;
     List<Product> mData;
     String tabName;
     RecyclerView mRecyclerView;
 
 
-    public RecyclerViewAdapter(Context mContext, List<Product> mData, String tabName) {
+    public HistoryAdapter(Context mContext, List<Product> mData, String tabName) {
         this.mContext = mContext;
         this.mData = mData;
         this.tabName = tabName;
@@ -50,7 +42,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     @NonNull
     @Override
-    public RecyclerViewAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public HistoryAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v;
         v = LayoutInflater.from(mContext).inflate(R.layout.history_item,parent,false);
         MyViewHolder vHolder = new MyViewHolder(v);
@@ -80,12 +72,12 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecyclerViewAdapter.MyViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull HistoryAdapter.MyViewHolder holder, int position) {
         holder.proName.setText(mData.get(position).getName());
         holder.proPrice.setText(Long.toString(Math.round(mData.get(position).getPrice())));
         Date date = new Date(mData.get(position).getTimestamp());
         holder.proDate.setText(DateFormat.getDateInstance().format(date));
-        Glide.with(holder.proImage).load(mData.get(position).getImageURL())
+        Glide.with(holder.proImage).load(mData.get(position).getImageURL().get(0))
                 .into(holder.proImage);
         holder.btnDelete.setOnClickListener(new View.OnClickListener() {
             @Override
