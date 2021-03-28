@@ -50,7 +50,7 @@ public class SoldFragment extends Fragment {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot ds: snapshot.getChildren()) {
                     Product tmp = ds.getValue(Product.class);
-                    if (tmp.getSeller().equals(userID) && tmp.getStatus() == 0 && tmp.isVisibleToSeller()) {
+                        if (tmp.getSeller().equals(userID) && tmp.getStatus() == 0 && tmp.isVisibleToSeller()) {
                         lstProduct.add(tmp);
                     }
                 }

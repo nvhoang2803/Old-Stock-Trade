@@ -83,7 +83,7 @@ public class PostActivity extends AppCompatActivity {
 
     private void openImage() {
         Intent intent= new Intent();
-        intent.setType("image/");
+        intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
         startActivityForResult(intent,IMAGE_REQUEST);
 
