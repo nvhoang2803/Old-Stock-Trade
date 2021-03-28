@@ -54,6 +54,7 @@ public class MessageActivity extends AppCompatActivity {
     private DatabaseReference reference;
     private ImageButton btn_send;
     private ImageButton btn_img;
+    private ImageButton btn_call;
     private EditText txt_msg;
     private String conversation_id = null;
     private DatabaseReference conversation_reference = null;
@@ -66,6 +67,7 @@ public class MessageActivity extends AppCompatActivity {
     private Uri fileUri;
     private String userid = "";
     private ProgressDialog dialog;
+    private User user;
     ValueEventListener valueEventListener;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +81,7 @@ public class MessageActivity extends AppCompatActivity {
         txt_username = findViewById(R.id.username);
         btn_send = findViewById(R.id.btn_send);
         btn_img = findViewById(R.id.btn_img);
+        btn_call = findViewById(R.id.btn_call);
         txt_msg = findViewById(R.id.txt_msg);
         recyclerView = findViewById(R.id.recycler);
         recyclerView.setHasFixedSize(true);
@@ -112,7 +115,7 @@ public class MessageActivity extends AppCompatActivity {
         valueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                User user = snapshot.getValue(User.class);
+                user = snapshot.getValue(User.class);
                 txt_username.setText(user.getUsername().toString());
                 imageURL = user.getImageURL();
                 if (imageURL.equals("default"))
@@ -158,7 +161,15 @@ public class MessageActivity extends AppCompatActivity {
             }
         });
 
-
+        btn_call.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent();
+                i.setAction(Intent.ACTION_DIAL);
+                i.setData(Uri.parse("tel:"+user.getPhone()));
+                startActivity(i);
+            }
+        });
 
     }
 
@@ -236,13 +247,14 @@ public class MessageActivity extends AppCompatActivity {
         });
     }
     void sendMessage(String sender,String receiver, String msg){
-        DatabaseReference reference = conversation_reference;
+        DatabaseReference reference = conversation_reference.child("Chats").push();
         HashMap<String, Object> hashMap = new HashMap<>();
         hashMap.put("sender",sender);
         hashMap.put("receiver",receiver);
         hashMap.put("message",msg);
         hashMap.put("type","text");
-        reference.child("Chats").push().setValue(hashMap);
+        hashMap.put("id",reference.getKey());
+        reference.setValue(hashMap);
     }
 
     void loadMessage() {
@@ -255,7 +267,7 @@ public class MessageActivity extends AppCompatActivity {
                     Chat chat = data.getValue(Chat.class);
                     mChats.add(chat);
                 }
-                messageAdapter = new MessageAdapter(MessageActivity.this, mChats, imageURL );
+                messageAdapter = new MessageAdapter(MessageActivity.this, mChats, imageURL, conversation_reference);
                 recyclerView.setAdapter(messageAdapter);
             }
 
