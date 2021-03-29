@@ -45,12 +45,12 @@ public class BoughtFragment extends Fragment {
         lstProduct = new ArrayList<>();
         fuser = FirebaseAuth.getInstance().getCurrentUser();
         userID = fuser.getUid();
-        mReference.child("Products").addListenerForSingleValueEvent(new ValueEventListener() {
+        mReference.child("Products").orderByChild("Buyer").equalTo(userID).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot ds: snapshot.getChildren()) {
                     Product tmp = ds.getValue(Product.class);
-                    if (tmp.getBuyer().equals(userID) && tmp.getStatus() == 0 && tmp.isVisibleToBuyer()) {
+                    if (tmp.getStatus() == 0 && tmp.isVisibleToBuyer()) {
                         lstProduct.add(tmp);
                     }
                 }
