@@ -1,10 +1,10 @@
 package com.example.oldstocktrade.Model;
 
-public class MyProduct {
+public class Wishlist {
     String ProID;
     String UserID;
 
-    public MyProduct(){
+    public Wishlist(){
 
     }
 
@@ -24,7 +24,7 @@ public class MyProduct {
         UserID = userID;
     }
 
-    public MyProduct(String proID, String userID) {
+    public Wishlist(String proID, String userID) {
         ProID = proID;
         UserID = userID;
     }

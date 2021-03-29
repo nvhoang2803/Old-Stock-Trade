@@ -2,7 +2,6 @@ package com.example.oldstocktrade.Adapter;
 
 
 import android.app.Activity;
-import android.content.Context;
 import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,7 +9,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -22,7 +20,7 @@ import androidx.viewpager.widget.ViewPager;
 import com.bumptech.glide.Glide;
 import com.example.oldstocktrade.MainActivity;
 import com.example.oldstocktrade.Model.Comment;
-import com.example.oldstocktrade.Model.MyProduct;
+import com.example.oldstocktrade.Model.Wishlist;
 import com.example.oldstocktrade.Model.Product;
 import com.example.oldstocktrade.Model.User;
 import com.example.oldstocktrade.R;
@@ -38,7 +36,6 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.List;
 
 public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ViewHolder> {
 
@@ -47,12 +44,14 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ViewHo
     ArrayList<String> userProductlike;
     ArrayList<Product> productArrayList;
     DatabaseReference mReference = FirebaseDatabase.getInstance().getReference();
+    ArrayList<Double> lonlat;
 
-    public ListViewAdapter(ArrayList<Product> productArrayList, Activity curAcc, User a, ArrayList<String> a1) {
+    public ListViewAdapter(ArrayList<Product> productArrayList, Activity curAcc, User a, ArrayList<String> a1,ArrayList<Double> lonlat) {
         this.userProductlike = a1;
         this.curActivity = curAcc;
         this.productArrayList = productArrayList;
         this.tmp = a;
+        this.lonlat = lonlat;
     }
 
     @NonNull
@@ -180,11 +179,21 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ViewHo
         holder.productTime.setText(timeD + " - $" + priceD);
         //
         holder.productDetail.setText(productArrayList.get(position).getDescription());
+
+
         //Caculate distance from currenLocation to product location
-        double dis = BasicFunctions.calDistance(((MainActivity) curActivity).longitude,
-                ((MainActivity) curActivity).latitude,
-                productArrayList.get(position).getLongtitude(),
-                productArrayList.get(position).getLatitude());
+        double dis = 0;
+        if (lonlat != null){
+            dis = BasicFunctions.calDistance(lonlat.get(0), lonlat.get(1),
+                    productArrayList.get(position).getLongtitude(),
+                    productArrayList.get(position).getLatitude());
+        }else{
+             dis = BasicFunctions.calDistance(((MainActivity) curActivity).longitude,
+                    ((MainActivity) curActivity).latitude,
+                    productArrayList.get(position).getLongtitude(),
+                    productArrayList.get(position).getLatitude());
+        }
+
         dis = Math.floor(dis);
         holder.productDistance.setText((int) dis + "km");
         holder.userName.setText(productArrayList.get(position).getName());
@@ -233,17 +242,17 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ViewHo
             public void onClick(View v) {
                 if(holder.productLike.getDrawable().getConstantState()==
                         curActivity.getDrawable(R.drawable.ic_heart).getConstantState()){
-                    String mKey = mReference.child("MyProducts").push().getKey();
-                    MyProduct Mpro = new MyProduct(productArrayList.get(position).getProID(), tmp.getId());
-                    mReference.child("MyProducts").child(mKey).setValue(Mpro);
+                    String mKey = mReference.child("Wishlist").push().getKey();
+                    Wishlist Mpro = new Wishlist(productArrayList.get(position).getProID(), tmp.getId());
+                    mReference.child("Wishlist").child(mKey).setValue(Mpro);
                     holder.productLike.setImageResource(R.drawable.ic_like__1_);
                 }else{
-                    mReference.child("MyProducts").orderByChild("userID").
+                    mReference.child("Wishlist").orderByChild("userID").
                             equalTo(tmp.getId()).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                             for (DataSnapshot appleSnapshot: snapshot.getChildren()) {
-                                MyProduct yP = appleSnapshot.getValue(MyProduct.class);
+                                Wishlist yP = appleSnapshot.getValue(Wishlist.class);
                                 if (yP.getProID().equals(productArrayList.get(position).getProID())){
                                     appleSnapshot.getRef().removeValue();
                                     holder.productLike.setImageResource(R.drawable.ic_heart);
