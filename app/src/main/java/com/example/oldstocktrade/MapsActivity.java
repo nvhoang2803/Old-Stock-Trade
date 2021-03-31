@@ -11,12 +11,14 @@ import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.media.Image;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.SearchView;
@@ -58,6 +60,7 @@ public class MapsActivity extends FragmentActivity {
     Button btnConfirm;
     TextView txtAddress,txtTude;
     Geocoder geocoder;
+    ImageButton btnBack;
 //    List<String> listResult = null;
 //    ListView listLocation;
 
@@ -73,6 +76,13 @@ public class MapsActivity extends FragmentActivity {
         btnConfirm = findViewById(R.id.btnConfirm);
         txtAddress = findViewById(R.id.address);
         txtTude = findViewById(R.id.tude);
+        btnBack = findViewById(R.id.btnBack1);
+        btnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
         //listLocation = findViewById(R.id.listLocation);
 //        listResult = new LinkedList<>();
 //        ArrayAdapter<String> adapter = new ArrayAdapter<String>(MapsActivity.this, android.R.layout.simple_list_item_1,listResult);

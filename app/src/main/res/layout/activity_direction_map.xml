@@ -13,13 +13,14 @@
         android:layout_height="wrap_content"
         tools:context="com.example.oldstocktrade.DirectionMap"/>
     <LinearLayout
+        android:id="@+id/llDetail"
         android:layout_width="match_parent"
         android:layout_height="200dp"
         android:layout_alignParentBottom="true"
         android:orientation="vertical"
         android:elevation="5dp"
         android:background="@drawable/bg_roundinfo"
-        android:layout_margin="10dp">
+        >
 
         <TextView
             android:layout_width="match_parent"
@@ -30,6 +31,7 @@
             android:textStyle="bold"
             android:layout_marginTop="10dp"
             android:text=""
+            android:maxLines="3"
             android:id="@+id/tvAddress"/>
         <LinearLayout
             android:layout_marginTop="10dp"
@@ -90,5 +92,15 @@
 
 
     </LinearLayout>
+    <ImageButton
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/ic_back"
+        android:layout_above="@id/llDetail"
+        android:id="@+id/btnBack"
 
+        android:layout_marginLeft="10dp"
+        android:layout_marginBottom="20dp"
+        android:background="@drawable/bg_round_btn"
+        />
 </RelativeLayout>
