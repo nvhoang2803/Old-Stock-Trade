@@ -28,17 +28,23 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class PostActivity extends AppCompatActivity {
-    private static final int IMAGE_REQUEST = 2,REQUEST_CODE_LOCATION= 3;
+    private static final int IMAGE_REQUEST = 2,REQUEST_CODE_LOCATION= 3, PICK_IMAGE=4;
     private ImageView close;
     private ImageView imageAdded;
     private TextView post;
-    EditText description, address;
+    EditText description, address, price, phone;
     Uri imageUri;
     private String imageUrl;
     Button btnLocation;
+    private EditText name;
+    private Button chooseImage, uploadImage;
+    private TextView alert;
+    private ArrayList<Uri> a= new ArrayList<Uri>();
+    private Uri uriImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +57,12 @@ public class PostActivity extends AppCompatActivity {
         post = findViewById(R.id.post);
         description = findViewById(R.id.description);
         address = findViewById(R.id.addressPost);
+        price= findViewById(R.id.price);
+        phone= findViewById(R.id.phone);
+        name= findViewById(R.id.name);
+        chooseImage= findViewById(R.id.chooseImage);
+        uploadImage= findViewById(R.id.uploadImage);
+        alert= findViewById(R.id.alert);
 
         close.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -79,6 +91,14 @@ public class PostActivity extends AppCompatActivity {
             }
         });
 
+        chooseImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent= new Intent(Intent.ACTION_GET_CONTENT);
+                intent.setType("image/*");
+                startActivityForResult(intent, PICK_IMAGE);
+            }
+        });
     }
 
     private void openImage() {
@@ -116,6 +136,23 @@ public class PostActivity extends AppCompatActivity {
             }
 
         }
+        if(requestCode == PICK_IMAGE){
+            if(requestCode==RESULT_OK){
+                if(data.getClipData()!=null){
+                    int countImage= data.getClipData().getItemCount();
+                    for(int i=0;i<countImage;i++){
+                        uriImage= data.getClipData().getItemAt(i).getUri();
+                        a.add(uriImage);
+                    }
+                    alert.setVisibility(View.VISIBLE);
+                    alert.setText(a.size()+" hình");
+                    chooseImage.setVisibility(View.GONE);
+                }
+                else{
+                    Toast.makeText(this, "Please select multiple image", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
     }
 
     private void uploadImage() {
@@ -145,7 +182,16 @@ public class PostActivity extends AppCompatActivity {
                     map.put("ProID",ProID);
                     map.put("ImageURL",imageUrl);
                     map.put("Description",description.getText().toString());
+                    map.put("Address", address.getText().toString());
                     map.put("Seller", FirebaseAuth.getInstance().getCurrentUser().getUid());
+                    map.put("Price", price.getText().toString());
+                    map.put("Phone", phone.getText().toString());
+                    map.put("Name", name.getText().toString());
+                    map.put("Status", 0);
+                    map.put("Report", 0);
+                    map.put("VisibleToBuyer", true);
+                    map.put("VisibleToSeller", true);
+                    map.put("Buyer", "None");
                     databaseReference.child(ProID).setValue(map);
                     pd.dismiss();
                     startActivity(new Intent(PostActivity.this,MainActivity.class));
