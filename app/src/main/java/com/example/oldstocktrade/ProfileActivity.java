@@ -24,6 +24,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.oldstocktrade.Model.User;
 import com.google.android.gms.tasks.Continuation;
@@ -43,6 +44,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.util.HashMap;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -80,6 +82,7 @@ public class ProfileActivity extends AppCompatActivity {
                 if (user.getImageURL().equals("default"));
 //                    profile_image.setImageResource(R.mipmap.ic_launcher);
                 else
+
                     //Glide.with(context).load(url).apply(RequestOptions.circleCropTransform()).into(imageView);
                     Glide.with(ProfileActivity.this).load(user.getImageURL()).apply(RequestOptions.circleCropTransform()).into(profile_image);
                 username.setText(user.getUsername());
@@ -174,7 +177,22 @@ public class ProfileActivity extends AppCompatActivity {
         if(requestCode == IMAGE_REQUEST){
             if(resultCode==RESULT_OK){
                 imageUri = data.getData();
-                Glide.with(ProfileActivity.this).load(imageUri).apply(RequestOptions.circleCropTransform()).into(profile_image);
+                Log.d("Image", "onActivityResult: "+imageUri);
+                profile_image.setImageURI(imageUri);
+
+//                Glide.with(ProfileActivity.this)
+//                        .load(imageUri)
+//                        .apply(new RequestOptions()
+//                                .diskCacheStrategy(DiskCacheStrategy.NONE)
+//                                .skipMemoryCache(true)
+//                                )//.circleCropTransform()
+//                        .into(profile_image);
+                Glide.with(ProfileActivity.this)
+                        .load(imageUri)
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+
+                        .apply(RequestOptions.circleCropTransform()).into(profile_image);
+                //Glide.with(ProfileActivity.this).load(imageUri).apply(RequestOptions.circleCropTransform()).into(profile_image);
             }
             else{
                 Toast.makeText(this,"Something went wrong!",Toast.LENGTH_SHORT).show();
