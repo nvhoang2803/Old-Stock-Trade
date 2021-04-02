@@ -10,6 +10,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.PersistableBundle;
+import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -24,6 +26,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.signature.ObjectKey;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.oldstocktrade.Model.User;
@@ -45,6 +48,9 @@ import com.google.firebase.storage.StorageTask;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.HashMap;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -62,6 +68,7 @@ public class ProfileActivity extends AppCompatActivity {
     private String imageUrl;
     private Uri imageUri;
     private User user;
+    RequestOptions newImageSignature;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,16 +82,23 @@ public class ProfileActivity extends AppCompatActivity {
         change_photo = findViewById(R.id.change_photo);
         fuser = FirebaseAuth.getInstance().getCurrentUser();
         ref = FirebaseDatabase.getInstance().getReference("Users").child(fuser.getUid());
-        valueEventListener = new ValueEventListener() {
+        ref.addValueEventListener( new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 user = snapshot.getValue(User.class);
-                if (user.getImageURL().equals("default"));
-//                    profile_image.setImageResource(R.mipmap.ic_launcher);
-                else
+                if (user.getImageURL().equals("default"))
+                    profile_image.setImageResource(R.mipmap.ic_launcher);
+                else{
+                    //Bitmap bitmap = BitmapFactory.decodeStream((InputStream)new URL(user.getImageURL()).getContent());
+                    //imageView.setImageBitmap(bitmap);
+                    Glide.with(getApplicationContext())
+                            .load(user.getImageURL())
+                            .apply(RequestOptions.circleCropTransform())
+                            .into(profile_image)
+                    ;
+                }
 
-                    //Glide.with(context).load(url).apply(RequestOptions.circleCropTransform()).into(imageView);
-                    Glide.with(ProfileActivity.this).load(user.getImageURL()).apply(RequestOptions.circleCropTransform()).into(profile_image);
+
                 username.setText(user.getUsername());
                 txt_phone.setText(user.getPhone());
                 txt_address.setText(user.getAddress());
@@ -126,7 +140,7 @@ public class ProfileActivity extends AppCompatActivity {
             public void onCancelled(@NonNull DatabaseError error) {
 
             }
-        };
+        });
 
         change_photo.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -148,20 +162,9 @@ public class ProfileActivity extends AppCompatActivity {
         });
 
     }
-    ValueEventListener valueEventListener = null;
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        ref.removeEventListener(valueEventListener);
-    }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        ref.addValueEventListener(valueEventListener);
 
-    }
     private void openImage() {
         Intent intent= new Intent();
         intent.setType("image/*");
@@ -178,21 +181,14 @@ public class ProfileActivity extends AppCompatActivity {
             if(resultCode==RESULT_OK){
                 imageUri = data.getData();
                 Log.d("Image", "onActivityResult: "+imageUri);
-                profile_image.setImageURI(imageUri);
-
-//                Glide.with(ProfileActivity.this)
-//                        .load(imageUri)
-//                        .apply(new RequestOptions()
-//                                .diskCacheStrategy(DiskCacheStrategy.NONE)
-//                                .skipMemoryCache(true)
-//                                )//.circleCropTransform()
-//                        .into(profile_image);
+                //Bitmap bitmap = (Bitmap) data.getExtras().get("dat");
+                //profile_image.setImageURI(imageUri);
                 Glide.with(ProfileActivity.this)
                         .load(imageUri)
-                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .apply(RequestOptions.circleCropTransform())
+                        .into(profile_image)
+                ;
 
-                        .apply(RequestOptions.circleCropTransform()).into(profile_image);
-                //Glide.with(ProfileActivity.this).load(imageUri).apply(RequestOptions.circleCropTransform()).into(profile_image);
             }
             else{
                 Toast.makeText(this,"Something went wrong!",Toast.LENGTH_SHORT).show();
@@ -230,8 +226,8 @@ public class ProfileActivity extends AppCompatActivity {
                         public void onComplete(@NonNull Task task) {
                             Uri downloadUri = (Uri) task.getResult();
                             imageUrl = downloadUri.toString();
-//
-                            if (!user.getImageURL().equals("default")) {
+                            Log.d("update user", imageUrl);
+                            if (!(user.getImageURL().equals("default"))) {
                                 StorageReference photoRef = FirebaseStorage.getInstance().getReferenceFromUrl(user.getImageURL());
                                 photoRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override

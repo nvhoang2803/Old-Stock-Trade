@@ -61,8 +61,7 @@ public class MapsActivity extends FragmentActivity {
     TextView txtAddress,txtTude;
     Geocoder geocoder;
     ImageButton btnBack;
-//    List<String> listResult = null;
-//    ListView listLocation;
+    Double lati = null,longi=null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,10 +82,19 @@ public class MapsActivity extends FragmentActivity {
                 onBackPressed();
             }
         });
-        //listLocation = findViewById(R.id.listLocation);
-//        listResult = new LinkedList<>();
-//        ArrayAdapter<String> adapter = new ArrayAdapter<String>(MapsActivity.this, android.R.layout.simple_list_item_1,listResult);
-//        listLocation.setAdapter(adapter);
+
+        Intent recieve = getIntent();
+        if(recieve!=null){
+            Bundle myBundle = recieve.getExtras();
+            if(myBundle!=null){
+                lati = myBundle.getDouble("lat");
+                longi = myBundle.getDouble("long");
+            }
+
+
+        }
+
+
         Places.initialize(getApplicationContext(),getString(R.string.google_maps_key));
 
         View locationButton = ((View) findViewById(Integer.parseInt("1")).getParent()).findViewById(Integer.parseInt("2"));
@@ -104,12 +112,12 @@ public class MapsActivity extends FragmentActivity {
                     mMap.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
                         @Override
                         public boolean onMyLocationButtonClick() {
-                            getCurrentLocation();
+                            getCurrentLocation(true);
                             return false;
                         }
                     });
                 }});
-            getCurrentLocation();
+            getCurrentLocation(false);
         } else {
             ActivityCompat.requestPermissions(MapsActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 44);
         }
@@ -135,53 +143,11 @@ public class MapsActivity extends FragmentActivity {
             }
         });
 
-////        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-////            @Override
-////            public boolean onQueryTextSubmit(String query) {
-////
-//////                String location = searchView.getQuery().toString();
-//////                List<Address> listAddress = null;
-//////                listResult.clear();
-//////                listResult = new ArrayList<>();
-//////                if (location != null || !location.equals("")) {
-//////
-//////                    try {
-//////                        listAddress = geocoder.getFromLocationName(location, 5);
-//////                        for(Address x:listAddress){
-//////                            listResult.add(x.getAddressLine(0).toString());
-//////                        }
-//////                        Log.d("Result", "onQueryTextSubmit: "+listResult);
-//////                        adapter.notifyDataSetChanged();
-//////
-//////                    } catch (IOException e) {
-//////                        e.printStackTrace();
-//////                    }
-//////
-////////                    if (addressList.size() != 0) {
-////////
-//////////                        Address address = addressList.get(0);
-//////////                        LatLng latLng = new LatLng(address.getLatitude(), address.getLongitude());
-//////////                        mMap.addMarker(new MarkerOptions().position(latLng).title(address.getAddressLine(0)));
-//////////                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
-//////////                        txtAddress.setText(address.getAddressLine(0));
-//////////                        txtTude.setText(Double.toString(address.getLatitude())+"-"+Double.toString(address.getLongitude()));
-////////
-////////                    }
-//////
-//////
-//////                }
-//////                return false;
-////            }
-//
-//            @Override
-//            public boolean onQueryTextChange(String newText) {
-//                return false;
-//            }
-//        });
-        //mapFragment.getMapAsync(this);
+
+
     }
 
-    private void getCurrentLocation() {
+    private void getCurrentLocation(boolean isCurrent) {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
@@ -204,11 +170,16 @@ public class MapsActivity extends FragmentActivity {
 //                            mMap = googleMap;
 
                             setMyLocation();
+                            LatLng pos;
+                            if(isCurrent==false&&lati!=null&&longi!=null){
+                                pos = new LatLng(lati,longi);
+                            }else{
+                                pos = new LatLng(location.getLatitude(),location.getLongitude());
+                            }
 
-                            LatLng pos = new LatLng(location.getLatitude(),location.getLongitude());
                             ArrayList<Address> addresses = null;
                             try {
-                                addresses = (ArrayList<Address>) geocoder.getFromLocation(location.getLatitude(),location.getLongitude(),1);
+                                addresses = (ArrayList<Address>) geocoder.getFromLocation(pos.latitude,pos.longitude,1);
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
@@ -217,7 +188,7 @@ public class MapsActivity extends FragmentActivity {
                             if (addresses.size() != 0) {
                                 Address address = addresses.get(0);
                                 txtAddress.setText(address.getAddressLine(0));
-                                txtTude.setText(Double.toString(location.getLatitude()) + "-" + Double.toString(location.getLongitude()));
+                                txtTude.setText(Double.toString(pos.latitude) + "-" + Double.toString(pos.longitude));
 
 
                             }
@@ -244,7 +215,7 @@ public class MapsActivity extends FragmentActivity {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if(requestCode==44){
             if(grantResults.length>0 &&grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                getCurrentLocation();
+                getCurrentLocation(false);
             }
         }
 

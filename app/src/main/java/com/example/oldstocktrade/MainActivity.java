@@ -47,7 +47,6 @@ public class MainActivity extends AppCompatActivity {
                 getReference("Users").child(firebaseUser.getUid());
         BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
         bottomNav.setOnNavigationItemSelectedListener(navListener);
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeFragment(MainActivity.this)).commit();
 
         //----------------------------Get current Location
         client = LocationServices.getFusedLocationProviderClient(this);
@@ -153,8 +152,8 @@ public class MainActivity extends AppCompatActivity {
                     public void onSuccess(Location location) {
                         // Got last known location. In some rare situations this can be null.
                         if (location != null) {
-                            longitude = location.getLatitude();
-                            latitude = location.getLongitude();
+                            longitude = location.getLongitude();
+                            latitude = location.getLatitude();
                             //10.7704246 106.6724038
                             //10.762397,106.682752
                             Log.d("location", "onSuccess: "+location.toString());//vi tri hien tai
