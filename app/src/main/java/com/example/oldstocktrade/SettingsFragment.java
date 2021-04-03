@@ -35,7 +35,7 @@ public class SettingsFragment extends Fragment {
     Button btnMap,btnDirection;
     TextView txtUsername;
     private FirebaseUser fuser;
-    RelativeLayout btnSignout,btnPost,btn_profile,btnYourLocation,btnWishlist,btnSelling,btnSold,btnBought;
+    RelativeLayout btnSignout,btnPost,btn_profile,btnYourLocation,btnWishlist,btnSelling,btnSold,btnBought,btnContact;
     private DatabaseReference ref;
     CircleImageView avatar;
     private User user;
@@ -52,6 +52,7 @@ public class SettingsFragment extends Fragment {
             btnSelling = view.findViewById(R.id.btnSelling);
             btnSold = view.findViewById(R.id.btnSold);
             btnBought = view.findViewById(R.id.btnBought);
+            btnContact = view.findViewById(R.id.btnContact);
             btnPost = view.findViewById(R.id.btnPost);
             btnMap = view.findViewById(R.id.btnMap);
             avatar = view.findViewById(R.id.avatar);
@@ -70,7 +71,7 @@ public class SettingsFragment extends Fragment {
                     if (user.getImageURL().equals("default"))
                         avatar.setImageResource(R.mipmap.ic_launcher);
                     else
-                        Glide.with(getActivity()).load(user.getImageURL()).apply(RequestOptions.circleCropTransform()).into(avatar);
+                        Glide.with(main.getApplicationContext()).load(user.getImageURL()).apply(RequestOptions.circleCropTransform()).into(avatar);
 
                 }
 
@@ -86,6 +87,36 @@ public class SettingsFragment extends Fragment {
                     FirebaseAuth.getInstance().signOut();
                     startActivity(new Intent(getActivity(),LoginActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK));
                     //getActivity().finish();
+                }
+            });
+            btnWishlist.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    main.handleClickFragment(R.id.nav_storage,1);
+                }
+            });
+            btnContact.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    main.handleClickFragment(R.id.nav_contact,0);
+                }
+            });
+            btnSelling.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    main.handleClickFragment(R.id.nav_storage,0);
+                }
+            });
+            btnSold.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    main.handleClickFragment(R.id.nav_history,0);
+                }
+            });
+            btnBought.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    main.handleClickFragment(R.id.nav_history,1);
                 }
             });
             btnYourLocation.setOnClickListener(new View.OnClickListener() {

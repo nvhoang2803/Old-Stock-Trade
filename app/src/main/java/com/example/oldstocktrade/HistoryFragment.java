@@ -17,7 +17,16 @@ public class HistoryFragment extends Fragment {
     private TabLayout tabLayout;
     private ViewPager viewPager;
     private ViewPageAdapter adapter;
+    //-------------phan de setting chon toi
+    private int typetab = -1;
 
+    public HistoryFragment(int typetab) {
+        this.typetab = typetab;
+    }
+    public HistoryFragment() {
+
+    }
+    //------------------
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -36,5 +45,11 @@ public class HistoryFragment extends Fragment {
         adapter.addFragment(new BoughtFragment(), getString(R.string.title_history_bought));
         viewPager.setAdapter(adapter);
         tabLayout.setupWithViewPager(viewPager);
+        //--------phan de chon item setting dan toi tab tuong thich
+        if(typetab!=-1){
+            TabLayout.Tab tab = tabLayout.getTabAt(typetab);
+            tab.select();
+        }
+        //----------------------
     }
 }
