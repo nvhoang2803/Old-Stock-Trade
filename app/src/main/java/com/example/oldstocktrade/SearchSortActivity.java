@@ -33,6 +33,7 @@ import com.example.oldstocktrade.Adapter.SearchFillAdapter;
 import com.example.oldstocktrade.Model.Product;
 import com.example.oldstocktrade.Model.User;
 import com.example.oldstocktrade.Model.Wishlist;
+import com.example.oldstocktrade.utils.VnCharacteristic;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.slider.RangeSlider;
@@ -314,7 +315,6 @@ public class SearchSortActivity extends AppCompatActivity {
     }
     //Fill sort and updated data follow Sort field
     public void fillSort(ArrayList<String> arrSort,String type){
-
         mReference.child("Products").limitToLast(10).
                 addListenerForSingleValueEvent(new ValueEventListener() {
                     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -327,16 +327,18 @@ public class SearchSortActivity extends AppCompatActivity {
                             List<Float> priceSort = priceSlider.getValues();
                             for (DataSnapshot ds: snapshot.getChildren()){
                                 tmp = ds.getValue(Product.class);
-                                if (tmp.getStatus() == 1 && (tmp.getPrice() > priceSort.get(0)) &&
+                                if ((tmp.getPrice() > priceSort.get(0)) &&
                                         (tmp.getPrice() < priceSort.get(1)) && tmp.getName() != null
-                                            && tmp.getName().toLowerCase().contains(query)){
+                                            && (tmp.getName() != null && ( tmp.getName().toLowerCase().contains(query.toLowerCase())
+                                        || VnCharacteristic.removeAccent(tmp.getName()).toLowerCase().contains(query.toLowerCase()) ))){
                                     arr.add(tmp);
                                 }
                             }
                         }else {
                             for (DataSnapshot ds: snapshot.getChildren()){
                                 tmp = ds.getValue(Product.class);
-                                if (tmp.getStatus() == 1 && tmp.getName() != null && tmp.getName().toLowerCase().contains(query)){
+                                if (tmp.getName() != null && (tmp.getName() != null && ( tmp.getName().toLowerCase().contains(query.toLowerCase())
+                                        || VnCharacteristic.removeAccent(tmp.getName()).toLowerCase().contains(query.toLowerCase()) ))){
                                     arr.add(tmp);
                                 }
                             }
@@ -347,27 +349,35 @@ public class SearchSortActivity extends AppCompatActivity {
                             arr.sort(Comparator.comparing(Product::getPrice).reversed());
                         }
                         if (arrSort.get(1).toString().contains("From Oldest to Newest")){
-                            Collections.sort(arr, (Comparator<Product>) (lhs, rhs) -> {
-                                if ((lhs.getPrice() == rhs.getPrice())){
-                                    if (lhs.getTimestamp() > rhs.getPrice()){
-                                        return 1;
-                                    }else {
-                                        return -1;
+                            if (type == "Filter"){
+                                Collections.sort(arr, (Comparator<Product>) (lhs, rhs) -> {
+                                    if ((lhs.getPrice() == rhs.getPrice())){
+                                        if (lhs.getTimestamp() > rhs.getPrice()){
+                                            return 1;
+                                        }else {
+                                            return -1;
+                                        }
                                     }
-                                }
-                                return 0;
-                            });
+                                    return 0;
+                                });
+                            }else{
+                                arr.sort(Comparator.comparing(Product::getTimestamp));
+                            }
                         }else if (arrSort.get(1).toString().contains("From Newest to Oldest")){
-                            Collections.sort(arr, (Comparator<Product>) (lhs, rhs) -> {
-                                if ((lhs.getPrice() == rhs.getPrice())){
-                                    if (lhs.getTimestamp() > rhs.getPrice()){
-                                        return -1;
-                                    }else {
-                                        return 1;
+                            if (type == "Filter"){
+                                Collections.sort(arr, (Comparator<Product>) (lhs, rhs) -> {
+                                    if ((lhs.getPrice() == rhs.getPrice())){
+                                        if (lhs.getTimestamp() > rhs.getPrice()){
+                                            return -1;
+                                        }else {
+                                            return 1;
+                                        }
                                     }
-                                }
-                                return 0;
-                            });
+                                    return 0;
+                                });
+                            }else{
+                                arr.sort(Comparator.comparing(Product::getTimestamp).reversed());
+                            }
                         }
 //                        if (arrSort.get(2).toString().contains("From High to Low")){
 //                            Collections.sort(arr, (Comparator<Product>) (lhs, rhs) -> {
@@ -515,11 +525,13 @@ public class SearchSortActivity extends AppCompatActivity {
                                 Product tmp;
                                 for (DataSnapshot ds: snapshot.getChildren()){
                                     tmp = ds.getValue(Product.class);
-                                    if (tmp.getStatus() == 1 && tmp.getName() != null && tmp.getName().toLowerCase().contains(query.toLowerCase())){
+                                    if (tmp.getName() != null && ( tmp.getName().toLowerCase().contains(query.toLowerCase())
+                                            || VnCharacteristic.removeAccent(tmp.getName()).toLowerCase().contains(query.toLowerCase()) )){
                                         arr.add(tmp);
                                     }
                                 }
-                                arr.sort(Comparator.comparing(Product::getTimestamp));
+                                arr.sort(Comparator.comparing(Product::getStatus).reversed());
+
                                 mReference.child("Wishlist").orderByChild("userID").
                                         equalTo(curUser.getId()).addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
@@ -568,7 +580,8 @@ public class SearchSortActivity extends AppCompatActivity {
                                 for (DataSnapshot ds: snapshot.getChildren()){
                                     Product tmp = ds.getValue(Product.class);
                                     String txt = tmp.getName();
-                                    if (txt != null && txt.toLowerCase().contains(newText.toLowerCase())){
+                                    if (txt != null && ( tmp.getName().toLowerCase().contains(newText.toLowerCase())
+                                            || VnCharacteristic.removeAccent(tmp.getName()).toLowerCase().contains(newText.toLowerCase()) )){
                                         searcharr.add(tmp.getName());
                                     }
                                 }
@@ -606,8 +619,54 @@ public class SearchSortActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 searchFill.setVisibility(View.GONE);
+                resetSortSpecificField();
                 searchView.setQuery("",false);
                 searchView.clearFocus();
+                mReference.child("Products").limitToLast(10).
+                        addListenerForSingleValueEvent(new ValueEventListener() {
+                            @RequiresApi(api = Build.VERSION_CODES.N)
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                Product tmp;
+                                arr.clear();
+                                for (DataSnapshot ds: snapshot.getChildren()){
+                                    tmp = ds.getValue(Product.class);
+                                    if (tmp.getStatus() == 1){
+                                        arr.add(tmp);
+                                    }
+                                }
+                                arr.sort(Comparator.comparing(Product::getTimestamp));
+                                mReference.child("Wishlist").orderByChild("userID").
+                                        equalTo(curUser.getId()).addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                        ArrayList<String> userLike = new ArrayList();
+                                        for (DataSnapshot appleSnapshot: snapshot.getChildren()) {
+                                            Wishlist yP = appleSnapshot.getValue(Wishlist.class);
+                                            userLike.add(yP.getProID());
+                                        }
+                                        listViewProduct = findViewById(R.id.listViewProduct_ass);
+                                        //Display adapter product
+                                        //Let Lon and lat attr of map in arraylist and add to last position ,otherwise let null if Mainactivty are on line
+                                        ArrayList<Double> lonlat = new ArrayList<>();
+                                        lonlat.add(finalLon);
+                                        lonlat.add(finalLat);
+                                        ListViewAdapter listViewProductAdapter = new ListViewAdapter(arr,SearchSortActivity.this,curUser,userLike,lonlat);
+                                        listViewProduct.setAdapter(listViewProductAdapter);
+                                        listViewProduct.setLayoutManager(new LinearLayoutManager(SearchSortActivity.this));
+                                    }
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError error) {
+
+                                    }
+                                });
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        });
             }
         });
         //
