@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -46,6 +47,7 @@ public class DirectionMap extends FragmentActivity implements OnMapReadyCallback
     String strOrigin,strDest;
     TextView tvAddress;
     ImageView btnGMap;
+    ImageButton btnBack;
     @SuppressLint("WrongViewCast")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +77,13 @@ public class DirectionMap extends FragmentActivity implements OnMapReadyCallback
         tvAddress = findViewById(R.id.tvAddress);
         tvAddress.setText("255 Ba tháng hai, P10, Q10, TP HCM");
         btnGMap = findViewById(R.id.btnGMap);
+        btnBack = findViewById(R.id.btnBack);
+        btnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
         btnGMap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -91,23 +100,13 @@ public class DirectionMap extends FragmentActivity implements OnMapReadyCallback
 
             @Override
             public void onDirectionFinderSuccess(List<Route> routes) {
-//            polylinePaths = new ArrayList<>();
-//            originMarkers = new ArrayList<>();
-//            destinationMarkers = new ArrayList<>();
+
 
                 for (Route route : routes) {
                     map.moveCamera(CameraUpdateFactory.newLatLngZoom(route.startLocation, 16));
                     ((TextView) findViewById(R.id.tvDuration)).setText(route.duration.text);
                     ((TextView) findViewById(R.id.tvDistance)).setText(route.distance.text);
 
-//                originMarkers.add(mMap.addMarker(new MarkerOptions()
-//                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.start_blue))
-//                        .title(route.startAddress)
-//                        .position(route.startLocation)));
-//                destinationMarkers.add(mMap.addMarker(new MarkerOptions()
-//                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.end_green))
-//                        .title(route.endAddress)
-//                        .position(route.endLocation)));
 
                     PolylineOptions polylineOptions = new PolylineOptions().
                             geodesic(true).
