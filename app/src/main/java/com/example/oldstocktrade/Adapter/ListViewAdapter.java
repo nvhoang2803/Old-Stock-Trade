@@ -97,11 +97,10 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ViewHo
         }
         double price = productArrayList.get(position).getPrice();
 
-
         if (Math.floor(price / (1000 * 1000 * 1000)) > 0){
             priceD = Math.floor(price / (1000 * 1000 * 1000))  + " Bilion";
         }else if (Math.floor(price / (1000 * 1000)) > 0){
-            priceD = Math.floor(price / (1000 * 100))  + " Milion";
+            priceD = Math.floor(price / (1000 * 1000))  + " Milion";
         }else{
             priceD =Math.floor(price / (1000)) + " K";
         }
