@@ -15,13 +15,21 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.oldstocktrade.Model.Product;
+import com.example.oldstocktrade.Model.WishListItem;
 import com.example.oldstocktrade.R;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Queue;
 
 public class StorageAdapter extends RecyclerView.Adapter<StorageAdapter.MyViewHolder> {
     Context mContext;
@@ -91,6 +99,8 @@ public class StorageAdapter extends RecyclerView.Adapter<StorageAdapter.MyViewHo
                         inflater.inflate(R.menu.selling_menu, popup.getMenu());
                     else
                         inflater.inflate(R.menu.wishlist_menu,popup.getMenu());
+
+                    popup.show();
                     popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                         @Override
                         public boolean onMenuItemClick(MenuItem item) {
@@ -98,18 +108,64 @@ public class StorageAdapter extends RecyclerView.Adapter<StorageAdapter.MyViewHo
                                 // edit selling item
                             } else if (item.getItemId() == R.id.remove_item){
                                 // remove item
+                                removeFromSelling(position);
                             } else if (item.getItemId() == R.id.removefromwishlist_item){
                                 // remove from wishlist
+                                removeFromWishList(position);
                             }else {
                                 // chat with seller
                             }
                             return false;
                         }
                     });
-                    popup.show();
 
             }
         }
         );
+    }
+    public void removeFromSelling(int position){
+        DatabaseReference mProduct = FirebaseDatabase.getInstance().getReference("Products").child(mData.get(position).getProID());
+        mProduct.removeValue();
+        Query mWishList = FirebaseDatabase.getInstance().getReference("WishList").orderByChild("proID").equalTo(mData.get(position).getProID());
+        mWishList.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot wishlistSnapshot: snapshot.getChildren()) {
+                    wishlistSnapshot.getRef().removeValue();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+        mData.remove(position);
+        mRecyclerView.removeViewAt(position);
+        notifyItemRemoved(position);
+        notifyItemRangeRemoved(position, mData.size());
+    }
+    public void removeFromWishList(int position){
+        FirebaseUser fuser = FirebaseAuth.getInstance().getCurrentUser();
+        Query mWishList = FirebaseDatabase.getInstance().getReference("Wishlist").orderByChild("proID").equalTo(mData.get(position).getProID());
+        mWishList.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot wishlistSnapshot: snapshot.getChildren()) {
+                    if(wishlistSnapshot.getValue(WishListItem.class).getUserID().equals(fuser.getUid())){
+                        wishlistSnapshot.getRef().removeValue();
+                    };
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+        mData.remove(position);
+        mRecyclerView.removeViewAt(position);
+        notifyItemRemoved(position);
+        notifyItemRangeRemoved(position, mData.size());
     }
 }
