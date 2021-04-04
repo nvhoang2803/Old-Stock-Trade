@@ -1,6 +1,7 @@
 package com.example.oldstocktrade.Adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -14,6 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.oldstocktrade.MessageActivity;
 import com.example.oldstocktrade.Model.Product;
 import com.example.oldstocktrade.Model.WishListItem;
 import com.example.oldstocktrade.R;
@@ -113,7 +115,7 @@ public class StorageAdapter extends RecyclerView.Adapter<StorageAdapter.MyViewHo
                                 // remove from wishlist
                                 removeFromWishList(position);
                             }else {
-                                // chat with seller
+                                sendChat(position);
                             }
                             return false;
                         }
@@ -168,4 +170,10 @@ public class StorageAdapter extends RecyclerView.Adapter<StorageAdapter.MyViewHo
         notifyItemRemoved(position);
         notifyItemRangeRemoved(position, mData.size());
     }
+    public void sendChat(int position){
+        Intent intent = new Intent(mContext, MessageActivity.class).addFlags(Intent.FLAG_ACTIVITY_FORWARD_RESULT);
+        intent.putExtra("userid", mData.get(position).getSeller());
+        mContext.startActivity(intent);
+    }
+
 }
