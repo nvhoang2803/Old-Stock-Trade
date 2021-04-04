@@ -80,11 +80,14 @@ public class RegisterActivity extends AppCompatActivity {
 
                             reference = FirebaseDatabase.getInstance("https://old-stock-trade-default-rtdb.firebaseio.com/").getReference("Users").child(userid);
 
-                            HashMap<String,String> hashMap =  new HashMap<>();
+                            HashMap<String,Object> hashMap =  new HashMap<>();
                             hashMap.put("id", userid);
                             hashMap.put("username", txt_username);
                             hashMap.put("imageURL","default");
                             hashMap.put("status", "offline");
+                            hashMap.put("phone", "");
+                            hashMap.put("address", "");
+                            hashMap.put("type", 0);
 
                             reference.setValue(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override

@@ -66,7 +66,7 @@ public class ProfileActivity extends AppCompatActivity {
     private ImageView btnClose;
     private TextView btnSave,change_photo;
     private String imageUrl;
-    private Uri imageUri;
+    private Uri imageUri = null;
     private User user;
     RequestOptions newImageSignature;
     @Override
@@ -228,20 +228,23 @@ public class ProfileActivity extends AppCompatActivity {
                             imageUrl = downloadUri.toString();
                             Log.d("update user", imageUrl);
                             if (!(user.getImageURL().equals("default"))) {
-                                StorageReference photoRef = FirebaseStorage.getInstance().getReferenceFromUrl(user.getImageURL());
-                                photoRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        // File deleted successfully
-                                        Log.d("Delete success", "onSuccess: deleted file image");
-                                    }
-                                }).addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception exception) {
-                                        // Uh-oh, an error occurred!
-                                        Log.d("Delete fail", "onFailure: did not delete file");
-                                    }
-                                });
+                                if(user.getImageURL().contains("firebase")){
+                                    StorageReference photoRef = FirebaseStorage.getInstance().getReferenceFromUrl(user.getImageURL());
+                                    photoRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            // File deleted successfully
+                                            Log.d("Delete success", "onSuccess: deleted file image");
+                                        }
+                                    }).addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception exception) {
+                                            // Uh-oh, an error occurred!
+                                            Log.d("Delete fail", "onFailure: did not delete file");
+                                        }
+                                    });
+                                }
+
                             }
                             HashMap<String, Object> hashMap = new HashMap<>();
                             hashMap.put("username",username.getText().toString());
@@ -263,6 +266,19 @@ public class ProfileActivity extends AppCompatActivity {
                     });
 
 
+                }
+                else {
+                    HashMap<String, Object> hashMap = new HashMap<>();
+                    hashMap.put("username",username.getText().toString());
+                    hashMap.put("phone",txt_phone.getText().toString());
+                    hashMap.put("address",txt_address.getText().toString());
+                    //hashMap.put("imageURL",imageUrl);
+
+                    ref.updateChildren(hashMap);
+
+                    pd.dismiss();
+                    startActivity(new Intent(ProfileActivity.this,MainActivity.class));
+                    finish();
                 }
 
             }
