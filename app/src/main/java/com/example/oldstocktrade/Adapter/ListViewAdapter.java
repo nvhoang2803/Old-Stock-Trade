@@ -80,7 +80,6 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ViewHo
 
         //Set user add to favorite list
         if (userProductlike.contains(productArrayList.get(position).getProID())){
-            System.out.println(productArrayList.get(position).getProID());
             holder.productLike.setImageResource(R.drawable.ic_like__1_);
         }
     //
@@ -179,8 +178,6 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ViewHo
         holder.productTime.setText(timeD + " - $" + priceD);
         //
         holder.productDetail.setText(productArrayList.get(position).getDescription());
-
-
         //Caculate distance from currenLocation to product location
         double dis = 0;
         if (lonlat != null){
@@ -195,6 +192,8 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ViewHo
         }
 
         dis = Math.floor(dis);
+
+
         holder.productDistance.setText((int) dis + "km");
         holder.userName.setText(productArrayList.get(position).getName());
         //Handle ImageSlider
