@@ -89,20 +89,20 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ViewHo
         String priceD = "";
         time = time /1000;
         if (time / (60* 60 * 24) > 0){
-            timeD = time / (60* 60 * 24) + " days";
-        }else if (time / (60* 60 * 24) > 0){
-            timeD = time / (60* 60) + " hours";
+            timeD = (int) ( time / (60* 60 * 24)) + " days";
+        }else if (time / (60 * 60 ) > 0){
+            timeD =(int) ( time / (60* 60)) + " hours";
         }else{
-            timeD = time / (60) + " mins";
+            timeD = (int) (time / (60)) + " mins";
         }
         double price = productArrayList.get(position).getPrice();
 
         if (Math.floor(price / (1000 * 1000 * 1000)) > 0){
-            priceD = Math.floor(price / (1000 * 1000 * 1000))  + " Bilion";
+            priceD = (int) Math.floor(price / (1000 * 1000 * 1000))  + " Bilion";
         }else if (Math.floor(price / (1000 * 1000)) > 0){
-            priceD = Math.floor(price / (1000 * 1000))  + " Milion";
+            priceD = (int) Math.floor(price / (1000 * 1000))  + " Milion";
         }else{
-            priceD =Math.floor(price / (1000)) + " K";
+            priceD =(int) Math.floor(price / (1000)) + " K";
         }
 
         //
@@ -175,7 +175,7 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ViewHo
 
         holder.productAddress.setText(productArrayList.get(position).getAddress());
         //
-        holder.productTime.setText(timeD + " - $" + priceD);
+        holder.productTime.setText(timeD + " - $" +  priceD);
         //
         holder.productDetail.setText(productArrayList.get(position).getDescription());
         //Caculate distance from currenLocation to product location

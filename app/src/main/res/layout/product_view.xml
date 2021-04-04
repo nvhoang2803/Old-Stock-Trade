@@ -119,7 +119,9 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="2dp"
             android:text="TextView"
+            android:textColor="#555"
             android:textSize="12sp"
+            android:textStyle="bold"
             app:layout_constraintStart_toEndOf="@+id/frameLayout"
             app:layout_constraintTop_toBottomOf="@+id/productAddress" />
 
