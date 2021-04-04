@@ -51,14 +51,6 @@
             android:layout_marginTop="15dp"
             android:hint="Tên sản phẩm"
             android:id="@+id/name"/>
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:layout_gravity="center"
-            android:scaleType="centerInside"
-            android:src="@mipmap/ic_launcher"
-            android:id="@+id/image_added"
-            />
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -93,11 +85,6 @@
             android:layout_height="wrap_content"
             android:text="Choose Image"
             android:id="@+id/chooseImage"/>
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Upload Image"
-            android:id="@+id/uploadImage"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

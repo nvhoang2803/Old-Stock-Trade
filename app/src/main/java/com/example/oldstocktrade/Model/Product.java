@@ -18,6 +18,7 @@ public class Product {
     long Timestamp;
     boolean VisibleToSeller;
     boolean VisibleToBuyer;
+    String phone;
 
     public String getAddress() {
         return Address;
@@ -149,12 +150,17 @@ public class Product {
         VisibleToBuyer = visibleToBuyer;
     }
 
+    public String getPhone(){return phone;}
+
+    public void setPhone(String phone){this.phone=phone;}
+
+
     public Product(){
 
     }
 
     public Product(String address, String buyer, String description, ArrayList<String> imageURL, long latitude, long longtitude, String name, double price, String proID, int report,
-                   String seller, int status, long timestamp, String userImageURL, float rate) {
+                   String seller, int status, long timestamp, float rate, String phone) {
         Address = address;
         Buyer = buyer;
         Description = description;
@@ -171,6 +177,7 @@ public class Product {
         this.rate = rate;
         VisibleToSeller = true;
         VisibleToBuyer = true;
+        this.phone= phone;
     }
 
     float rate;
