@@ -82,6 +82,7 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ViewHo
         if (userProductlike.contains(productArrayList.get(position).getProID())){
             holder.productLike.setImageResource(R.drawable.ic_like__1_);
         }
+
     //
         long time = System.currentTimeMillis() - productArrayList.get(position).getTimestamp();
         String timeD = "";
@@ -96,11 +97,10 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ViewHo
         }
         double price = productArrayList.get(position).getPrice();
 
-
         if (Math.floor(price / (1000 * 1000 * 1000)) > 0){
             priceD = Math.floor(price / (1000 * 1000 * 1000))  + " Bilion";
         }else if (Math.floor(price / (1000 * 1000)) > 0){
-            priceD = Math.floor(price / (1000 * 100))  + " Milion";
+            priceD = Math.floor(price / (1000 * 1000))  + " Milion";
         }else{
             priceD =Math.floor(price / (1000)) + " K";
         }
@@ -269,6 +269,11 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ViewHo
             }
         });
 
+        if (productArrayList.get(position).getStatus() != 1){
+            holder.productStatus.setVisibility(View.VISIBLE);
+            holder.productStatus.bringToFront();
+        }
+
     }
 
     public void hanldeComment(View bottomShettView,String proID){
@@ -316,7 +321,7 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ViewHo
         ImageView productLike;
         TextView productTime;
         LinearLayout productImageDotSlider;
-
+        ImageView productStatus;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -331,6 +336,7 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ViewHo
             productLike = itemView.findViewById(R.id.product_like);
             productTime = itemView.findViewById(R.id.productTime);
             productImageDotSlider = itemView.findViewById(R.id.productImageDotSlider);
+            productStatus = itemView.findViewById(R.id.product_status);
         }
     }
 }

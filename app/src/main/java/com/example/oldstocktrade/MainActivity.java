@@ -47,7 +47,8 @@ public class MainActivity extends AppCompatActivity {
                 getReference("Users").child(firebaseUser.getUid());
         BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
         bottomNav.setOnNavigationItemSelectedListener(navListener);
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeFragment(MainActivity.this)).commit();
+
+
 
         //----------------------------Get current Location
         client = LocationServices.getFusedLocationProviderClient(this);
@@ -88,8 +89,8 @@ public class MainActivity extends AppCompatActivity {
                 case R.id.nav_storage:
                     selectedFragment = new StorageFragment();
                     break;
-                case R.id.nav_contact:
-                    selectedFragment = new ContactFragment();
+                case R.id.nav_delivery:
+                    selectedFragment = new DeliveryFragment();
                     break;
                 case R.id.nav_settings:
                     selectedFragment = new SettingsFragment();
@@ -100,7 +101,28 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
     };
+    public void handleClickFragment(int itemID, int type) {
+        Fragment selectedFragment = null;
+        switch (itemID) {
+            case R.id.nav_home:
+                selectedFragment = new HomeFragment(MainActivity.this);
+                break;
+            case R.id.nav_history:
+                selectedFragment = new HistoryFragment(type);
+                break;
+            case R.id.nav_storage:
+                selectedFragment = new StorageFragment(type);
 
+                break;
+            case R.id.nav_delivery:
+                selectedFragment = new ContactFragment();
+                break;
+            case R.id.nav_settings:
+                selectedFragment = new SettingsFragment();
+                break;
+        }
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, selectedFragment).commit();
+    }
     void status(String s) {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Users").child(firebaseUser.getUid());
         HashMap<String, Object> hashMap = new HashMap<>();
@@ -153,8 +175,8 @@ public class MainActivity extends AppCompatActivity {
                     public void onSuccess(Location location) {
                         // Got last known location. In some rare situations this can be null.
                         if (location != null) {
-                            longitude = location.getLatitude();
-                            latitude = location.getLongitude();
+                            longitude = location.getLongitude();
+                            latitude = location.getLatitude();
                             //10.7704246 106.6724038
                             //10.762397,106.682752
                             Log.d("location", "onSuccess: "+location.toString());//vi tri hien tai

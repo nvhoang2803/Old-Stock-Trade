@@ -32,7 +32,7 @@ import java.util.List;
  * Use the  factory method to
  * create an instance of this fragment.
  */
-public class WishListFragment extends Fragment {
+public class  WishListFragment extends Fragment {
     View v;
     private RecyclerView myrecycleview;
     private List<Product> lstProduct;

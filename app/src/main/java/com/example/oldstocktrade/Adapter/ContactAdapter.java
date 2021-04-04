@@ -2,7 +2,6 @@ package com.example.oldstocktrade.Adapter;
 
 import android.content.Context;
 import android.content.Intent;
-import android.media.Image;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,39 +9,27 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.oldstocktrade.MessageActivity;
-import com.example.oldstocktrade.Model.Chat;
-import com.example.oldstocktrade.Model.Conversation;
 import com.example.oldstocktrade.Model.User;
 import com.example.oldstocktrade.R;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
-import org.w3c.dom.Text;
-
-import java.util.HashMap;
 import java.util.List;
-
-import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHolder> {
     Context context;
     List<User> mUsers;
-    public ContactAdapter(@NonNull Context context, List<User> mUsers) {
+    List<Long> min_time;
+    List<String> last_message;
+    //List<RecentMessage> mMessages;
+    public ContactAdapter(@NonNull Context context, List<User> mUsers, List<Long> min_time, List<String> last_message) {
         this.context = context;
         this.mUsers = mUsers;
+        this.min_time = min_time;
+        this.last_message = last_message;
     }
-
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -65,61 +52,21 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
             holder.img_on.setVisibility(View.VISIBLE);
             holder.img_off.setVisibility(View.GONE);
         }
-
-        FirebaseUser fuser = FirebaseAuth.getInstance().getCurrentUser();
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Conversations");
-        reference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                DatabaseReference conversation_reference = null;
-                for(DataSnapshot data : snapshot.getChildren()){
-                    Conversation conversation = data.getValue(Conversation.class);
-                    if ((conversation.getUser1().equals(fuser.getUid()) && conversation.getUser2().equals(user.getId())) || conversation.getUser1().equals(user.getId()) && conversation.getUser2().equals(fuser.getUid())){
-                        conversation_reference = data.getRef();
-                        break;
-                    }
-                }
-
-                if (conversation_reference != null){
-                    conversation_reference.child("Chats").addValueEventListener(new ValueEventListener() {
-                        String last_message = "";
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-                            Chat chat = null;
-                            for(DataSnapshot data : snapshot.getChildren()){
-                                chat = data.getValue(Chat.class);
-                                last_message = chat.getMessage();
-                            }
-                            if (chat != null){
-                                if (chat.getType().equals("text")){
-                                    String recentMsg = last_message.split("\n")[0];
-                                    if (recentMsg.length() > 20)
-                                        recentMsg = recentMsg.substring(0,20) + "...";
-                                    holder.last_msg.setText(recentMsg);
-                                }
-                                else if(chat.getType().equals("image")){
-                                    if (chat.getSender().equals(fuser.getUid()))
-                                        holder.last_msg.setText("You sent an image");
-                                    else holder.last_msg.setText("You received an image");
-                                }
-                            }
-
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError error) {
-
-                        }
-                    });
-                }
-                else holder.last_msg.setText("");
+        if (last_message != null && min_time != null){
+            holder.last_msg.setText(last_message.get(position));
+            long time = System.currentTimeMillis() - min_time.get(position);
+            String time_duration = "";
+            time = time /1000;
+            if (time / (60* 60 * 24) > 0){
+                time_duration = time / (60* 60 * 24) + " days ago";
+            }else if (time / (60* 60) > 0){
+                time_duration = time / (60* 60) + " hours ago";
+            }else if ((time / 60) > 0){
+                time_duration = time / (60) + " mins ago";
             }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
+            else time_duration += "Just now";
+            holder.sent_time.setText(time_duration);
+        }
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -142,6 +89,7 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
         public ImageView img_on;
         public ImageView img_off;
         public TextView last_msg;
+        public TextView sent_time;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -151,6 +99,7 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
             img_on = itemView.findViewById(R.id.img_on);
             img_off = itemView.findViewById(R.id.img_off);
             last_msg = itemView.findViewById(R.id.last_msg);
+            sent_time = itemView.findViewById(R.id.sent_time);
         }
     }
 }

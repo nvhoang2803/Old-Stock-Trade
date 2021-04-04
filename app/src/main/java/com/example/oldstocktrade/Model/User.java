@@ -5,9 +5,9 @@ public class User {
     private String username;
     private String imageURL;
     private String status;
-    private int type;
-    private String phone;
-    private String address;
+    private int type = 0;
+    private String phone = "";
+    private String address ="";
 
 
     public User(){

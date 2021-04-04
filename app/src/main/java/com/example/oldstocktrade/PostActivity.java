@@ -1,7 +1,5 @@
 package com.example.oldstocktrade;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
@@ -10,35 +8,37 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.Continuation;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.Task;
+import com.example.oldstocktrade.Model.Product;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.StorageTask;
+import com.google.firebase.storage.UploadTask;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class PostActivity extends AppCompatActivity {
-    private static final int IMAGE_REQUEST = 2,REQUEST_CODE_LOCATION= 3;
+    private static final int REQUEST_CODE_LOCATION= 1, PICK_IMAGE=2;
     private ImageView close;
-    private ImageView imageAdded;
     private TextView post;
-    EditText description, address;
-    Uri imageUri;
-    private String imageUrl;
-    Button btnLocation;
+    private EditText description, address, price, phone;
+    private Button btnLocation;
+    private EditText name;
+    private Button chooseImage;
+    private TextView alert;
+    private ArrayList<Uri> a= new ArrayList<Uri>();
+    private Uri uriImage;
+    private ProgressDialog progressDialog;
+    private static int count=1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,10 +47,14 @@ public class PostActivity extends AppCompatActivity {
         setContentView(R.layout.activity_post);
         close = findViewById(R.id.btnClose);
         btnLocation = findViewById(R.id.btnLocation);
-        imageAdded = findViewById(R.id.image_added);
         post = findViewById(R.id.post);
         description = findViewById(R.id.description);
         address = findViewById(R.id.addressPost);
+        price= findViewById(R.id.price);
+        phone= findViewById(R.id.phone);
+        name= findViewById(R.id.name);
+        chooseImage= findViewById(R.id.chooseImage);
+        alert= findViewById(R.id.alert);
 
         close.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -66,31 +70,27 @@ public class PostActivity extends AppCompatActivity {
                 startActivityForResult(intent,REQUEST_CODE_LOCATION);
             }
         });
-        imageAdded.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openImage();
-            }
-        });
         post.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                uploadImage();
+                uploadMultipleImage();
             }
         });
 
+        chooseImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent= new Intent(Intent.ACTION_GET_CONTENT);
+                intent.setType("image/*");
+                intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+                startActivityForResult(intent, PICK_IMAGE);
+            }
+        });
     }
 
-    private void openImage() {
-        Intent intent= new Intent();
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(intent,IMAGE_REQUEST);
-
-    }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CODE_LOCATION) {
             if (resultCode == RESULT_OK) {
@@ -103,69 +103,92 @@ public class PostActivity extends AppCompatActivity {
                 address.setText(straddress);
             }
         }
-        if(requestCode == IMAGE_REQUEST){
+        if(requestCode == PICK_IMAGE){
             if(resultCode==RESULT_OK){
-                imageUri = data.getData();
-                imageAdded.setImageURI(imageUri);
-
+                if(data.getClipData()!=null){
+                    int countImage= data.getClipData().getItemCount();
+                    for(int i=0;i<countImage;i++){
+                        uriImage= data.getClipData().getItemAt(i).getUri();
+                        a.add(uriImage);
+                    }
+                    alert.setVisibility(View.VISIBLE);
+                    alert.setText(a.size()+" hình");
+                }
+                else{
+                    Toast.makeText(this, "Please select multiple image", Toast.LENGTH_SHORT).show();
+                }
             }
-            else{
-                Toast.makeText(this,"Try again!",Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(PostActivity.this,MainActivity.class));
-                finish();
-            }
-
         }
     }
 
-    private void uploadImage() {
-        ProgressDialog pd = new ProgressDialog(this);
-        pd.setMessage("Uploading...");
-        pd.show();
-        if(imageUri!= null){
-            StorageReference filePath= FirebaseStorage.getInstance().getReference("Post").child(System.currentTimeMillis()+"-"+getFileExtension(imageUri));
-            StorageTask uploadTask = filePath.putFile(imageUri);
-            uploadTask.continueWithTask(new Continuation() {
-                @Override
-                public Object then(@NonNull Task task) throws Exception {
-                    if(!task.isSuccessful()){
-                        throw task.getException();
-                    }
-                    return filePath.getDownloadUrl();
-                }
-            }).addOnCompleteListener(new OnCompleteListener<Uri>() {
-                @Override
-                public void onComplete(@NonNull Task task) {
-                    Uri downloadUri = (Uri) task.getResult();
-                    imageUrl = downloadUri.toString();
-                    DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Products");
 
-                    String ProID = databaseReference.push().getKey();
-                    HashMap<String,Object> map= new HashMap<>();
-                    map.put("ProID",ProID);
-                    map.put("ImageURL",imageUrl);
-                    map.put("Description",description.getText().toString());
-                    map.put("Seller", FirebaseAuth.getInstance().getCurrentUser().getUid());
-                    databaseReference.child(ProID).setValue(map);
-                    pd.dismiss();
-                    startActivity(new Intent(PostActivity.this,MainActivity.class));
-                    finish();
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Toast.makeText(PostActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                }
-            });
+    private void uploadMultipleImage(){
+        progressDialog= new ProgressDialog(this);
+        progressDialog.setMessage("Image Uploading please wait............");
+        progressDialog.show();
+        if(a.size()>0)
+        {
+            StorageReference imageFolder= FirebaseStorage.getInstance().getReference("Post").child("Image Folder");
+            ArrayList<String> aImage= new ArrayList<String>();
+            DatabaseReference df= FirebaseDatabase.getInstance().getReference("Products");
+            String id= df.push().getKey();
+            for(int i=0;i<a.size();i++){
+                Uri image= a.get(i);
+                StorageReference individualImage= imageFolder.child("Image"+ image.getLastPathSegment());
+                individualImage.putFile(image)
+                        .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                            @Override
+                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                individualImage.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                    @Override
+                                    public void onSuccess(Uri uri) {
+                                        String url = String.valueOf(uri);
+                                        df.child(id).child("Image").child(String.valueOf(count)).setValue(url);
+                                        count++;
+                                    }
+                                });
+                            }
+                        });
+//                        .addOnFailureListener(new OnFailureListener() {
+//                    @Override
+//                    public void onFailure(@NonNull Exception e) {
+//                        Toast.makeText(PostActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+//                    }
+//                });
+            }
 
-
-        }else{
+            String des, addr, seller, pri, ph, na;
+            des= description.getText().toString();
+            addr= address.getText().toString();
+            seller= FirebaseAuth.getInstance().getCurrentUser().getUid();
+            pri= price.getText().toString();
+            ph= phone.getText().toString();
+            na= name.getText().toString();
+            Product product= new Product(addr, "None", des, aImage, 0, 0, na, Double.parseDouble(pri), id, 0, seller, 0, 0, 0, ph);
+            HashMap<String, Object> map= new HashMap<>();
+            map.put("Product id", product.getProID());
+            map.put("Address", product.getAddress());
+            map.put("Buyer", product.getBuyer());
+            map.put("Seller", product.getSeller());
+            map.put("Description", product.getDescription());
+            map.put("Latitude", product.getLatitude());
+            map.put("Longtitude", product.getLongtitude());
+            map.put("Name product", product.getName());
+            map.put("Price", product.getPrice());
+            map.put("Report", product.getReport());
+            map.put("Status", product.getStatus());
+            map.put("Timestamp", product.getTimestamp());
+            map.put("Rate", product.getRate());
+            map.put("Phone", product.getPhone());
+            df.child(id).setValue(map);
+            progressDialog.dismiss();
+            alert.setText("Upload image successfully");
+            startActivity(new Intent(PostActivity.this,MainActivity.class));
+            finish();
+        }
+        else{
             Toast.makeText(this, "No image was selected", Toast.LENGTH_SHORT).show();
         }
-
     }
 
-    private String getFileExtension(Uri uri) {
-        return MimeTypeMap.getSingleton().getExtensionFromMimeType(this.getContentResolver().getType(uri));
-    }
 }

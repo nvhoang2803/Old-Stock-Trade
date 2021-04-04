@@ -17,6 +17,15 @@ public class StorageFragment extends Fragment {
     private TabLayout tabLayout;
     private ViewPager viewPager;
     private ViewPageAdapter adapter;
+    //-------------phan de setting chon toi
+    private int typetab = -1;
+    public StorageFragment(int type) {
+        typetab = type;
+    }
+    public StorageFragment() {
+
+    }
+    //-----------------
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -35,5 +44,12 @@ public class StorageFragment extends Fragment {
         adapter.addFragment(new WishListFragment(), getString(R.string.title_storage_wishlist));
         viewPager.setAdapter(adapter);
         tabLayout.setupWithViewPager(viewPager);
+        //--------phan de chon item setting dan toi tab tuong thich
+        if(typetab!=-1){
+            TabLayout.Tab tab = tabLayout.getTabAt(typetab);
+            tab.select();
+        }
+        //----------------------
+
     }
 }

@@ -17,27 +17,27 @@
             android:layout_height="wrap_content"
             android:background="?android:attr/windowBackground"
             android:id="@+id/toolbar"/>
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    android:src="@drawable/ic_close"
-                    android:id="@+id/btnClose"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="POST"
-                    android:id="@+id/post"
-                    android:textSize="18sp"
-                    android:layout_alignParentEnd="true"
-                    android:layout_marginRight="15dp"
-                    android:layout_centerVertical="true"
-                    />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:src="@drawable/ic_close"
+                android:id="@+id/btnClose"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="POST"
+                android:id="@+id/post"
+                android:textSize="18sp"
+                android:layout_alignParentEnd="true"
+                android:layout_marginRight="15dp"
+                android:layout_centerVertical="true"
+                />
 
-            </RelativeLayout>
+        </RelativeLayout>
 
     </com.google.android.material.appbar.AppBarLayout>
     <LinearLayout
@@ -45,34 +45,55 @@
         android:layout_height="wrap_content"
         android:padding="10dp"
         android:orientation="vertical">
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:layout_gravity="center"
-            android:scaleType="centerInside"
-            android:src="@mipmap/ic_launcher"
-            android:id="@+id/image_added"
-            ></ImageView>
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
-            android:hint="Description..."
+            android:hint="Tên sản phẩm"
+            android:id="@+id/name"/>
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:hint="Mô tả"
             android:maxLines="5"
             android:id="@+id/description"/>
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:hint="Địa chỉ"
+            android:id="@+id/addressPost"/>
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Giá"
+            android:id="@+id/price"/>
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="SĐT"
+            android:id="@+id/phone" />
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/btnLocation"
             android:text="Choose Location"
             />
-        <EditText
-            android:layout_width="match_parent"
+        <Button
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
-            android:hint="Address..."
-            android:maxLines="5"
-            android:id="@+id/addressPost"/>
+            android:text="Choose Image"
+            android:id="@+id/chooseImage"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Here will be alert"
+            android:textColor="@color/quantum_googred"
+            android:textAlignment="center"
+            android:layout_marginTop="50dp"
+            android:visibility="gone"
+            android:id="@+id/alert"/>
 
     </LinearLayout>
 
