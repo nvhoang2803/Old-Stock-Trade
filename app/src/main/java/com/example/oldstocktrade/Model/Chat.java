@@ -6,6 +6,7 @@ public class Chat {
     private String message;
     private String type;
     private String id;
+    private long time;
 
     public String getSender() {
         return sender;
@@ -25,5 +26,9 @@ public class Chat {
 
     public String getId() {
         return id;
+    }
+
+    public long getTime() {
+        return time;
     }
 }

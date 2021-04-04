@@ -50,4 +50,11 @@
         android:layout_marginLeft="10dp"
         android:id="@+id/last_msg"
         android:layout_marginTop="5dp"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:id="@+id/sent_time"/>
 </RelativeLayout>

@@ -191,11 +191,14 @@ public class MessageActivity extends AppCompatActivity {
             dialog.setMessage("Sending image...");
             dialog.show();
             fileUri = data.getData();
-            StorageReference reference = FirebaseStorage.getInstance().getReference().child("Images");
+            StorageReference reference_storage = FirebaseStorage.getInstance().getReference().child("Images");
+            if (conversation_reference == null) {
+                createConversation(fuser.getUid(),userid);
+            }
             DatabaseReference messagePushRef = conversation_reference.child("Chats").push();
             String messagePushID = messagePushRef.getKey();
 
-            final StorageReference filePath = reference.child(messagePushID+".jpg");
+            final StorageReference filePath = reference_storage.child(messagePushID+".jpg");
             uploadTask = filePath.putFile(fileUri);
             uploadTask.continueWithTask(new Continuation() {
                 @Override
@@ -217,7 +220,11 @@ public class MessageActivity extends AppCompatActivity {
                         hashMap.put("receiver",userid);
                         hashMap.put("message",downloadUrl.toString());
                         hashMap.put("type","image");
+                        hashMap.put("time",System.currentTimeMillis());
                         messagePushRef.setValue(hashMap);
+
+                        reference.child("Conversations").child(conversation_reference.getKey()).child("recent_msg").setValue(hashMap);
+                        ref.child(conversation_reference.getKey()).child("recent_msg").setValue(hashMap);
                         dialog.dismiss();
                     }
                     else dialog.dismiss();
@@ -226,28 +233,25 @@ public class MessageActivity extends AppCompatActivity {
 
         }
     }
-
+    DatabaseReference ref;
     void findConversationId(String user1, String user2) {
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Conversations");
-        reference.addValueEventListener(new ValueEventListener() {
+        ref = FirebaseDatabase.getInstance().getReference("Users").child(fuser.getUid()).child("Conversations");
+        ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for(DataSnapshot data : snapshot.getChildren()){
                     Conversation conversation = data.getValue(Conversation.class);
                     if ((conversation.getUser1().equals(user1) && conversation.getUser2().equals(user2)) || conversation.getUser1().equals(user2) && conversation.getUser2().equals(user1)){
                         conversation_id = data.getKey();
-                        conversation_reference = data.getRef();
                         break;
                     }
+
                 }
-                if (conversation_reference == null){
-                    HashMap<String, Object> hashMap = new HashMap<>();
-                    hashMap.put("user1", user1);
-                    hashMap.put("user2", user2);
-                    conversation_reference = reference.push();
-                    conversation_reference.setValue(hashMap);
+                if (conversation_id != null && conversation_reference == null){
+                    DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Conversations").child(conversation_id);
+                    conversation_reference = reference.getRef();
+                    loadMessage();
                 }
-                loadMessage();
             }
 
             @Override
@@ -255,37 +259,86 @@ public class MessageActivity extends AppCompatActivity {
 
             }
         });
+//        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Conversations");
+//        reference.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                for(DataSnapshot data : snapshot.getChildren()){
+//                    Conversation conversation = data.getValue(Conversation.class);
+//                    if ((conversation.getUser1().equals(user1) && conversation.getUser2().equals(user2)) || conversation.getUser1().equals(user2) && conversation.getUser2().equals(user1)){
+//                        conversation_id = data.getKey();
+//                        conversation_reference = data.getRef();
+//                        break;
+//                    }
+//                }
+//                if (conversation_reference == null){
+//                    HashMap<String, Object> hashMap = new HashMap<>();
+//                    hashMap.put("user1", user1);
+//                    hashMap.put("user2", user2);
+//                    conversation_reference = reference.push();
+//                    conversation_reference.setValue(hashMap);
+//                }
+//                loadMessage();
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError error) {
+//
+//            }
+//        });
     }
     void sendMessage(String sender,String receiver, String msg){
-        DatabaseReference reference = conversation_reference.child("Chats").push();
+        if (conversation_reference == null) {
+            createConversation(sender,receiver);
+        }
+        DatabaseReference ref_chats = conversation_reference.child("Chats").push();
         HashMap<String, Object> hashMap = new HashMap<>();
         hashMap.put("sender",sender);
         hashMap.put("receiver",receiver);
         hashMap.put("message",msg);
         hashMap.put("type","text");
-        hashMap.put("id",reference.getKey());
-        reference.setValue(hashMap);
+        hashMap.put("id",ref_chats.getKey());
+        hashMap.put("time", System.currentTimeMillis());
+        ref_chats.setValue(hashMap);
+
+        reference.child("Conversations").child(conversation_reference.getKey()).child("recent_msg").setValue(hashMap);
+        ref.child(conversation_reference.getKey()).child("recent_msg").setValue(hashMap);
     }
+    void createConversation(String sender, String receiver){
+        DatabaseReference ref_con = FirebaseDatabase.getInstance().getReference("Conversations");
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put("user1", sender);
+        hashMap.put("user2", receiver);
+        conversation_reference = ref_con.push();
+        conversation_reference.setValue(hashMap);
 
+        reference.child("Conversations").child(conversation_reference.getKey()).setValue(hashMap);
+        ref.child(conversation_reference.getKey()).setValue(hashMap);
+        loadMessage();
+    }
     void loadMessage() {
-        DatabaseReference reference = conversation_reference.child("Chats");
-        mChats = new ArrayList<>();
-        reference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for(DataSnapshot data : snapshot.getChildren()){
-                    Chat chat = data.getValue(Chat.class);
-                    mChats.add(chat);
+        if (conversation_reference != null){
+            DatabaseReference reference = conversation_reference.child("Chats");
+            mChats = new ArrayList<>();
+            reference.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    mChats.clear();
+                    for(DataSnapshot data : snapshot.getChildren()){
+                        Chat chat = data.getValue(Chat.class);
+                        mChats.add(chat);
+                    }
+                    messageAdapter = new MessageAdapter(MessageActivity.this, mChats, imageURL, conversation_reference);
+                    recyclerView.setAdapter(messageAdapter);
                 }
-                messageAdapter = new MessageAdapter(MessageActivity.this, mChats, imageURL, conversation_reference);
-                recyclerView.setAdapter(messageAdapter);
-            }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
 
-            }
-        });
+                }
+            });
+        }
+
     }
 
     @Override
