@@ -17,13 +17,17 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.oldstocktrade.ContactFragment;
 import com.example.oldstocktrade.FullscreenActivity;
 import com.example.oldstocktrade.Model.Chat;
 import com.example.oldstocktrade.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.List;
 
@@ -98,8 +102,50 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                DatabaseReference ref = conversation_ref.child("Chats").child(mChats.get(position).getId());
-                                ref.removeValue();
+                                if (position == mChats.size() -1){
+                                    if (mChats.size() != 1){
+                                        DatabaseReference ref = conversation_ref.child("Chats").child(mChats.get(position-1).getId());
+                                        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                Chat chat = snapshot.getValue(Chat.class);
+                                                String con_id = conversation_ref.getKey();
+                                                FirebaseDatabase.getInstance().getReference("Users").child(chat.getSender()).child("Conversations").child(con_id).child("recent_msg").setValue(chat);
+                                                FirebaseDatabase.getInstance().getReference("Users").child(chat.getReceiver()).child("Conversations").child(con_id).child("recent_msg").setValue(chat);
+
+                                            }
+
+                                            @Override
+                                            public void onCancelled(@NonNull DatabaseError error) {
+
+                                            }
+                                        });
+                                        conversation_ref.child("Chats").child(mChats.get(position).getId()).removeValue();
+                                    }
+                                    else {
+                                        DatabaseReference ref = conversation_ref.child("Chats").child(mChats.get(position).getId());
+                                        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                Chat chat = snapshot.getValue(Chat.class);
+                                                String con_id = conversation_ref.getKey();
+                                                FirebaseDatabase.getInstance().getReference("Users").child(chat.getSender()).child("Conversations").child(con_id).removeValue();
+                                                FirebaseDatabase.getInstance().getReference("Users").child(chat.getReceiver()).child("Conversations").child(con_id).removeValue();
+                                            }
+
+                                            @Override
+                                            public void onCancelled(@NonNull DatabaseError error) {
+
+                                            }
+                                        });
+                                        ref.removeValue();
+                                    }
+                                }
+                                else {
+                                    DatabaseReference ref = conversation_ref.child("Chats").child(mChats.get(position).getId());
+                                    ref.removeValue();
+                                }
+
                             }
                         })
                         .setNegativeButton("No",null)

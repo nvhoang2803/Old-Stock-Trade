@@ -83,6 +83,7 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ViewHo
             System.out.println(productArrayList.get(position).getProID());
             holder.productLike.setImageResource(R.drawable.ic_like__1_);
         }
+
     //
         long time = System.currentTimeMillis() - productArrayList.get(position).getTimestamp();
         String timeD = "";
@@ -269,6 +270,11 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ViewHo
             }
         });
 
+        if (productArrayList.get(position).getStatus() != 1){
+            holder.productStatus.setVisibility(View.VISIBLE);
+            holder.productStatus.bringToFront();
+        }
+
     }
 
     public void hanldeComment(View bottomShettView,String proID){
@@ -316,7 +322,7 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ViewHo
         ImageView productLike;
         TextView productTime;
         LinearLayout productImageDotSlider;
-
+        ImageView productStatus;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -331,6 +337,7 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ViewHo
             productLike = itemView.findViewById(R.id.product_like);
             productTime = itemView.findViewById(R.id.productTime);
             productImageDotSlider = itemView.findViewById(R.id.productImageDotSlider);
+            productStatus = itemView.findViewById(R.id.product_status);
         }
     }
 }

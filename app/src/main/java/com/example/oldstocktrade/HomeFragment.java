@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -81,6 +82,7 @@ public class HomeFragment extends Fragment {
         View view = inflater.inflate(R.layout.activity_new_feed, container, false);
         arr = new ArrayList<>();
         searcharr = new ArrayList<>();
+        Log.d("Begin activity", "onCreateView: "+FirebaseAuth.getInstance().getCurrentUser().getUid());
         mReference.child("Users").orderByChild("id")
                 .equalTo(FirebaseAuth.getInstance().getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override

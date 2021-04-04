@@ -7,6 +7,17 @@
     android:background="#FFFFFF"
     android:paddingTop="3dp">
 
+    <ImageView
+        android:id="@+id/product_status"
+        android:layout_width="160dp"
+        android:layout_height="160dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/constraintLayout8"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/constraintLayout2"
+        app:srcCompat="@drawable/ic_sold_out" />
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout2"
         android:layout_width="match_parent"
