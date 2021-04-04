@@ -2,9 +2,12 @@ package com.example.oldstocktrade.Adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -60,14 +63,14 @@ public class StorageAdapter extends RecyclerView.Adapter<StorageAdapter.MyViewHo
         private TextView proName;
         private TextView proDate;
         private TextView proPrice;
-        private ImageView btnDelete;
+        private ImageView btnSetting;
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
             proImage = (ImageView) itemView.findViewById(R.id.proImage);
             proName = (TextView) itemView.findViewById(R.id.proName);
             proDate = (TextView) itemView.findViewById(R.id.proTransactedDate);
             proPrice = (TextView) itemView.findViewById(R.id.proPrice);
-            btnDelete = (ImageView) itemView.findViewById(R.id.btn_historydelete);
+            btnSetting = (ImageView) itemView.findViewById(R.id.btn_setting);
         }
     }
 
@@ -79,22 +82,32 @@ public class StorageAdapter extends RecyclerView.Adapter<StorageAdapter.MyViewHo
         holder.proDate.setText(DateFormat.getDateInstance().format(date));
         Glide.with(holder.proImage).load(mData.get(position).getImageURL().get(0))
                 .into(holder.proImage);
-        holder.btnDelete.setOnClickListener(new View.OnClickListener() {
+        holder.btnSetting.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                final DatabaseReference mReference = FirebaseDatabase.getInstance().getReference("Products");
-//                if (tabName.equals("bought")){
-//                    mData.get(position).setVisibleToBuyer(false);
-//                    mReference.child(mData.get(position).getProID()).child("VisibleToBuyer").setValue(false);
-//                }
-//                else {
-//                    mData.get(position).setVisibleToSeller(false);
-//                    mReference.child(mData.get(position).getProID()).child("VisibleToSeller").setValue(false);
-//                }
-//                mData.remove(position);
-//                mRecyclerView.removeViewAt(position);
-//                notifyItemRemoved(position);
-//                notifyItemRangeChanged(position, mData.size());
+                    PopupMenu popup = new PopupMenu(mContext, v);
+                    MenuInflater inflater = popup.getMenuInflater();
+                    if (tabName == "selling")
+                        inflater.inflate(R.menu.selling_menu, popup.getMenu());
+                    else
+                        inflater.inflate(R.menu.wishlist_menu,popup.getMenu());
+                    popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                        @Override
+                        public boolean onMenuItemClick(MenuItem item) {
+                            if (item.getItemId() == R.id.edit_item){
+                                // edit selling item
+                            } else if (item.getItemId() == R.id.remove_item){
+                                // remove item
+                            } else if (item.getItemId() == R.id.removefromwishlist_item){
+                                // remove from wishlist
+                            }else {
+                                // chat with seller
+                            }
+                            return false;
+                        }
+                    });
+                    popup.show();
+
             }
         }
         );
