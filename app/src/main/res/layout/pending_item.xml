@@ -34,43 +34,31 @@
         android:orientation="vertical"
         android:gravity="center"
         android:layout_below="@+id/product_detail">
-        <TextView
-            android:layout_width="wrap_content"
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="This product was removed or bought by another."
-            android:id="@+id/status0"
-            android:visibility="gone"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Wait to confirm your product."
-            android:id="@+id/status1"
-            android:visibility="gone"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Your product is on delivery."
-            android:id="@+id/status2"
-            android:visibility="gone"/>
+            android:paddingLeft="76dp"/>
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:gravity="center"
-            android:id="@+id/status3"
-            android:visibility="gone">
+            android:visibility="visible">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Your product was delivered."/>
+                android:text="Product is on delivery."/>
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Confirm to rate vendor"
-                android:layout_marginTop="5dp"
-                android:textSize="10dp"
-                android:id="@+id/btn_confirm_product"/>
+                android:text="Delivered to customer"/>
         </LinearLayout>
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="This order is done."
+            android:visibility="visible"/>
     </LinearLayout>
+
 </RelativeLayout>

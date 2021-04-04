@@ -115,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
 
                 break;
             case R.id.nav_delivery:
-                selectedFragment = new ContactFragment();
+                selectedFragment = new DeliveryFragment();
                 break;
             case R.id.nav_settings:
                 selectedFragment = new SettingsFragment();
