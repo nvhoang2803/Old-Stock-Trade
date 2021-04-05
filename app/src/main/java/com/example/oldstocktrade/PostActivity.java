@@ -27,10 +27,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class PostActivity extends AppCompatActivity {
-    private static final int REQUEST_CODE_LOCATION= 1, PICK_IMAGE=2;
+    private static final int REQUEST_CODE_LOCATION= 3, PICK_IMAGE=4;
     private ImageView close;
     private TextView post;
-    private EditText description, address, price, phone;
+    private EditText description, address, price;
     private Button btnLocation;
     private EditText name;
     private Button chooseImage;
@@ -38,7 +38,8 @@ public class PostActivity extends AppCompatActivity {
     private ArrayList<Uri> a= new ArrayList<Uri>();
     private Uri uriImage;
     private ProgressDialog progressDialog;
-    private static int count=1;
+    private static int count=0;
+    private double lon, lat;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +52,6 @@ public class PostActivity extends AppCompatActivity {
         description = findViewById(R.id.description);
         address = findViewById(R.id.addressPost);
         price= findViewById(R.id.price);
-        phone= findViewById(R.id.phone);
         name= findViewById(R.id.name);
         chooseImage= findViewById(R.id.chooseImage);
         alert= findViewById(R.id.alert);
@@ -101,6 +101,9 @@ public class PostActivity extends AppCompatActivity {
                 // Set text view with string
                 Log.d("Location", "onActivityResult: "+location);;//split location bang - se ra longitude va latitude roi luu vao db
                 address.setText(straddress);
+                String a[]= location.split("-");
+                lon= Double.parseDouble(a[0]);
+                lat= Double.parseDouble(a[1]);
             }
         }
         if(requestCode == PICK_IMAGE){
@@ -112,7 +115,7 @@ public class PostActivity extends AppCompatActivity {
                         a.add(uriImage);
                     }
                     alert.setVisibility(View.VISIBLE);
-                    alert.setText(a.size()+" hình");
+                    alert.setText(a.size()+" image");
                 }
                 else{
                     Toast.makeText(this, "Please select multiple image", Toast.LENGTH_SHORT).show();
@@ -143,18 +146,12 @@ public class PostActivity extends AppCompatActivity {
                                     @Override
                                     public void onSuccess(Uri uri) {
                                         String url = String.valueOf(uri);
-                                        df.child(id).child("Image").child(String.valueOf(count)).setValue(url);
+                                        df.child(id).child("ImageURL").child(String.valueOf(count)).setValue(url);
                                         count++;
                                     }
                                 });
                             }
                         });
-//                        .addOnFailureListener(new OnFailureListener() {
-//                    @Override
-//                    public void onFailure(@NonNull Exception e) {
-//                        Toast.makeText(PostActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-//                    }
-//                });
             }
 
             String des, addr, seller, pri, ph, na;
@@ -162,27 +159,26 @@ public class PostActivity extends AppCompatActivity {
             addr= address.getText().toString();
             seller= FirebaseAuth.getInstance().getCurrentUser().getUid();
             pri= price.getText().toString();
-            ph= phone.getText().toString();
             na= name.getText().toString();
-            Product product= new Product(addr, "None", des, aImage, 0, 0, na, Double.parseDouble(pri), id, 0, seller, 0, 0, 0, ph);
+            long ts= System.currentTimeMillis()/1000;
+            Product product= new Product(addr, "None", des, aImage, lat, lon, na, Double.parseDouble(pri), id, 0, seller, 0, ts, 0);
             HashMap<String, Object> map= new HashMap<>();
-            map.put("Product id", product.getProID());
+            map.put("Proid", product.getProID());
             map.put("Address", product.getAddress());
             map.put("Buyer", product.getBuyer());
             map.put("Seller", product.getSeller());
             map.put("Description", product.getDescription());
             map.put("Latitude", product.getLatitude());
-            map.put("Longtitude", product.getLongtitude());
-            map.put("Name product", product.getName());
+            map.put("Longitude", product.getLongtitude());
+            map.put("Name", product.getName());
             map.put("Price", product.getPrice());
             map.put("Report", product.getReport());
             map.put("Status", product.getStatus());
             map.put("Timestamp", product.getTimestamp());
-            map.put("Rate", product.getRate());
-            map.put("Phone", product.getPhone());
+            map.put("Visible to buyer", product.isVisibleToBuyer());
+            map.put("Visible to seller", product.isVisibleToSeller());
             df.child(id).setValue(map);
             progressDialog.dismiss();
-            alert.setText("Upload image successfully");
             startActivity(new Intent(PostActivity.this,MainActivity.class));
             finish();
         }

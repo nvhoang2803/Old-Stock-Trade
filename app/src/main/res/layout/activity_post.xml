@@ -49,31 +49,26 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
-            android:hint="Tên sản phẩm"
+            android:hint="Product name"
             android:id="@+id/name"/>
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
-            android:hint="Mô tả"
+            android:hint="Description"
             android:maxLines="5"
             android:id="@+id/description"/>
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
-            android:hint="Địa chỉ"
+            android:hint="Address"
             android:id="@+id/addressPost"/>
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Giá"
+            android:hint="Price"
             android:id="@+id/price"/>
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="SĐT"
-            android:id="@+id/phone" />
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -91,7 +86,7 @@
             android:text="Here will be alert"
             android:textColor="@color/quantum_googred"
             android:textAlignment="center"
-            android:layout_marginTop="50dp"
+            android:layout_marginTop="30dp"
             android:visibility="gone"
             android:id="@+id/alert"/>
 
