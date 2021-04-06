@@ -39,7 +39,7 @@ public class PostActivity extends AppCompatActivity {
     private Uri uriImage;
     private ProgressDialog progressDialog;
     private static int count=0;
-    private double lon, lat;
+    private Double lon=null, lat=null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +55,16 @@ public class PostActivity extends AppCompatActivity {
         name= findViewById(R.id.name);
         chooseImage= findViewById(R.id.chooseImage);
         alert= findViewById(R.id.alert);
+        Intent recieve = getIntent();
+        if(recieve!=null){
+            Bundle myBundle = recieve.getExtras();
+            if(myBundle!=null){
+                lat = myBundle.getDouble("lat");
+                lon = myBundle.getDouble("long");
+            }
+
+
+        }
 
         close.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -67,6 +77,12 @@ public class PostActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(PostActivity.this,MapsActivity.class);
+                Bundle myBundle = new Bundle();
+                myBundle.putDouble ("lat",lat);
+                myBundle.putDouble ("long",lon);
+                intent.putExtras(myBundle);
+
+
                 startActivityForResult(intent,REQUEST_CODE_LOCATION);
             }
         });
@@ -102,8 +118,8 @@ public class PostActivity extends AppCompatActivity {
                 Log.d("Location", "onActivityResult: "+location);;//split location bang - se ra longitude va latitude roi luu vao db
                 address.setText(straddress);
                 String a[]= location.split("-");
-                lon= Double.parseDouble(a[0]);
-                lat= Double.parseDouble(a[1]);
+                lat= Double.parseDouble(a[0]);
+                lon= Double.parseDouble(a[1]);
             }
         }
         if(requestCode == PICK_IMAGE){

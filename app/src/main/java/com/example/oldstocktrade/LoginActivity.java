@@ -44,7 +44,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.HashMap;
 
-public class LoginActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
+public class LoginActivity extends AppCompatActivity {
     private static final int RC_SIGN_IN = 1;
     FirebaseAuth auth;
     SignInButton btnGoogleLog;
@@ -60,7 +60,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         Button btn_login = (Button) findViewById(R.id.btn_login2);
         EditText email = findViewById(R.id.email_login);
         EditText password = findViewById(R.id.password_login);
-
+        Log.d("current user", "onCreate: "+FirebaseAuth.getInstance().getCurrentUser());
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
@@ -223,8 +223,5 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         });
     }
 
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
-    }
 }

@@ -8,6 +8,8 @@ import androidx.fragment.app.Fragment;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
@@ -18,6 +20,8 @@ import android.view.inputmethod.InputMethodManager;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -28,6 +32,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 
@@ -37,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
     DatabaseReference reference;
     FusedLocationProviderClient client;
     public double longitude, latitude;
+    public String address;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -177,8 +184,19 @@ public class MainActivity extends AppCompatActivity {
                         if (location != null) {
                             longitude = location.getLongitude();
                             latitude = location.getLatitude();
-                            //10.7704246 106.6724038
-                            //10.762397,106.682752
+                            Geocoder geocoder = new Geocoder(MainActivity.this);
+                            ArrayList<Address> addresses = null;
+                            try {
+                                addresses = (ArrayList<Address>) geocoder.getFromLocation(latitude,longitude,1);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+
+                            if (addresses.size() != 0) {
+                                Address add = addresses.get(0);
+                                address = add.getAddressLine(0);
+                            }
+
                             Log.d("location", "onSuccess: "+location.toString());//vi tri hien tai
                             //test khoang cach tai vi tri hien tai den mot vi tri bat ki
                             Log.d("distance", "onSuccess: ");

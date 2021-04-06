@@ -13,6 +13,7 @@ public class BasicFunctions {
         Location source = new Location("");
         source.setLatitude(lat1);
         source.setLongitude(long1);
+        Log.d("Distance", "calDistance: "+source.distanceTo(dest)/1000+"jjj"+lat1+","+long1+" "+lat2+","+long2);
         return source.distanceTo(dest)/1000;
     }
 
