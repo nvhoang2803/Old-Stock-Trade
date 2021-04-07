@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Spannable;
@@ -49,7 +50,7 @@ public class LoginActivity extends AppCompatActivity {
     FirebaseAuth auth;
     SignInButton btnGoogleLog;
     DatabaseReference reference;
-
+    ProgressDialog pd;
     private static final int SIGN_IN=1;
     private GoogleSignInClient mGoogleSignInClient;
 
@@ -57,6 +58,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        pd = new ProgressDialog(this);
         Button btn_login = (Button) findViewById(R.id.btn_login2);
         EditText email = findViewById(R.id.email_login);
         EditText password = findViewById(R.id.password_login);
@@ -71,6 +73,8 @@ public class LoginActivity extends AppCompatActivity {
         btnGoogleLog.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+
                 signIn();
             }
         });
@@ -98,10 +102,11 @@ public class LoginActivity extends AppCompatActivity {
                 finish();
             }
         });
-        // TextView txt_forgotpw = findViewById(R.id.txt_forgotpw);
+
 
     }
     private void signIn() {
+        mGoogleSignInClient.signOut();
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
@@ -118,6 +123,8 @@ public class LoginActivity extends AppCompatActivity {
                 GoogleSignInAccount account = task.getResult(ApiException.class);
                 Log.d("login by google", "firebaseAuthWithGoogle:" + account.getId()+account);
                 firebaseAuthWithGoogle(account.getIdToken());
+                pd.setMessage("Please Wait!");
+                pd.show();
             } catch (ApiException e) {
                 // Google Sign In failed, update UI appropriately
                 Log.w("login by google", "Google sign in failed", e);
@@ -129,9 +136,10 @@ public class LoginActivity extends AppCompatActivity {
         AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
         auth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-
+                        pd.dismiss();
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d("Login by google", "signInWithCredential:success");
@@ -190,6 +198,7 @@ public class LoginActivity extends AppCompatActivity {
                         }
                     }
                 });
+
     }
 
 

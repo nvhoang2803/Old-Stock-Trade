@@ -101,7 +101,7 @@ public class HomeFragment extends Fragment {
                                 arr.add(tmp);
                             }
                         }
-                        arr.sort(Comparator.comparing(Product::getTimestamp));
+                        arr.sort(Comparator.comparing(Product::getTimestamp).reversed());
                         mReference.child("Wishlist").orderByChild("userID").
                                 equalTo(curUser.getId()).addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override

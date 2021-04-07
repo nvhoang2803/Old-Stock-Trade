@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                new HomeFragment(MainActivity.this)).commit();
+               new HomeFragment(this)).commit();
     }
 
     private BottomNavigationView.OnNavigationItemSelectedListener navListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
