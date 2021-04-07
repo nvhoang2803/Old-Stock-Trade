@@ -35,7 +35,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-
+    
 
 
 public class MainActivity extends AppCompatActivity {
@@ -186,15 +186,13 @@ public class MainActivity extends AppCompatActivity {
                             ArrayList<Address> addresses = null;
                             try {
                                 addresses = (ArrayList<Address>) geocoder.getFromLocation(latitude,longitude,1);
+                                if (addresses.size() != 0) {
+                                    Address add = addresses.get(0);
+                                    address = add.getAddressLine(0);
+                                }
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
-
-                            if (addresses.size() != 0) {
-                                Address add = addresses.get(0);
-                                address = add.getAddressLine(0);
-                            }
-
                             Log.d("location", "onSuccess: "+location.toString());//vi tri hien tai
                             //test khoang cach tai vi tri hien tai den mot vi tri bat ki
                             Log.d("distance", "onSuccess: ");

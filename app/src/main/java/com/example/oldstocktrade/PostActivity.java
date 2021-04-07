@@ -185,7 +185,7 @@ public class PostActivity extends AppCompatActivity {
             map.put("Seller", product.getSeller());
             map.put("Description", product.getDescription());
             map.put("Latitude", product.getLatitude());
-            map.put("Longitude", product.getLongtitude());
+            map.put("Longitude", product.getLongitude());
             map.put("Name", product.getName());
             map.put("Price", product.getPrice());
             map.put("Report", product.getReport());

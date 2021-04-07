@@ -218,10 +218,13 @@ public class SearchSortActivity extends AppCompatActivity {
                 bottomSheetDialog.setContentView(bottomShettView);
                 bottomSheetDialog.show();
                 Button btn = bottomShettView.findViewById(R.id.button);
-                btn.setOnClickListener(new View.OnClickListener() {
+
+                RadioGroup rg = (RadioGroup)
+                        bottomShettView.findViewById(R.id.specific_sort_feld__sort_ass_container);
+                rg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
                     @Override
-                    public void onClick(View v) {
-                        RadioButton tmp = (RadioButton) bottomShettView.findViewById( ((RadioGroup) bottomShettView.findViewById(R.id.specific_sort_feld__sort_ass_container)).getCheckedRadioButtonId());
+                    public void onCheckedChanged(RadioGroup group, int checkedId) {
+                        RadioButton tmp = (RadioButton) bottomShettView.findViewById(checkedId);
                         String query = tmp.getText().toString();
                         specificPrice.setBackground(ContextCompat.getDrawable(SearchSortActivity.this, R.drawable.background_specific_sort));
                         TextView txt = (TextView) findViewById(R.id.sort2_ass_txt);
@@ -247,12 +250,13 @@ public class SearchSortActivity extends AppCompatActivity {
                 bottomSheetDialog.setContentView(bottomShettView);
                 bottomSheetDialog.show();
 
+                RadioGroup rg = (RadioGroup)
+                        bottomShettView.findViewById(R.id.specific_sort_feld__distance_ass_container);
 
-                Button btn = bottomShettView.findViewById(R.id.button);
-                btn.setOnClickListener(new View.OnClickListener() {
+                rg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
                     @Override
-                    public void onClick(View v) {
-                        RadioButton tmp = (RadioButton) bottomShettView.findViewById(((RadioGroup) bottomShettView.findViewById(R.id.specific_sort_feld__distance_ass_container)).getCheckedRadioButtonId());
+                    public void onCheckedChanged(RadioGroup group, int checkedId) {
+                        RadioButton tmp = (RadioButton) bottomShettView.findViewById(checkedId);
                         String query = tmp.getText().toString();
                         specificTime.setBackground(ContextCompat.getDrawable(SearchSortActivity.this, R.drawable.background_specific_sort));
                         TextView txt = (TextView) findViewById(R.id.sort1_ass_txt);
@@ -266,6 +270,7 @@ public class SearchSortActivity extends AppCompatActivity {
                         bottomSheetDialog.dismiss();
                     }
                 });
+
             }
         });
     }
@@ -383,15 +388,18 @@ public class SearchSortActivity extends AppCompatActivity {
 
 
     public String ChangeMoneyToString(int price){
-        String priceD;
-        if (Math.floor(price / (1000 * 1000 * 1000)) > 0){
-            priceD = (int) Math.floor(price / (1000 * 1000 * 1000) ) + ".000.000.000";
-        }else if (Math.floor(price / (1000 * 1000)) > 0){
-            priceD = (int) Math.floor(price / (1000 * 1000))  + ".000.000";
-        }else{
-            priceD = (int) Math.floor(price / (1000)) + ".000";
+        int cur;
+        String priceD = "";
+        String result = "";
+        priceD = String.valueOf(price);
+        cur = priceD.length() - 3;
+        for (int i =0 ; i< ((int)(priceD.length() / 3));i++ ){
+            result = "." + priceD.substring(cur,cur +3)+ result;
+            cur = cur -3;
         }
-        return priceD;
+        cur = cur + 3;
+        result = priceD.substring(0, cur) + result;
+        return result;
     }
 
     public void handleSort(View viewS,BottomSheetDialog bottomSheetDialog){

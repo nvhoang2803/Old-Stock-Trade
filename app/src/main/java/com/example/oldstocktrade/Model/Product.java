@@ -155,7 +155,7 @@ public class Product {
     }
 
     public Product(String address, String buyer, String description, ArrayList<String> imageURL, double latitude, double Longitude, String name, double price, String proID, int report,
-                   String seller, int status, long timestamp, String userImageURL, float rate) {
+                   String seller, int status, long timestamp, float rate) {
         Address = address;
         Buyer = buyer;
         Description = description;

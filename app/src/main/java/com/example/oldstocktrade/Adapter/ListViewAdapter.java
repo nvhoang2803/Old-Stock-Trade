@@ -97,14 +97,7 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ViewHo
             timeD = (int) (time / (60)) + " mins";
         }
         double price = productArrayList.get(position).getPrice();
-
-        if (Math.floor(price / (1000 * 1000 * 1000)) > 0){
-            priceD = (int) Math.floor(price / (1000 * 1000 * 1000) ) + ".000.000.000";
-        }else if (Math.floor(price / (1000 * 1000)) > 0){
-            priceD = (int) Math.floor(price / (1000 * 1000))  + ".000.000";
-        }else{
-            priceD = (int) Math.floor(price / (1000)) + ".000";
-        }
+        priceD = ChangeMoneyToString((int) price);
 
         //
         mReference.child("Users").orderByChild("id").equalTo(productArrayList.get(position).getSeller())
@@ -343,4 +336,22 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ViewHo
             productSellerName = itemView.findViewById(R.id.productSellerName);
         }
     }
+
+
+    public String ChangeMoneyToString(int price){
+        int cur;
+        String priceD = "";
+        String result = "";
+        priceD = String.valueOf(price);
+        cur = priceD.length() - 3;
+        for (int i =0 ; i< ((int)(priceD.length() / 3));i++ ){
+            result = "." + priceD.substring(cur,cur +3)+ result;
+            cur = cur -3;
+        }
+        cur = cur + 3;
+        result = priceD.substring(0, cur) + result;
+        return result;
+    }
 }
+
+
