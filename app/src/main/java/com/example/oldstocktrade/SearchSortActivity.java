@@ -1,3 +1,4 @@
+
 package com.example.oldstocktrade;
 
 import androidx.annotation.NonNull;
@@ -101,51 +102,6 @@ public class SearchSortActivity extends AppCompatActivity {
                 for (DataSnapshot ds: snapshot.getChildren()){
                     curUser = ds.getValue(User.class);
                 }
-                mReference.child("Products").limitToLast(10).
-                        addListenerForSingleValueEvent(new ValueEventListener() {
-                            @RequiresApi(api = Build.VERSION_CODES.N)
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                Product tmp;
-                                for (DataSnapshot ds: snapshot.getChildren()){
-                                    tmp = ds.getValue(Product.class);
-                                    searcharr.add(tmp.getName());
-                                    if (tmp.getStatus() == 1){
-                                        arr.add(tmp);
-                                        searcharr.add(tmp.getName());
-                                    }
-                                }
-                                arr.sort(Comparator.comparing(Product::getTimestamp));
-                                mReference.child("Wishlist").orderByChild("userID").
-                                        equalTo(curUser.getId()).addListenerForSingleValueEvent(new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                        ArrayList<String> userLike = new ArrayList();
-                                        for (DataSnapshot appleSnapshot: snapshot.getChildren()) {
-                                            Wishlist yP = appleSnapshot.getValue(Wishlist.class);
-                                            userLike.add(yP.getProID());
-                                        }
-                                        listViewProduct = findViewById(R.id.listViewProduct_ass);
-                                        //Display adapter product
-                                        ArrayList<Double> lonlat = new ArrayList<>();
-                                        lonlat.add(finalLon);
-                                        lonlat.add(finalLat);
-                                        ListViewAdapter listViewProductAdapter = new ListViewAdapter(arr,SearchSortActivity.this,curUser,userLike,lonlat);
-                                        listViewProduct.setAdapter(listViewProductAdapter);
-                                        listViewProduct.setLayoutManager(new LinearLayoutManager(SearchSortActivity.this));
-
-                                    }
-                                    @Override
-                                    public void onCancelled(@NonNull DatabaseError error) {
-
-                                    }
-                                });
-                            }
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError error) {
-
-                            }
-                        });
             }
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
@@ -328,7 +284,7 @@ public class SearchSortActivity extends AppCompatActivity {
                             for (DataSnapshot ds: snapshot.getChildren()){
                                 tmp = ds.getValue(Product.class);
                                 if ((tmp.getPrice() > priceSort.get(0)) &&
-                                        (tmp.getPrice() < priceSort.get(1)) && tmp.getName() != null
+                                        (tmp.getPrice() < priceSort.get(1)) && tmp.getName() != null && tmp.getStatus() == 1
                                             && (tmp.getName() != null && ( tmp.getName().toLowerCase().contains(query.toLowerCase())
                                         || VnCharacteristic.removeAccent(tmp.getName()).toLowerCase().contains(query.toLowerCase()) ))){
                                     arr.add(tmp);
@@ -337,8 +293,8 @@ public class SearchSortActivity extends AppCompatActivity {
                         }else {
                             for (DataSnapshot ds: snapshot.getChildren()){
                                 tmp = ds.getValue(Product.class);
-                                if (tmp.getName() != null && (tmp.getName() != null && ( tmp.getName().toLowerCase().contains(query.toLowerCase())
-                                        || VnCharacteristic.removeAccent(tmp.getName()).toLowerCase().contains(query.toLowerCase()) ))){
+                                if (tmp.getName() != null && (tmp.getName() != null && tmp.getStatus() == 1 && ( tmp.getName().toLowerCase().contains(query.toLowerCase())
+                                        || VnCharacteristic.removeAccent(tmp.getName()).toLowerCase().contains(query.toLowerCase())))){
                                     arr.add(tmp);
                                 }
                             }
@@ -418,26 +374,38 @@ public class SearchSortActivity extends AppCompatActivity {
                             }
                         });
                     }
-
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
 
                     }
                 });
-
     }
+
+
+    public String ChangeMoneyToString(int price){
+        String priceD;
+        if (Math.floor(price / (1000 * 1000 * 1000)) > 0){
+            priceD = (int) Math.floor(price / (1000 * 1000 * 1000) ) + ".000.000.000";
+        }else if (Math.floor(price / (1000 * 1000)) > 0){
+            priceD = (int) Math.floor(price / (1000 * 1000))  + ".000.000";
+        }else{
+            priceD = (int) Math.floor(price / (1000)) + ".000";
+        }
+        return priceD;
+    }
+
     public void handleSort(View viewS,BottomSheetDialog bottomSheetDialog){
         priceSlider = viewS.findViewById(R.id.sortfield_ass_priceSlider);
         priceSlider.setValueFrom(0);
-        priceSlider.setValueTo(50000000);
-        priceSlider.setValues(0f,1000000f);
+        priceSlider.setValueTo(50000);
+        priceSlider.setValues(0f,1000f);
         TextView priceSliderValue = viewS.findViewById(R.id.sortfield_ass_priceSliderValue);
-        priceSliderValue.setText("Price from :" + 0 + " to: " + "200000");
+        priceSliderValue.setText("Price from :" + 0 + " to: " + "1.000.000");
         priceSlider.addOnChangeListener(new RangeSlider.OnChangeListener() {
             @Override
             public void onValueChange(@NonNull RangeSlider slider, float value, boolean fromUser) {
-                priceSliderValue.setText(" " + (int) Math.floor(priceSlider.getValues().get(0)) + "$        to: "
-                 + (int) Math.floor(priceSlider.getValues().get(1)) + "$");
+                priceSliderValue.setText(" " + ChangeMoneyToString((int) Math.floor(priceSlider.getValues().get(0)) * 1000) + "VND to: "
+                 + ChangeMoneyToString((int) Math.floor(priceSlider.getValues().get(1)) * 1000) + "VND");
 
             }
         });
@@ -509,7 +477,7 @@ public class SearchSortActivity extends AppCompatActivity {
         searchFill.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                searchView.setQuery(searcharr.get(position),false);
+                searchView.setQuery(searcharr.get(position),true);
             }
         });
         final Handler handler = new Handler();
@@ -525,7 +493,7 @@ public class SearchSortActivity extends AppCompatActivity {
                                 Product tmp;
                                 for (DataSnapshot ds: snapshot.getChildren()){
                                     tmp = ds.getValue(Product.class);
-                                    if (tmp.getName() != null && ( tmp.getName().toLowerCase().contains(query.toLowerCase())
+                                    if (tmp.getName() != null && tmp.getStatus() == 1 && ( tmp.getName().toLowerCase().contains(query.toLowerCase())
                                             || VnCharacteristic.removeAccent(tmp.getName()).toLowerCase().contains(query.toLowerCase()) )){
                                         arr.add(tmp);
                                     }

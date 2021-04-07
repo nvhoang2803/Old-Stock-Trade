@@ -49,14 +49,15 @@ public class MainActivity extends AppCompatActivity {
         bottomNav.setOnNavigationItemSelectedListener(navListener);
 
         //----------------------------Get current Location
+
         client = LocationServices.getFusedLocationProviderClient(this);
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 44);
-
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
+                    new HomeFragment(MainActivity.this)).commit();
         } else {
             getLocation();
         }
-
         //----------------------------End
         reference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -69,8 +70,7 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                new HomeFragment(MainActivity.this)).commit();
+
     }
 
     private BottomNavigationView.OnNavigationItemSelectedListener navListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -143,7 +143,6 @@ public class MainActivity extends AppCompatActivity {
 
     public void getLocation() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-
             return;
         }
         client.getLastLocation()
@@ -154,11 +153,11 @@ public class MainActivity extends AppCompatActivity {
                         if (location != null) {
                             longitude = location.getLongitude();
                             latitude = location.getLatitude();
-                            //10.7704246 106.6724038
-                            //10.762397,106.682752
                             Log.d("location", "onSuccess: "+location.toString());//vi tri hien tai
                             //test khoang cach tai vi tri hien tai den mot vi tri bat ki
                             Log.d("distance", "onSuccess: ");
+                            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
+                                    new HomeFragment(MainActivity.this)).commit();
                         }
                     }
                 });

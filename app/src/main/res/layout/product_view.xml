@@ -72,7 +72,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/productAddress"
+            android:id="@+id/productSellerName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -80,10 +80,27 @@
             android:layout_marginEnd="8dp"
             android:text="TextView"
             android:textColor="#555"
+            android:textSize="12sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/frameLayout"
             app:layout_constraintTop_toBottomOf="@+id/userName" />
+
+        <TextView
+            android:id="@+id/productAddress"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="2dp"
+            android:layout_marginEnd="8dp"
+            android:text="TextView"
+            android:textColor="#333"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/frameLayout"
+            app:layout_constraintTop_toBottomOf="@+id/productSellerName" />
 
         <TextView
             android:id="@+id/productDistance"
@@ -104,6 +121,7 @@
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
+            android:ellipsize="end"
             android:maxLines="3"
             android:text="TextView"
             android:textColor="#222"
@@ -119,7 +137,9 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="2dp"
             android:text="TextView"
-            android:textSize="12sp"
+            android:textColor="#555"
+            android:textSize="14sp"
+            android:textStyle="bold"
             app:layout_constraintStart_toEndOf="@+id/frameLayout"
             app:layout_constraintTop_toBottomOf="@+id/productAddress" />
 

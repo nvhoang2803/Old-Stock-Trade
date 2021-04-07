@@ -7,8 +7,8 @@ public class Product {
     String Buyer;
     String Description;
     ArrayList<String> ImageURL;
-    long Latitude;
-    long Longtitude;
+    double Latitude;
+    double Longitude;
     String Name;
     double Price;
     String ProID;
@@ -51,7 +51,7 @@ public class Product {
         ImageURL = imageURL;
     }
 
-    public long getLatitude() {
+    public double getLatitude() {
         return Latitude;
     }
 
@@ -59,12 +59,12 @@ public class Product {
         Latitude = latitude;
     }
 
-    public long getLongtitude() {
-        return Longtitude;
+    public double getLongitude() {
+        return Longitude;
     }
 
-    public void setLongtitude(long longtitude) {
-        Longtitude = longtitude;
+    public void setLongitude(long Longitude) {
+        Longitude = Longitude;
     }
 
     public String getName() {
@@ -153,14 +153,14 @@ public class Product {
 
     }
 
-    public Product(String address, String buyer, String description, ArrayList<String> imageURL, long latitude, long longtitude, String name, double price, String proID, int report,
+    public Product(String address, String buyer, String description, ArrayList<String> imageURL, double latitude, double Longitude, String name, double price, String proID, int report,
                    String seller, int status, long timestamp, String userImageURL, float rate) {
         Address = address;
         Buyer = buyer;
         Description = description;
         ImageURL = imageURL;
         Latitude = latitude;
-        Longtitude = longtitude;
+        Longitude = Longitude;
         Name = name;
         Price = price;
         ProID = proID;

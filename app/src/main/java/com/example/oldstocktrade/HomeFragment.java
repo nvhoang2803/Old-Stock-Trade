@@ -99,7 +99,7 @@ public class HomeFragment extends Fragment {
                                 arr.add(tmp);
                             }
                         }
-                        arr.sort(Comparator.comparing(Product::getTimestamp));
+                        arr.sort(Comparator.comparing(Product::getTimestamp).reversed());
                         mReference.child("Wishlist").orderByChild("userID").
                                 equalTo(curUser.getId()).addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
@@ -115,7 +115,6 @@ public class HomeFragment extends Fragment {
                                 ListViewAdapter listViewProductAdapter = new ListViewAdapter(arr,curActivity,curUser,userLike,null);
                                 listViewProduct.setAdapter(listViewProductAdapter);
                                 listViewProduct.setLayoutManager(new LinearLayoutManager(curActivity));
-
                                 handleSearch(view);
                             }
                             @Override
@@ -153,7 +152,7 @@ public class HomeFragment extends Fragment {
                                         arr.add(tmp);
                                     }
                                 }
-                                arr.sort(Comparator.comparing(Product::getTimestamp));
+                                arr.sort(Comparator.comparing(Product::getTimestamp).reversed());
                                 mReference.child("Wishlist").orderByChild("userID").
                                         equalTo(curUser.getId()).addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override

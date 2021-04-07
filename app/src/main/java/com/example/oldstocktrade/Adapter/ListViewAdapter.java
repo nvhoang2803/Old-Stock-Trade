@@ -71,6 +71,7 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ViewHo
                         for (DataSnapshot appleSnapshot: snapshot.getChildren()) {
                             Glide.with(holder.userImage).load(appleSnapshot.getValue(User.class).getImageURL())
                                     .into(holder.userImage);
+                            holder.productSellerName.setText(appleSnapshot.getValue(User.class).getUsername());
                         }
                     }
                     @Override
@@ -80,7 +81,6 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ViewHo
 
         //Set user add to favorite list
         if (userProductlike.contains(productArrayList.get(position).getProID())){
-            System.out.println(productArrayList.get(position).getProID());
             holder.productLike.setImageResource(R.drawable.ic_like__1_);
         }
 
@@ -91,7 +91,7 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ViewHo
         time = time /1000;
         if (time / (60* 60 * 24) > 0){
             timeD = time / (60* 60 * 24) + " days";
-        }else if (time / (60* 60 * 24) > 0){
+        }else if (time / (60* 60) > 0){
             timeD = time / (60* 60) + " hours";
         }else{
             timeD = time / (60) + " mins";
@@ -99,11 +99,11 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ViewHo
         double price = productArrayList.get(position).getPrice();
 
         if (Math.floor(price / (1000 * 1000 * 1000)) > 0){
-            priceD = Math.floor(price / (1000 * 1000 * 1000))  + " Bilion";
+            priceD = (int) Math.floor(price / (1000 * 1000 * 1000) ) + ".000.000.000";
         }else if (Math.floor(price / (1000 * 1000)) > 0){
-            priceD = Math.floor(price / (1000 * 1000))  + " Milion";
+            priceD = (int) Math.floor(price / (1000 * 1000))  + ".000.000";
         }else{
-            priceD =Math.floor(price / (1000)) + " K";
+            priceD = (int) Math.floor(price / (1000)) + ".000";
         }
 
         //
@@ -176,21 +176,22 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ViewHo
 
         holder.productAddress.setText(productArrayList.get(position).getAddress());
         //
-        holder.productTime.setText(timeD + " - $" + priceD);
+        holder.productTime.setText(timeD + " - " + priceD + " VND");
         //
         holder.productDetail.setText(productArrayList.get(position).getDescription());
 
 
         //Caculate distance from currenLocation to product location
         double dis = 0;
+
         if (lonlat != null){
             dis = BasicFunctions.calDistance(lonlat.get(0), lonlat.get(1),
-                    productArrayList.get(position).getLongtitude(),
+                    productArrayList.get(position).getLongitude(),
                     productArrayList.get(position).getLatitude());
         }else{
              dis = BasicFunctions.calDistance(((MainActivity) curActivity).longitude,
                     ((MainActivity) curActivity).latitude,
-                    productArrayList.get(position).getLongtitude(),
+                    productArrayList.get(position).getLongitude(),
                     productArrayList.get(position).getLatitude());
         }
 
@@ -318,6 +319,7 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ViewHo
         TextView productAddress;
         TextView productDistance;
         TextView productDetail;
+        TextView productSellerName;
         ImageView productComment;
         ImageView productLike;
         TextView productTime;
@@ -338,6 +340,7 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ViewHo
             productTime = itemView.findViewById(R.id.productTime);
             productImageDotSlider = itemView.findViewById(R.id.productImageDotSlider);
             productStatus = itemView.findViewById(R.id.product_status);
+            productSellerName = itemView.findViewById(R.id.productSellerName);
         }
     }
 }
