@@ -176,10 +176,10 @@ public class PostActivity extends AppCompatActivity {
             seller= FirebaseAuth.getInstance().getCurrentUser().getUid();
             pri= price.getText().toString();
             na= name.getText().toString();
-            long ts= System.currentTimeMillis()/1000;
+            long ts= System.currentTimeMillis();
             Product product= new Product(addr, "None", des, aImage, lat, lon, na, Double.parseDouble(pri), id, 0, seller, 0, ts, 0);
             HashMap<String, Object> map= new HashMap<>();
-            map.put("Proid", product.getProID());
+            map.put("ProID", product.getProID());
             map.put("Address", product.getAddress());
             map.put("Buyer", product.getBuyer());
             map.put("Seller", product.getSeller());
@@ -191,8 +191,8 @@ public class PostActivity extends AppCompatActivity {
             map.put("Report", product.getReport());
             map.put("Status", product.getStatus());
             map.put("Timestamp", product.getTimestamp());
-            map.put("Visible to buyer", product.isVisibleToBuyer());
-            map.put("Visible to seller", product.isVisibleToSeller());
+            map.put("VisibleToBuyer", product.isVisibleToBuyer());
+            map.put("VisibleToSeller", product.isVisibleToSeller());
             df.child(id).setValue(map);
             progressDialog.dismiss();
             startActivity(new Intent(PostActivity.this,MainActivity.class));
