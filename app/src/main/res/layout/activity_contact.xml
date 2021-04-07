@@ -10,7 +10,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="HISTORY"
+            android:text="CONTACT"
             android:textColor="@color/light_blue_600"
             android:textStyle="bold"
             android:layout_centerInParent="true"/>
@@ -22,7 +22,7 @@
         app:tabMode="fixed"
         app:tabGravity="fill"
         app:tabIndicatorColor="@color/white"
-        android:id="@+id/tab_history">
+        android:id="@+id/tab_contact">
 
     </com.google.android.material.tabs.TabLayout>
     <androidx.viewpager.widget.ViewPager

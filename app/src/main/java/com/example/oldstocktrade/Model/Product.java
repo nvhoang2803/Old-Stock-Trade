@@ -55,7 +55,7 @@ public class Product {
         return Latitude;
     }
 
-    public void setLatitude(long latitude) {
+    public void setLatitude(double latitude) {
         Latitude = latitude;
     }
 
@@ -148,6 +148,7 @@ public class Product {
     public void setVisibleToBuyer(boolean visibleToBuyer) {
         VisibleToBuyer = visibleToBuyer;
     }
+
 
     public Product(){
 

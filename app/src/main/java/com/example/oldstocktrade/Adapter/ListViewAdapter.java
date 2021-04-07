@@ -90,11 +90,11 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ViewHo
         String priceD = "";
         time = time /1000;
         if (time / (60* 60 * 24) > 0){
-            timeD = time / (60* 60 * 24) + " days";
-        }else if (time / (60* 60) > 0){
-            timeD = time / (60* 60) + " hours";
+            timeD = (int) ( time / (60* 60 * 24)) + " days";
+        }else if (time / (60 * 60 ) > 0){
+            timeD =(int) ( time / (60* 60)) + " hours";
         }else{
-            timeD = time / (60) + " mins";
+            timeD = (int) (time / (60)) + " mins";
         }
         double price = productArrayList.get(position).getPrice();
 
@@ -179,8 +179,6 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ViewHo
         holder.productTime.setText(timeD + " - " + priceD + " VND");
         //
         holder.productDetail.setText(productArrayList.get(position).getDescription());
-
-
         //Caculate distance from currenLocation to product location
         double dis = 0;
 
@@ -196,6 +194,8 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ViewHo
         }
 
         dis = Math.floor(dis);
+
+
         holder.productDistance.setText((int) dis + "km");
         holder.userName.setText(productArrayList.get(position).getName());
         //Handle ImageSlider

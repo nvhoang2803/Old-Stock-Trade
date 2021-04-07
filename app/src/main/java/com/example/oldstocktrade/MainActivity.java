@@ -8,6 +8,8 @@ import androidx.fragment.app.Fragment;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
@@ -18,6 +20,8 @@ import android.view.inputmethod.InputMethodManager;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -28,6 +32,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 
@@ -37,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
     DatabaseReference reference;
     FusedLocationProviderClient client;
     public double longitude, latitude;
+    public String address;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +54,8 @@ public class MainActivity extends AppCompatActivity {
                 getReference("Users").child(firebaseUser.getUid());
         BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
         bottomNav.setOnNavigationItemSelectedListener(navListener);
+
+
 
         //----------------------------Get current Location
 
@@ -70,7 +79,6 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-
     }
 
     private BottomNavigationView.OnNavigationItemSelectedListener navListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -87,8 +95,8 @@ public class MainActivity extends AppCompatActivity {
                 case R.id.nav_storage:
                     selectedFragment = new StorageFragment();
                     break;
-                case R.id.nav_contact:
-                    selectedFragment = new ContactFragment();
+                case R.id.nav_delivery:
+                    selectedFragment = new DeliveryFragment();
                     break;
                 case R.id.nav_settings:
                     selectedFragment = new SettingsFragment();
@@ -99,7 +107,28 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
     };
+    public void handleClickFragment(int itemID, int type) {
+        Fragment selectedFragment = null;
+        switch (itemID) {
+            case R.id.nav_home:
+                selectedFragment = new HomeFragment(MainActivity.this);
+                break;
+            case R.id.nav_history:
+                selectedFragment = new HistoryFragment(type);
+                break;
+            case R.id.nav_storage:
+                selectedFragment = new StorageFragment(type);
 
+                break;
+            case R.id.nav_delivery:
+                selectedFragment = new DeliveryFragment();
+                break;
+            case R.id.nav_settings:
+                selectedFragment = new SettingsFragment();
+                break;
+        }
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, selectedFragment).commit();
+    }
     void status(String s) {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Users").child(firebaseUser.getUid());
         HashMap<String, Object> hashMap = new HashMap<>();
@@ -153,6 +182,19 @@ public class MainActivity extends AppCompatActivity {
                         if (location != null) {
                             longitude = location.getLongitude();
                             latitude = location.getLatitude();
+                            Geocoder geocoder = new Geocoder(MainActivity.this);
+                            ArrayList<Address> addresses = null;
+                            try {
+                                addresses = (ArrayList<Address>) geocoder.getFromLocation(latitude,longitude,1);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+
+                            if (addresses.size() != 0) {
+                                Address add = addresses.get(0);
+                                address = add.getAddressLine(0);
+                            }
+
                             Log.d("location", "onSuccess: "+location.toString());//vi tri hien tai
                             //test khoang cach tai vi tri hien tai den mot vi tri bat ki
                             Log.d("distance", "onSuccess: ");

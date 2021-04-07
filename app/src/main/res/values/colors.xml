@@ -18,4 +18,8 @@
     <color name="light_blue_A200">#FF40C4FF</color>
     <color name="light_blue_A400">#FF00B0FF</color>
     <color name="black_overlay">#66000000</color>
+    <color name="logo_color">#A66F00</color>
+    <color name="background_color">#FFD073</color>
+    <color name="back_btn">#FFBF40</color>
+    <color name="color1">#FFAA00</color>
 </resources>

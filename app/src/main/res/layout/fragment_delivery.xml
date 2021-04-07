@@ -10,10 +10,18 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="HISTORY"
+            android:text="DELIVERY"
             android:textColor="@color/light_blue_600"
             android:textStyle="bold"
             android:layout_centerInParent="true"/>
+        <ImageButton
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:background="@drawable/ic_contact"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="10dp"
+            android:id="@+id/btn_contact"/>
     </RelativeLayout>
     <com.google.android.material.tabs.TabLayout
         android:layout_width="match_parent"
@@ -22,7 +30,7 @@
         app:tabMode="fixed"
         app:tabGravity="fill"
         app:tabIndicatorColor="@color/white"
-        android:id="@+id/tab_history">
+        android:id="@+id/tab_delivery">
 
     </com.google.android.material.tabs.TabLayout>
     <androidx.viewpager.widget.ViewPager

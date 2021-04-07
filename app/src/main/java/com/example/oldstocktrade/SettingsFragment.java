@@ -33,9 +33,9 @@ import static android.app.Activity.RESULT_OK;
 public class SettingsFragment extends Fragment {
     private final int REQUEST_CODE_LOCATION = 100;
     Button btnMap,btnDirection;
-    TextView txtUsername;
+    TextView txtUsername,txtLocation;
     private FirebaseUser fuser;
-    RelativeLayout btnSignout,btnPost,btn_profile,btnYourLocation,btnWishlist,btnSelling,btnSold,btnBought;
+    RelativeLayout btnSignout,btnPost,btn_profile,btnYourLocation,btnWishlist,btnSelling,btnSold,btnBought,btnContact;
     private DatabaseReference ref;
     CircleImageView avatar;
     private User user;
@@ -52,14 +52,17 @@ public class SettingsFragment extends Fragment {
             btnSelling = view.findViewById(R.id.btnSelling);
             btnSold = view.findViewById(R.id.btnSold);
             btnBought = view.findViewById(R.id.btnBought);
+            btnContact = view.findViewById(R.id.btnContact);
             btnPost = view.findViewById(R.id.btnPost);
             btnMap = view.findViewById(R.id.btnMap);
             avatar = view.findViewById(R.id.avatar);
             txtUsername = view.findViewById(R.id.UserName);
+            txtLocation = view.findViewById(R.id.txtMyLocation);
             btnDirection = view.findViewById(R.id.btnDirection);
             btn_profile = view.findViewById(R.id.btn_profile);
             fuser = FirebaseAuth.getInstance().getCurrentUser();
             ref = FirebaseDatabase.getInstance().getReference("Users").child(fuser.getUid());
+            txtLocation.setText(main.address);
 
             valueEventListener = new ValueEventListener() {
                 @Override
@@ -70,7 +73,7 @@ public class SettingsFragment extends Fragment {
                     if (user.getImageURL().equals("default"))
                         avatar.setImageResource(R.mipmap.ic_launcher);
                     else
-                        Glide.with(getActivity()).load(user.getImageURL()).apply(RequestOptions.circleCropTransform()).into(avatar);
+                        Glide.with(main.getApplicationContext()).load(user.getImageURL()).apply(RequestOptions.circleCropTransform()).into(avatar);
 
                 }
 
@@ -86,6 +89,37 @@ public class SettingsFragment extends Fragment {
                     FirebaseAuth.getInstance().signOut();
                     startActivity(new Intent(getActivity(),LoginActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK));
                     //getActivity().finish();
+                    Log.d("signout", "onClick: Sign out");
+                }
+            });
+            btnWishlist.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    main.handleClickFragment(R.id.nav_storage,1);
+                }
+            });
+            btnContact.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    main.handleClickFragment(R.id.nav_delivery,0);
+                }
+            });
+            btnSelling.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    main.handleClickFragment(R.id.nav_storage,0);
+                }
+            });
+            btnSold.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    main.handleClickFragment(R.id.nav_history,0);
+                }
+            });
+            btnBought.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    main.handleClickFragment(R.id.nav_history,1);
                 }
             });
             btnYourLocation.setOnClickListener(new View.OnClickListener() {
@@ -103,7 +137,12 @@ public class SettingsFragment extends Fragment {
             btnPost.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    startActivity(new Intent(getActivity(),PostActivity.class));
+                    Intent intent = new Intent(getActivity(),PostActivity.class);
+                    Bundle myBundle = new Bundle();
+                    myBundle.putDouble ("lat",main.latitude);
+                    myBundle.putDouble ("long",main.longitude);
+                    intent.putExtras(myBundle);
+                    startActivity(intent);
 
                 }
             });
@@ -143,6 +182,8 @@ public class SettingsFragment extends Fragment {
                 String[] loc = location.split("-");
                 main.latitude = Double.valueOf(loc[0]);
                 main.longitude = Double.valueOf(loc[1]);
+                txtLocation.setText(straddress);
+                main.address = straddress;
                 // Set text view with string
                 Log.d("Location", "onActivityResult: "+location);;//split location bang - se ra longitude va latitude roi luu vao db
 

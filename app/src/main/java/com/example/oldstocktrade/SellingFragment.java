@@ -8,8 +8,10 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.PopupMenu;
 
 import com.example.oldstocktrade.Adapter.StorageAdapter;
 import com.example.oldstocktrade.Model.Product;
@@ -70,6 +72,7 @@ public class SellingFragment extends Fragment {
         return v;
 
     }
+
 
 
 }

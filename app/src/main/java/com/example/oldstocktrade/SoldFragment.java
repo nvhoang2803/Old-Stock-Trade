@@ -69,6 +69,7 @@ public class SoldFragment extends Fragment {
 
         return v;
 
+        
     }
 
 
