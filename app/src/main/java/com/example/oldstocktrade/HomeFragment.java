@@ -57,8 +57,6 @@ public class HomeFragment extends Fragment {
         curActivity = act;
     }
 
-
-
     public void handleSearch(View view){
         ImageView bntSearch = view.findViewById(R.id.btnSearch);
         bntSearch.setOnClickListener(new View.OnClickListener() {

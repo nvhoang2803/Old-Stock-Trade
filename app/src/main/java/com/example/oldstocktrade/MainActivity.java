@@ -35,7 +35,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-    
+
 
 
 public class MainActivity extends AppCompatActivity {
@@ -60,10 +60,12 @@ public class MainActivity extends AppCompatActivity {
         //----------------------------Get current Location
 
         client = LocationServices.getFusedLocationProviderClient(this);
+
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 44);
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
                     new HomeFragment(MainActivity.this)).commit();
+
         } else {
             getLocation();
         }
@@ -182,22 +184,23 @@ public class MainActivity extends AppCompatActivity {
                         if (location != null) {
                             longitude = location.getLongitude();
                             latitude = location.getLatitude();
+
+                            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
+                                    new HomeFragment(MainActivity.this)).commit();
                             Geocoder geocoder = new Geocoder(MainActivity.this);
                             ArrayList<Address> addresses = null;
                             try {
                                 addresses = (ArrayList<Address>) geocoder.getFromLocation(latitude,longitude,1);
-                                if (addresses.size() != 0) {
-                                    Address add = addresses.get(0);
-                                    address = add.getAddressLine(0);
-                                }
                             } catch (IOException e) {
                                 e.printStackTrace();
+                            }
+                            if (addresses != null && addresses.size() != 0) {
+                                Address add = addresses.get(0);
+                                address = add.getAddressLine(0);
                             }
                             Log.d("location", "onSuccess: "+location.toString());//vi tri hien tai
                             //test khoang cach tai vi tri hien tai den mot vi tri bat ki
                             Log.d("distance", "onSuccess: ");
-                            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                                    new HomeFragment(MainActivity.this)).commit();
                         }
                     }
                 });

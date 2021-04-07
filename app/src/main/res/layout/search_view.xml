@@ -15,8 +15,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@+id/search_item_nameLabel"
-        android:paddingLeft="50dp"
-        android:paddingRight="50dp"
+        android:paddingLeft="35dp"
+        android:paddingRight="20dp"
         android:text="12121212"
         android:textColor="#333" />
 </RelativeLayout>
