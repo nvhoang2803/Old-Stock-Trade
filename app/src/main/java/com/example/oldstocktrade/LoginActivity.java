@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+
 import android.os.Bundle;
 import android.text.Spannable;
 import android.text.TextUtils;
@@ -54,14 +55,17 @@ public class LoginActivity extends AppCompatActivity {
     private static final int SIGN_IN=1;
     private GoogleSignInClient mGoogleSignInClient;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         pd = new ProgressDialog(this);
         Button btn_login = (Button) findViewById(R.id.btn_login2);
+
         EditText email = findViewById(R.id.email_login);
         EditText password = findViewById(R.id.password_login);
+        auth = FirebaseAuth.getInstance();
         Log.d("current user", "onCreate: "+FirebaseAuth.getInstance().getCurrentUser());
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
@@ -70,6 +74,18 @@ public class LoginActivity extends AppCompatActivity {
 
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
         btnGoogleLog = findViewById(R.id.btnGoogleLog);
+//        btnGoogleLog.setColorScheme(SignInButton.COLOR_AUTO);
+//        btnGoogleLog.setSize(SignInButton.SIZE_WIDE);
+//        for (int i = 0; i < btnGoogleLog.getChildCount(); i++) {
+//            View v = btnGoogleLog.getChildAt(i);
+//
+//            if (v instanceof TextView) {
+//                TextView tv = (TextView) v;
+//                tv.setText("Log in with Google");
+//
+//                return;
+//            }
+//        }
         btnGoogleLog.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -78,7 +94,7 @@ public class LoginActivity extends AppCompatActivity {
                 signIn();
             }
         });
-        auth = FirebaseAuth.getInstance();
+
         btn_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
