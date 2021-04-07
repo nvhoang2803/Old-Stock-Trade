@@ -197,8 +197,8 @@ public class SearchSortActivity extends AppCompatActivity {
         //Handle Sort Layout
     }
     public void resetSortSpecificField(){
-        ((TextView) findViewById(R.id.sort2_ass_txt)).setText("Time");
-        ((TextView) findViewById(R.id.sort1_ass_txt)).setText("Price");
+        ((TextView) findViewById(R.id.sort2_ass_txt)).setText("Price");
+        ((TextView) findViewById(R.id.sort1_ass_txt)).setText("Time");
         ((TextView) findViewById(R.id.sort2_ass_txt)).setTextColor(Color.BLACK);
         ((TextView) findViewById(R.id.sort1_ass_txt)).setTextColor(Color.BLACK);
         LinearLayout specificPrice = findViewById(R.id.sort2_ass);
@@ -290,16 +290,20 @@ public class SearchSortActivity extends AppCompatActivity {
                                 tmp = ds.getValue(Product.class);
                                 if ((tmp.getPrice() > priceSort.get(0)) &&
                                         (tmp.getPrice() < priceSort.get(1)) && tmp.getName() != null && tmp.getStatus() == 1
-                                            && (tmp.getName() != null && ( tmp.getName().toLowerCase().contains(query.toLowerCase())
-                                        || VnCharacteristic.removeAccent(tmp.getName()).toLowerCase().contains(query.toLowerCase()) ))){
+                                            && (tmp.getName() != null && (( tmp.getName().toLowerCase().contains(query.toLowerCase())
+                                        || VnCharacteristic.removeAccent(tmp.getName()).toLowerCase().contains(query.toLowerCase()) )) ||
+                                                ( tmp.getDescription().toLowerCase().contains(query.toLowerCase())
+                                                        || VnCharacteristic.removeAccent(tmp.getDescription()).toLowerCase().contains(query.toLowerCase()) ))){
                                     arr.add(tmp);
                                 }
                             }
                         }else {
                             for (DataSnapshot ds: snapshot.getChildren()){
                                 tmp = ds.getValue(Product.class);
-                                if (tmp.getName() != null && (tmp.getName() != null && tmp.getStatus() == 1 && ( tmp.getName().toLowerCase().contains(query.toLowerCase())
-                                        || VnCharacteristic.removeAccent(tmp.getName()).toLowerCase().contains(query.toLowerCase())))){
+                                if (tmp.getName() != null && (( tmp.getName().toLowerCase().contains(query.toLowerCase())
+                                        || VnCharacteristic.removeAccent(tmp.getName()).toLowerCase().contains(query.toLowerCase()) )) ||
+                                        ( tmp.getDescription().toLowerCase().contains(query.toLowerCase())
+                                                || VnCharacteristic.removeAccent(tmp.getDescription()).toLowerCase().contains(query.toLowerCase()) )){
                                     arr.add(tmp);
                                 }
                             }
@@ -501,8 +505,10 @@ public class SearchSortActivity extends AppCompatActivity {
                                 Product tmp;
                                 for (DataSnapshot ds: snapshot.getChildren()){
                                     tmp = ds.getValue(Product.class);
-                                    if (tmp.getName() != null && tmp.getStatus() == 1 && ( tmp.getName().toLowerCase().contains(query.toLowerCase())
-                                            || VnCharacteristic.removeAccent(tmp.getName()).toLowerCase().contains(query.toLowerCase()) )){
+                                    if (tmp.getName() != null && tmp.getStatus() == 1 && (( tmp.getName().toLowerCase().contains(query.toLowerCase())
+                                            || VnCharacteristic.removeAccent(tmp.getName()).toLowerCase().contains(query.toLowerCase()) )
+                                                || ( tmp.getDescription().toLowerCase().contains(query.toLowerCase())
+                                            || VnCharacteristic.removeAccent(tmp.getDescription()).toLowerCase().contains(query.toLowerCase()) ))){
                                         arr.add(tmp);
                                     }
                                 }
@@ -556,8 +562,10 @@ public class SearchSortActivity extends AppCompatActivity {
                                 for (DataSnapshot ds: snapshot.getChildren()){
                                     Product tmp = ds.getValue(Product.class);
                                     String txt = tmp.getName();
-                                    if (txt != null && ( tmp.getName().toLowerCase().contains(newText.toLowerCase())
-                                            || VnCharacteristic.removeAccent(tmp.getName()).toLowerCase().contains(newText.toLowerCase()) )){
+                                    if (txt != null &&(( tmp.getName().toLowerCase().contains(newText.toLowerCase())
+                                            || VnCharacteristic.removeAccent(tmp.getName()).toLowerCase().contains(newText.toLowerCase()) )) ||
+                                            ( tmp.getDescription().toLowerCase().contains(newText.toLowerCase())
+                                                    || VnCharacteristic.removeAccent(tmp.getDescription()).toLowerCase().contains(newText.toLowerCase()) )   ){
                                         searcharr.add(tmp.getName());
                                     }
                                 }
