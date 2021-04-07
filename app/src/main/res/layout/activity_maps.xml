@@ -30,16 +30,6 @@
             android:background="@drawable/bg_round"
 
             />
-
-
-<!--        <androidx.recyclerview.widget.RecyclerView-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:id="@+id/listLocation"/>-->
-<!--        <ListView-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:id="@+id/listLocation"/>-->
     </LinearLayout>
 
     <LinearLayout
