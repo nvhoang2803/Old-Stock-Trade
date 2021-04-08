@@ -72,7 +72,6 @@ public class HomeFragment extends Fragment {
         });
     }
 
-
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Nullable
     @Override
@@ -184,7 +183,18 @@ public class HomeFragment extends Fragment {
                         });
             }
         });
-
+        ImageView btnPost = view.findViewById(R.id.btnPost);
+        btnPost.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(),PostActivity.class);
+                Bundle myBundle = new Bundle();
+                myBundle.putDouble ("lat",((MainActivity) curActivity).latitude);
+                myBundle.putDouble ("long",((MainActivity) curActivity).longitude);
+                intent.putExtras(myBundle);
+                startActivity(intent);
+            }
+        });
         //Display list product view
         return view;
     }
