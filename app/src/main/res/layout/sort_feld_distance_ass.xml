@@ -39,13 +39,11 @@
             <RadioButton
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:buttonTint="@color/back_btn"
                 android:text="From Newest to Oldest"></RadioButton>
 
             <RadioButton
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:buttonTint="@color/back_btn"
                 android:text="From Oldest to Newest"></RadioButton>
         </RadioGroup>
 

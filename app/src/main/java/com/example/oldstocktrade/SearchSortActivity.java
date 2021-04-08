@@ -288,8 +288,8 @@ public class SearchSortActivity extends AppCompatActivity {
                             List<Float> priceSort = priceSlider.getValues();
                             for (DataSnapshot ds: snapshot.getChildren()){
                                 tmp = ds.getValue(Product.class);
-                                if ((tmp.getPrice() > priceSort.get(0) * 1000) &&
-                                        (tmp.getPrice() < priceSort.get(1) * 1000) && tmp.getName() != null && tmp.getStatus() == 1
+                                if ((tmp.getPrice() > priceSort.get(0)) &&
+                                        (tmp.getPrice() < priceSort.get(1)) && tmp.getName() != null && tmp.getStatus() == 1
                                             && (tmp.getName() != null && (( tmp.getName().toLowerCase().contains(query.toLowerCase())
                                         || VnCharacteristic.removeAccent(tmp.getName()).toLowerCase().contains(query.toLowerCase()) )) ||
                                                 ( tmp.getDescription().toLowerCase().contains(query.toLowerCase())

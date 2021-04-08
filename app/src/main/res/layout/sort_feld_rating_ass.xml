@@ -39,13 +39,11 @@
             <RadioButton
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:buttonTint="@color/back_btn"
                 android:text="From High to Low"></RadioButton>
 
             <RadioButton
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:buttonTint="@color/back_btn"
                 android:text="From Low to High"></RadioButton>
         </RadioGroup>
 
