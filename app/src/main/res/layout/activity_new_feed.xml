@@ -22,7 +22,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/btnSearch"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_writing" />
+            app:srcCompat="@drawable/ic_writing_color" />
 
         <ImageView
             android:id="@+id/btnSearch"
