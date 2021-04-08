@@ -242,7 +242,21 @@ public class LoginActivity extends AppCompatActivity {
                         finish();
                     }
                     else{
-                        Toast.makeText(LoginActivity.this, "Please check your email to verification", Toast.LENGTH_SHORT).show();
+
+                        auth.getCurrentUser().sendEmailVerification()
+                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if (task.isSuccessful()) {
+                                            Log.d("SignUpEmail", "Email sent.");
+                                            Toast.makeText(LoginActivity.this, "Please check your email to verification", Toast.LENGTH_SHORT).show();
+                                        }else{
+                                            Toast.makeText(LoginActivity.this, "Something was wrong", Toast.LENGTH_SHORT).show();
+                                            Log.d("Error verification", "onComplete: "+task.getException().getMessage());
+
+                                        }
+                                    }
+                                });
                     }
 
 
