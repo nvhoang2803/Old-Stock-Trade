@@ -69,8 +69,14 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ViewHo
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         for (DataSnapshot appleSnapshot: snapshot.getChildren()) {
-                            Glide.with(holder.userImage).load(appleSnapshot.getValue(User.class).getImageURL())
-                                    .into(holder.userImage);
+                            String tmp = appleSnapshot.getValue(User.class).getImageURL();
+                            if (tmp != null && tmp.length() > 0){
+                                Glide.with(holder.userImage).load(appleSnapshot.getValue(User.class).getImageURL())
+                                        .into(holder.userImage);
+                            }else{
+                                Glide.with(holder.userImage).load("https://image.flaticon.com/icons/png/512/17/17004.png")
+                                        .into(holder.userImage);
+                            }
                             holder.productSellerName.setText(appleSnapshot.getValue(User.class).getUsername());
                         }
                     }
@@ -318,10 +324,10 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ViewHo
         TextView productTime;
         LinearLayout productImageDotSlider;
         ImageView productStatus;
+        LinearLayout productRating;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-
             userName = itemView.findViewById(R.id.userName);
             productAddress = itemView.findViewById(R.id.productAddress);
             productDetail = itemView.findViewById(R.id.productDetail);
@@ -334,6 +340,7 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ViewHo
             productImageDotSlider = itemView.findViewById(R.id.productImageDotSlider);
             productStatus = itemView.findViewById(R.id.product_status);
             productSellerName = itemView.findViewById(R.id.productSellerName);
+            productRating = itemView.findViewById(R.id.productRating);
         }
     }
 

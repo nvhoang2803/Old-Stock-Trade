@@ -11,11 +11,12 @@
         android:id="@+id/constraintLayout"
         android:layout_width="match_parent"
         android:layout_height="60dp"
+        android:background="@color/background_color"
         app:layout_constraintTop_toTopOf="parent"
         tools:layout_editor_absoluteX="1dp">
 
         <ImageView
-            android:id="@+id/imageView2"
+            android:id="@+id/btnPost"
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:layout_marginEnd="16dp"
