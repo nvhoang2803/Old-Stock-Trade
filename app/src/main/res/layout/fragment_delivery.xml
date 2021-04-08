@@ -30,7 +30,8 @@
             android:id="@+id/btn_contact"
             tools:ignore="MissingConstraints"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginRight="20dp"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
     <com.google.android.material.tabs.TabLayout
         android:layout_width="match_parent"

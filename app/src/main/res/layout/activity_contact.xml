@@ -38,7 +38,9 @@
         app:tabIndicatorColor="@color/white"
         android:id="@+id/tab_contact"
         android:layout_marginTop="10dp"
-        app:tabTextColor="#fff">
+        app:tabTextColor="#fff"
+        app:tabPaddingStart="15dp"
+        app:tabPaddingEnd="15dp">
 
     </com.google.android.material.tabs.TabLayout>
     <androidx.viewpager.widget.ViewPager
