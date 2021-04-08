@@ -5,7 +5,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="8dp"
-        android:id="@+id/product_detail">
+        android:id="@+id/product_detail"
+        android:visibility="gone">
         <de.hdodenhof.circleimageview.CircleImageView
             android:layout_width="40dp"
             android:layout_height="40dp"
@@ -37,13 +38,16 @@
         <androidx.recyclerview.widget.RecyclerView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingLeft="76dp"/>
+            android:paddingLeft="76dp"
+            android:id="@+id/status1"
+            android:visibility="gone"/>
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:gravity="center"
-            android:visibility="visible">
+            android:visibility="gone"
+            android:id="@+id/status2">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -58,7 +62,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="This order is done."
-            android:visibility="visible"/>
+            android:visibility="gone"
+            android:id="@+id/status3"/>
     </LinearLayout>
 
 </RelativeLayout>

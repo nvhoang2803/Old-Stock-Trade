@@ -12,6 +12,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
+import com.example.oldstocktrade.Adapter.BuyingItemAdapter;
+import com.example.oldstocktrade.Adapter.ContactAdapter;
 import com.example.oldstocktrade.Model.BuyingItem;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -28,6 +30,7 @@ public class BuyingFragment extends Fragment {
     private RecyclerView recyclerView;
     private FirebaseUser firebaseUser;
     private List<BuyingItem> mItems;
+    private BuyingItemAdapter buyingItemAdapter;
     public BuyingFragment() {
         // Required empty public constructor
     }
@@ -50,11 +53,13 @@ public class BuyingFragment extends Fragment {
         ref_buying.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                mItems.clear();
                 for(DataSnapshot data : snapshot.getChildren()){
                     BuyingItem item = data.getValue(BuyingItem.class);
                     mItems.add(item);
                 }
-
+                 buyingItemAdapter = new BuyingItemAdapter(getContext(), mItems);
+                recyclerView.setAdapter(buyingItemAdapter);
             }
 
             @Override

@@ -6,10 +6,10 @@
         android:layout_height="wrap_content"
         android:padding="8dp"
         android:id="@+id/product_detail">
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:background="@mipmap/ic_launcher"
+        <ImageView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@mipmap/ic_launcher"
             android:id="@+id/product_image"
             android:layout_marginRight="20dp"/>
         <TextView

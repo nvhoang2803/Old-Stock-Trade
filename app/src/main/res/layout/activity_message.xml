@@ -10,7 +10,8 @@
         <androidx.appcompat.widget.Toolbar
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/toolbar">
+            android:id="@+id/toolbar"
+            android:background="@color/background_color">
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -54,7 +55,9 @@
                     android:layout_toRightOf="@id/profile_image"
                     android:id="@+id/username"
                     android:layout_marginLeft="10dp"
-                    android:layout_centerVertical="true"/>
+                    android:layout_centerVertical="true"
+                    android:textStyle="bold"
+                    android:textColor="#fff"/>
                 <ImageButton
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -62,7 +65,7 @@
                     android:id="@+id/btn_call"
                     android:layout_alignParentEnd="true"
                     android:layout_centerInParent="true"
-                    android:layout_marginRight="10dp"/>
+                    android:layout_marginRight="10dp" />
             </RelativeLayout>
 
         </androidx.appcompat.widget.Toolbar>
@@ -83,15 +86,16 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:id="@+id/messageBox"
-        android:padding="8dp">
+        android:padding="8dp"
+        android:background="@color/background_color">
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_toLeftOf="@+id/btn_location"
-            android:background="@android:color/transparent"
-            android:hint="Text here"
+            android:background="@drawable/text_box"
+            android:hint="Put your message here"
             android:layout_centerVertical="true"
-            android:padding="8px"
+            android:padding="20px"
             android:id="@+id/txt_msg"/>
         <ImageButton
             android:layout_width="40dp"

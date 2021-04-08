@@ -9,6 +9,9 @@ public class BuyingItem {
         this.status = status;
     }
 
+    public BuyingItem() {
+    }
+
     public String getProID() {
         return proID;
     }
