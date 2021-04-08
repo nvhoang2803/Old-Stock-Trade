@@ -14,12 +14,12 @@
         android:background="?android:attr/windowBackground">
         <androidx.appcompat.widget.Toolbar
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:background="?android:attr/windowBackground"
             android:id="@+id/toolbar"/>
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="40dp">
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -45,42 +45,94 @@
         android:layout_height="wrap_content"
         android:padding="10dp"
         android:orientation="vertical">
-        <EditText
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
-            android:hint="Product name"
-            android:id="@+id/name"/>
+            android:text="Product"
+            android:textSize="18dp"
+            android:textColor="@color/logo_color"
+            android:textStyle="bold"
+            android:layout_margin="8dp">
+        </TextView>
         <EditText
             android:layout_width="match_parent"
+            android:layout_height="54dp"
+            android:padding="15dp"
+            android:id="@+id/name"
+            android:background="@drawable/input_text" />
+        <TextView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
-            android:hint="Description"
+            android:text="Description"
+            android:textSize="18dp"
+            android:textColor="@color/logo_color"
+            android:textStyle="bold"
+            android:layout_margin="8dp">
+        </TextView>
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:padding="15dp"
+            android:background="@drawable/input_text"
             android:maxLines="5"
             android:id="@+id/description"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Address"
+            android:textSize="18dp"
+            android:textColor="@color/logo_color"
+            android:textStyle="bold"
+            android:layout_margin="8dp"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/addressPost"
+                android:layout_width="308dp"
+                android:layout_height="wrap_content"
+                android:enabled="false"
+                android:padding="15dp"
+                android:background="@drawable/input_text"/>
+            <ImageView
+                android:layout_width="54dp"
+                android:layout_height="54dp"
+                android:src="@drawable/ic_location"
+                android:id="@+id/btnLocation"></ImageView>
+        </LinearLayout>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Price"
+            android:textSize="18dp"
+            android:textColor="@color/logo_color"
+            android:textStyle="bold"
+            android:layout_margin="8dp"/>
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
-            android:hint="Address"
-            android:id="@+id/addressPost"
-            android:enabled="false"/>
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Price"
+            android:padding="15dp"
+            android:background="@drawable/input_text"
             android:id="@+id/price"/>
-        <Button
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/btnLocation"
-            android:text="Choose Location"
-            />
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Choose Image"
-            android:id="@+id/chooseImage"/>
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:text="Images"
+                android:textSize="18dp"
+                android:textColor="@color/logo_color"
+                android:textStyle="bold"
+                android:layout_margin="8dp"/>
+            <ImageView
+                android:layout_width="54dp"
+                android:layout_height="54dp"
+                android:src="@drawable/ic_upload_photo"
+                android:id="@+id/chooseImage"></ImageView>
+        </LinearLayout>
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -90,6 +142,13 @@
             android:layout_marginTop="30dp"
             android:visibility="gone"
             android:id="@+id/alert"/>
+        <GridView
+            android:layout_marginVertical="15dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/chosenImages"
+            android:numColumns="3"
+            android:background="@drawable/image_gridview"></GridView>
 
     </LinearLayout>
 
