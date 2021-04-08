@@ -7,6 +7,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -76,6 +77,21 @@ public class RegisterActivity extends AppCompatActivity {
                         pd.dismiss();
                         if (task.isSuccessful()) {
                             FirebaseUser user = auth.getCurrentUser();
+                            user.sendEmailVerification()
+                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            if (task.isSuccessful()) {
+                                                Log.d("SignUpEmail", "Email sent.");
+                                                Toast.makeText(RegisterActivity.this, "You registered successfully. Please check your email for verification", Toast.LENGTH_LONG).show();
+                                                startActivity(new Intent(RegisterActivity.this,LoginActivity.class));
+                                            }else{
+                                                Toast.makeText(RegisterActivity.this, "Something was wrong", Toast.LENGTH_SHORT).show();
+                                                Log.d("Error verification", "onComplete: "+task.getException().getMessage());
+
+                                            }
+                                        }
+                                    });
                             String userid = user.getUid();
 
                             reference = FirebaseDatabase.getInstance("https://old-stock-trade-default-rtdb.firebaseio.com/").getReference("Users").child(userid);
@@ -92,11 +108,18 @@ public class RegisterActivity extends AppCompatActivity {
                             reference.setValue(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
+
                                     if (task.isSuccessful()) {
-                                        Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
-                                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                                        startActivity(intent);
-                                        finish();
+                                        if(user.isEmailVerified()){
+                                            Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
+                                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                            startActivity(intent);
+                                            finish();
+                                        }
+                                        else{
+                                            Toast.makeText(RegisterActivity.this, "Please check your email to verification", Toast.LENGTH_SHORT).show();
+                                        }
+
                                     }
                                 }
                             });

@@ -16,6 +16,7 @@
             android:layout_height="wrap_content"
             android:maxWidth="200dp"
             android:text="Hello"
+            android:textSize="20sp"
             android:layout_toRightOf="@+id/profile_image"
             android:layout_centerVertical="true"
             android:padding="8dp"

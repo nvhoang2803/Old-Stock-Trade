@@ -32,7 +32,7 @@
             android:id="@+id/proName"
             android:text="test cam bien nhan dang van tay"
             android:layout_weight="1"
-            android:textColor="@color/logo_color"
+            android:textColor="@color/purple_700"
             android:layout_gravity="center_horizontal">
         </TextView>
         <LinearLayout
@@ -77,13 +77,12 @@
                     android:textSize="15dp"></TextView>
             </LinearLayout>
             <ImageView
-                android:id="@+id/btn_setting"
+                android:id="@+id/btn_buy"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_gravity="right"
-                android:src="@drawable/ic_menu"
-                android:layout_weight="8"
-                android:onClick="showPopup"></ImageView>
+                android:src="@drawable/ic_shopping_cart"
+                android:layout_weight="8"></ImageView>
         </LinearLayout>
     </LinearLayout>
 

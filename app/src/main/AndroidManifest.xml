@@ -19,9 +19,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.OldStockTrade">
-        <activity android:name=".SearchSortActivity"></activity>
-        <activity android:name=".ContactActivity"></activity>
-        <activity android:name=".DirectionMap"></activity>
+        <activity android:name=".SellerFeedActivity"></activity>
+        <activity android:name=".SearchSortActivity" />
+        <activity android:name=".ContactActivity" />
+        <activity android:name=".DirectionMap" />
         <activity
             android:name=".FullscreenActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"

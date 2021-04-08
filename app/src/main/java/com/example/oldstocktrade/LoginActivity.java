@@ -222,7 +222,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         FirebaseUser user = auth.getCurrentUser();
-        if(user!=null){
+        if(user!=null&&user.isEmailVerified()){
             startActivity(new Intent(LoginActivity.this,MainActivity.class));
             finish();
 
@@ -235,10 +235,30 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()){
-                    Intent i = new Intent(LoginActivity.this, MainActivity.class);
-                    i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(i);
-                    finish();
+                    if (auth.getCurrentUser().isEmailVerified()){
+                        Intent i = new Intent(LoginActivity.this, MainActivity.class);
+                        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(i);
+                        finish();
+                    }
+                    else{
+
+                        auth.getCurrentUser().sendEmailVerification()
+                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if (task.isSuccessful()) {
+                                            Log.d("SignUpEmail", "Email sent.");
+                                            Toast.makeText(LoginActivity.this, "Please check your email to verification", Toast.LENGTH_SHORT).show();
+                                        }else{
+                                            Toast.makeText(LoginActivity.this, "Something was wrong", Toast.LENGTH_SHORT).show();
+                                            Log.d("Error verification", "onComplete: "+task.getException().getMessage());
+
+                                        }
+                                    }
+                                });
+                    }
+
 
                 }
                 else {

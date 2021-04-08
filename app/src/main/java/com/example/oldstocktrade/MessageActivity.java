@@ -180,6 +180,14 @@ public class MessageActivity extends AppCompatActivity {
                 startActivity(i);
             }
         });
+        txt_username.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MessageActivity.this, SellerFeedActivity.class).addFlags(Intent.FLAG_ACTIVITY_FORWARD_RESULT);
+                intent.putExtra("userid",user.getId());
+                startActivity(intent);
+            }
+        });
 
     }
 
@@ -259,33 +267,7 @@ public class MessageActivity extends AppCompatActivity {
 
             }
         });
-//        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Conversations");
-//        reference.addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                for(DataSnapshot data : snapshot.getChildren()){
-//                    Conversation conversation = data.getValue(Conversation.class);
-//                    if ((conversation.getUser1().equals(user1) && conversation.getUser2().equals(user2)) || conversation.getUser1().equals(user2) && conversation.getUser2().equals(user1)){
-//                        conversation_id = data.getKey();
-//                        conversation_reference = data.getRef();
-//                        break;
-//                    }
-//                }
-//                if (conversation_reference == null){
-//                    HashMap<String, Object> hashMap = new HashMap<>();
-//                    hashMap.put("user1", user1);
-//                    hashMap.put("user2", user2);
-//                    conversation_reference = reference.push();
-//                    conversation_reference.setValue(hashMap);
-//                }
-//                loadMessage();
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError error) {
-//
-//            }
-//        });
+
     }
     void sendMessage(String sender,String receiver, String msg){
         if (conversation_reference == null) {
