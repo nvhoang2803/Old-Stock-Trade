@@ -10,12 +10,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.oldstocktrade.Adapter.ImageAdapter;
 import com.example.oldstocktrade.Model.Product;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -33,11 +31,10 @@ public class PostActivity extends AppCompatActivity {
     private ImageView close;
     private TextView post;
     private EditText description, address, price;
-    private ImageView btnLocation;
+    private Button btnLocation;
     private EditText name;
-    private ImageView chooseImage;
+    private Button chooseImage;
     private TextView alert;
-    private GridView chosenImages;
     private ArrayList<Uri> a= new ArrayList<Uri>();
     private Uri uriImage;
     private ProgressDialog progressDialog;
@@ -57,7 +54,6 @@ public class PostActivity extends AppCompatActivity {
         price= findViewById(R.id.price);
         name= findViewById(R.id.name);
         chooseImage= findViewById(R.id.chooseImage);
-        chosenImages= findViewById(R.id.chosenImages);
         alert= findViewById(R.id.alert);
         Intent recieve = getIntent();
         if(recieve!=null){
@@ -100,7 +96,6 @@ public class PostActivity extends AppCompatActivity {
         chooseImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                a.clear();
                 Intent intent= new Intent(Intent.ACTION_GET_CONTENT);
                 intent.setType("image/*");
                 intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
@@ -125,7 +120,6 @@ public class PostActivity extends AppCompatActivity {
                 String a[]= location.split("-");
                 lat= Double.parseDouble(a[0]);
                 lon= Double.parseDouble(a[1]);
-
             }
         }
         if(requestCode == PICK_IMAGE){
@@ -136,7 +130,8 @@ public class PostActivity extends AppCompatActivity {
                         uriImage= data.getClipData().getItemAt(i).getUri();
                         a.add(uriImage);
                     }
-                    chosenImages.setAdapter(new ImageAdapter(this,a));
+                    alert.setVisibility(View.VISIBLE);
+                    alert.setText(a.size()+" image");
                 }
                 else{
                     Toast.makeText(this, "Please select multiple image", Toast.LENGTH_SHORT).show();
