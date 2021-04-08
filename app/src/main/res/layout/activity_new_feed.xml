@@ -40,7 +40,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
             android:text="OldStockTrade"
-            android:textColor="#4a2dbc"
+            android:textColor="@color/logo_color"
             android:textSize="20sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"

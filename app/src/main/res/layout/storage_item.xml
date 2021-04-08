@@ -32,7 +32,7 @@
             android:id="@+id/proName"
             android:text="test cam bien nhan dang van tay"
             android:layout_weight="1"
-            android:textColor="@color/purple_700"
+            android:textColor="@color/logo_color"
             android:layout_gravity="center_horizontal">
         </TextView>
         <LinearLayout
