@@ -318,10 +318,10 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ViewHo
         TextView productTime;
         LinearLayout productImageDotSlider;
         ImageView productStatus;
+        LinearLayout productRating;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-
             userName = itemView.findViewById(R.id.userName);
             productAddress = itemView.findViewById(R.id.productAddress);
             productDetail = itemView.findViewById(R.id.productDetail);
@@ -334,6 +334,7 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ViewHo
             productImageDotSlider = itemView.findViewById(R.id.productImageDotSlider);
             productStatus = itemView.findViewById(R.id.product_status);
             productSellerName = itemView.findViewById(R.id.productSellerName);
+            productRating = itemView.findViewById(R.id.productRating);
         }
     }
 
