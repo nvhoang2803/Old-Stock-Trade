@@ -69,8 +69,14 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ViewHo
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         for (DataSnapshot appleSnapshot: snapshot.getChildren()) {
-                            Glide.with(holder.userImage).load(appleSnapshot.getValue(User.class).getImageURL())
-                                    .into(holder.userImage);
+                            String tmp = appleSnapshot.getValue(User.class).getImageURL();
+                            if (tmp != null && tmp.length() > 0){
+                                Glide.with(holder.userImage).load(appleSnapshot.getValue(User.class).getImageURL())
+                                        .into(holder.userImage);
+                            }else{
+                                Glide.with(holder.userImage).load("https://image.flaticon.com/icons/png/512/17/17004.png")
+                                        .into(holder.userImage);
+                            }
                             holder.productSellerName.setText(appleSnapshot.getValue(User.class).getUsername());
                         }
                     }
