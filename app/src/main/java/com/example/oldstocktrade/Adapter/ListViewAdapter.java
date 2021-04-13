@@ -347,11 +347,8 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ViewHo
         TextView productTime;
         LinearLayout productImageDotSlider;
         ImageView productStatus;
-<<<<<<< Updated upstream
         LinearLayout productRating;
-=======
         ImageView imgProduct;
->>>>>>> Stashed changes
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -366,13 +363,10 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ViewHo
             productTime = itemView.findViewById(R.id.productTime);
             productImageDotSlider = itemView.findViewById(R.id.productImageDotSlider);
             productStatus = itemView.findViewById(R.id.product_status);
-<<<<<<< Updated upstream
             productSellerName = itemView.findViewById(R.id.productSellerName);
             productRating = itemView.findViewById(R.id.productRating);
-=======
             imageView= itemView.findViewById(R.id.imageView);
             imgProduct= itemView.findViewById(R.id.imageViewMain);
->>>>>>> Stashed changes
         }
 
 
