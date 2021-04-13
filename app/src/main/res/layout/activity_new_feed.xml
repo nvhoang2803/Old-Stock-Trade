@@ -71,7 +71,7 @@
                 android:id="@+id/listViewProduct"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                tools:ignore="NestedScrolling"></androidx.recyclerview.widget.RecyclerView>
+                tools:ignore="NestedScrolling"/>
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
     </ScrollView>
 

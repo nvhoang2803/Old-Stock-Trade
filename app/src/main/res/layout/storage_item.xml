@@ -68,13 +68,13 @@
                     android:textColor="@color/black"
                     android:text="500000"
                     android:textSize="15dp"
-                    android:id="@+id/proPrice"></TextView>
+                    android:id="@+id/proPrice"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/black"
                     android:text=" VND"
-                    android:textSize="15dp"></TextView>
+                    android:textSize="15dp"/>
             </LinearLayout>
             <ImageView
                 android:id="@+id/btn_setting"
@@ -83,8 +83,11 @@
                 android:layout_gravity="right"
                 android:src="@drawable/ic_menu"
                 android:layout_weight="8"
-                android:onClick="showPopup"></ImageView>
+                android:onClick="showPopup"/>
+
         </LinearLayout>
     </LinearLayout>
+
+
 
 </androidx.cardview.widget.CardView>
