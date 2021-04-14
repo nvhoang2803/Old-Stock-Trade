@@ -2,7 +2,10 @@ package com.example.oldstocktrade.Adapter;
 
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +13,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -18,11 +22,15 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.example.oldstocktrade.HomeFragment;
 import com.example.oldstocktrade.MainActivity;
 import com.example.oldstocktrade.Model.Comment;
 import com.example.oldstocktrade.Model.Wishlist;
 import com.example.oldstocktrade.Model.Product;
 import com.example.oldstocktrade.Model.User;
+import com.example.oldstocktrade.ParticularPageActivity;
+import com.example.oldstocktrade.PostActivity;
 import com.example.oldstocktrade.R;
 import com.example.oldstocktrade.utils.BasicFunctions;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
@@ -33,6 +41,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -44,7 +55,9 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ViewHo
     ArrayList<String> userProductlike;
     ArrayList<Product> productArrayList;
     DatabaseReference mReference = FirebaseDatabase.getInstance().getReference();
+    StorageReference sr= FirebaseStorage.getInstance().getReference();
     ArrayList<Double> lonlat;
+    Context ct;
 
     public ListViewAdapter(ArrayList<Product> productArrayList, Activity curAcc, User a, ArrayList<String> a1,ArrayList<Double> lonlat) {
         this.userProductlike = a1;
@@ -85,6 +98,7 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ViewHo
                     }
                 });
 
+
         //Set user add to favorite list
         if (userProductlike.contains(productArrayList.get(position).getProID())){
             holder.productLike.setImageResource(R.drawable.ic_like__1_);
@@ -105,21 +119,7 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ViewHo
         double price = productArrayList.get(position).getPrice();
         priceD = ChangeMoneyToString((int) price);
 
-        //
-        mReference.child("Users").orderByChild("id").equalTo(productArrayList.get(position).getSeller())
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        for (DataSnapshot appleSnapshot: snapshot.getChildren()) {
-                            Glide.with(holder.userImage).load(appleSnapshot.getValue(User.class).getImageURL())
-                                    .into(holder.userImage);
-                        }
-                    }
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-                    }
-                });
 
         holder.productComment.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -185,6 +185,7 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ViewHo
             dis = BasicFunctions.calDistance(lonlat.get(0), lonlat.get(1),
                     productArrayList.get(position).getLongitude(),
                     productArrayList.get(position).getLatitude());
+
         }else{
              dis = BasicFunctions.calDistance(((MainActivity) curActivity).longitude,
                     ((MainActivity) curActivity).latitude,
@@ -194,13 +195,14 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ViewHo
 
         dis = Math.floor(dis);
 
-
         holder.productDistance.setText((int) dis + "km");
         holder.userName.setText(productArrayList.get(position).getName());
         //Handle ImageSlider
         String[] arrImage = productArrayList.get(position).getImageURL().toArray(new String[0]);
         ImageSlider imgSliderAdapter = new ImageSlider(curActivity,arrImage);
         holder.productImage.setAdapter(imgSliderAdapter);
+
+//        Glide.with(holder.imgProduct).load(arrImage[0]).into(holder.imgProduct);
         //Handle ImageSlider Dot
 
         if (arrImage.length > 1){
@@ -232,7 +234,27 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ViewHo
 
                 }
             });
+
+
         }
+
+//        String m= a.get(0);
+//        Picasso.get().load(a.get(0).toString()).into(holder.imageView);
+//        Glide.with(holder.imageView).load(a.get(0)).into(holder.imageView);
+
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String id= productArrayList.get(position).getProID();
+                String userID= productArrayList.get(position).getSeller();
+                Intent partIntent= new Intent(v.getContext(), ParticularPageActivity.class);
+                partIntent.putExtra("id", id);
+                partIntent.putExtra("userID", userID);
+                partIntent.putExtra("sizeImageURL", arrImage.length);
+                v.getContext().startActivity(partIntent);
+            }
+        });
 
 
         //Hanlde product like behavior
@@ -312,6 +334,7 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ViewHo
 
 
     public class ViewHolder extends RecyclerView.ViewHolder {
+        ImageView imageView;
         TextView userName;
         ImageView userImage;
         ViewPager productImage;
@@ -325,6 +348,7 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ViewHo
         LinearLayout productImageDotSlider;
         ImageView productStatus;
         LinearLayout productRating;
+        ImageView imgProduct;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -341,7 +365,11 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ViewHo
             productStatus = itemView.findViewById(R.id.product_status);
             productSellerName = itemView.findViewById(R.id.productSellerName);
             productRating = itemView.findViewById(R.id.productRating);
+            imageView= itemView.findViewById(R.id.imageView);
+            imgProduct= itemView.findViewById(R.id.imageViewMain);
         }
+
+
     }
 
 
