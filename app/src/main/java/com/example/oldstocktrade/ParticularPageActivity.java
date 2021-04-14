@@ -1,10 +1,12 @@
 package com.example.oldstocktrade;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -77,6 +79,7 @@ public class ParticularPageActivity extends AppCompatActivity {
             });
             df= FirebaseDatabase.getInstance().getReference();
             df.child("Products").child(receiveID).addValueEventListener(new ValueEventListener() {
+                @SuppressLint("ClickableViewAccessibility")
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     String des= snapshot.child("Description").getValue().toString();
@@ -95,20 +98,42 @@ public class ParticularPageActivity extends AppCompatActivity {
                     pricePart.setText("Price: "+price);
                     dayPostPart.setText("Day Post: "+dayPost);
                     addressPart.setText("Address: "+ add);
-                    btnReport.setOnClickListener(new View.OnClickListener() {
+                    df.child("Report").child(receiveID).addValueEventListener(new ValueEventListener() {
                         @Override
-                        public void onClick(View v) {
-                            int report= Integer.parseInt(snapshot.child("Report").getValue().toString());
-                            report++;
-                            df.child("Products").child(receiveID).child("Report").setValue(report);
-                            btnReport.setEnabled(false);
+                        public void onDataChange(@NonNull DataSnapshot snapshot2) {
+                            int countUser= (int) snapshot2.getChildrenCount();
+                            if(snapshot2.exists()){
+                                for(int i=1;i<=countUser;i++){
+                                    if((snapshot2.child(String.valueOf(i)).getValue().toString()).equals(receiveUserID)){
+                                        btnReport.setEnabled(false);
+                                        break;
+                                    }
+                                }
+
+                            }
+                            btnReport.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    df.child("Report").child(receiveID).child(String.valueOf(countUser+1)).setValue(receiveUserID);
+                                    int report= Integer.parseInt(snapshot.child("Report").getValue().toString());
+                                    report++;
+                                    df.child("Products").child(receiveID).child("Report").setValue(report);
+                                    btnReport.setEnabled(false);
+                                }
+                            });
+
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
                         }
                     });
+
                 }
 
                 @Override
                 public void onCancelled(@NonNull DatabaseError error) {
-                    Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             });
 
