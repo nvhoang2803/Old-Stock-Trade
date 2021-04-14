@@ -2,6 +2,7 @@ package com.example.oldstocktrade;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.format.DateFormat;
@@ -36,6 +37,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -48,7 +50,7 @@ public class ParticularPageActivity extends AppCompatActivity {
     private TextView nameUser, phoneUser;
     private DatabaseReference df;
     private ViewPager productImagePart;
-    private Button btnReport;
+    private Button btnReport, call, sendSMS, deletePart;
     private ImageView arrow;
 
 
@@ -69,6 +71,11 @@ public class ParticularPageActivity extends AppCompatActivity {
             productImagePart= findViewById(R.id.productImagePart);
             btnReport= findViewById(R.id.btnReport);
             arrow= findViewById(R.id.btnBack);
+            call= findViewById(R.id.call);
+            sendSMS= findViewById(R.id.sendSMS);
+            deletePart= findViewById(R.id.deletePart);
+            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+            String myID= user.getUid();
 
             arrow.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -82,6 +89,18 @@ public class ParticularPageActivity extends AppCompatActivity {
                 @SuppressLint("ClickableViewAccessibility")
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    if((snapshot.child("Seller").getValue().toString()).equals(myID)){
+                        deletePart.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                df.child("Products").child(receiveID).removeValue();
+                                startActivity(new Intent(ParticularPageActivity.this,MainActivity.class));
+                                finish();
+                            }
+                        });
+                    }else{
+                        deletePart.setVisibility(View.GONE);
+                    }
                     String des= snapshot.child("Description").getValue().toString();
                     String price= snapshot.child("Price").getValue().toString();
                     String dayPost= DateFormat.format("dd-MM-yyyy", Long.parseLong(snapshot.child("Timestamp").getValue().toString())).toString();
@@ -104,7 +123,7 @@ public class ParticularPageActivity extends AppCompatActivity {
                             int countUser= (int) snapshot2.getChildrenCount();
                             if(snapshot2.exists()){
                                 for(int i=1;i<=countUser;i++){
-                                    if((snapshot2.child(String.valueOf(i)).getValue().toString()).equals(receiveUserID)){
+                                    if((snapshot2.child(String.valueOf(i)).getValue().toString()).equals(myID)){
                                         btnReport.setEnabled(false);
                                         break;
                                     }
@@ -114,7 +133,7 @@ public class ParticularPageActivity extends AppCompatActivity {
                             btnReport.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
-                                    df.child("Report").child(receiveID).child(String.valueOf(countUser+1)).setValue(receiveUserID);
+                                    df.child("Report").child(receiveID).child(String.valueOf(countUser+1)).setValue(myID);
                                     int report= Integer.parseInt(snapshot.child("Report").getValue().toString());
                                     report++;
                                     df.child("Products").child(receiveID).child("Report").setValue(report);
@@ -144,6 +163,23 @@ public class ParticularPageActivity extends AppCompatActivity {
                     String pu= snapshot.child("phone").getValue().toString();
                     nameUser.setText("Username: "+ nu);
                     phoneUser.setText("Phone user: "+ pu);
+
+                    call.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent= new Intent(Intent.ACTION_DIAL);
+                            intent.setData(Uri.parse("tel:"+pu));
+                            startActivity(intent);
+                        }
+                    });
+
+                    sendSMS.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent= new Intent(Intent.ACTION_VIEW, Uri.parse("sms:"+pu));
+                            startActivity(intent);
+                        }
+                    });
                 }
 
                 @Override
@@ -151,6 +187,8 @@ public class ParticularPageActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             });
+
+
 
 //
 //                    View view = LayoutInflater.from(this).inflate(R.layout.layout_bottomesheet_comment,

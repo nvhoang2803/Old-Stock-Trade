@@ -57,7 +57,6 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ViewHo
     DatabaseReference mReference = FirebaseDatabase.getInstance().getReference();
     StorageReference sr= FirebaseStorage.getInstance().getReference();
     ArrayList<Double> lonlat;
-    Context ct;
 
     public ListViewAdapter(ArrayList<Product> productArrayList, Activity curAcc, User a, ArrayList<String> a1,ArrayList<Double> lonlat) {
         this.userProductlike = a1;
