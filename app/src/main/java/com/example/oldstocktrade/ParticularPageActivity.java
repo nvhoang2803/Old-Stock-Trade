@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -50,8 +51,10 @@ public class ParticularPageActivity extends AppCompatActivity {
     private TextView nameUser, phoneUser;
     private DatabaseReference df;
     private ViewPager productImagePart;
-    private Button btnReport, call, sendSMS, deletePart;
+    private Button btnReport, call, sendSMS, deletePart,btnDirection;
     private ImageView arrow;
+    private Double longitudeS = 0.0,latitudeS = 0.0,longitudeD = 0.0,latitudeD = 0.0;
+    String addressS,addressD;
 
 
         @Override
@@ -61,6 +64,9 @@ public class ParticularPageActivity extends AppCompatActivity {
             String receiveID= getIntent().getExtras().get("id").toString();
             String receiveUserID= getIntent().getExtras().get("userID").toString();
             int sizeImageURL= (int)(getIntent().getExtras().get("sizeImageURL"));
+            longitudeS = (Double) (getIntent().getExtras().get("longitude"));
+            latitudeS = (Double) (getIntent().getExtras().get("latitude"));
+            addressS = getIntent().getExtras().get("address").toString();
 
             descriptionPart= findViewById(R.id.descriptionPart);
             pricePart= findViewById(R.id.pricePart);
@@ -76,7 +82,23 @@ public class ParticularPageActivity extends AppCompatActivity {
             deletePart= findViewById(R.id.deletePart);
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
             String myID= user.getUid();
+            btnDirection = findViewById(R.id.btnDirection);
+            btnDirection.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(ParticularPageActivity.this,DirectionMap.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putDouble("latitudeS",latitudeS);
+                    bundle.putDouble("longitudeS",longitudeS);
+                    bundle.putDouble("latitudeD",latitudeD);
+                    bundle.putDouble("longitudeD",longitudeD);
+                    bundle.putString("addressS",addressS);
+                    bundle.putString("addressD",addressD);
+                    intent.putExtras(bundle);
+                    startActivity(intent);
 
+                }
+            });
             arrow.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -103,6 +125,10 @@ public class ParticularPageActivity extends AppCompatActivity {
                     }
                     String des= snapshot.child("Description").getValue().toString();
                     String price= snapshot.child("Price").getValue().toString();
+                    longitudeD = Double.parseDouble(snapshot.child("Longitude").getValue().toString());
+                    latitudeD = Double.parseDouble(snapshot.child("Latitude").getValue().toString());
+                    addressD= snapshot.child("Address").getValue().toString();
+                    Log.d("getFromDBLo", "onDataChange: "+longitudeD+" "+latitudeD);
                     String dayPost= DateFormat.format("dd-MM-yyyy", Long.parseLong(snapshot.child("Timestamp").getValue().toString())).toString();
                     String add= snapshot.child("Address").getValue().toString();
 
