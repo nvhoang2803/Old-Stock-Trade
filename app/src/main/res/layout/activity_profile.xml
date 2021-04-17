@@ -35,6 +35,7 @@
                     android:layout_centerVertical="true"
                     android:layout_marginStart="10dp"
                     android:textSize="18sp"
+                    android:textColor="@color/logo_color"
                     android:layout_toEndOf="@+id/btnClose"/>
                 <TextView
                     android:layout_width="wrap_content"
@@ -44,6 +45,7 @@
                     android:textSize="18sp"
                     android:layout_centerVertical="true"
                     android:layout_alignParentEnd="true"
+                    android:textColor="@color/logo_color"
                     android:id="@+id/btnSave"/>
 
 
@@ -71,6 +73,7 @@
             android:layout_gravity="center"
             android:id="@+id/change_photo"
             android:text="Change Photo"
+            android:textColor="@color/background_color"
             android:textSize="18dp"
             />
         <LinearLayout
@@ -81,6 +84,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Username:"
+                android:textColor="@color/back_btn"
                 android:textSize="20dp"
                 android:textStyle="bold"
                 android:layout_marginRight="10dp"/>
@@ -100,6 +104,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Phone:"
+                android:textColor="@color/back_btn"
                 android:textSize="20dp"
                 android:textStyle="bold"/>
             <EditText
@@ -118,6 +123,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="10dp"
+                android:textColor="@color/back_btn"
                 android:text="Address:"
                 android:textSize="20dp"
                 android:textStyle="bold"/>

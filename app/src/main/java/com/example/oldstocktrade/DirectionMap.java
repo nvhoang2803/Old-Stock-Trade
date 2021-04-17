@@ -40,14 +40,15 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class DirectionMap extends FragmentActivity implements OnMapReadyCallback{
     GoogleMap map;
     MarkerOptions source, dest;
-    Polyline currentPolyline;
     String strOrigin,strDest;
-    TextView tvAddress;
+    TextView tvTo,tvFrom;
     ImageView btnGMap;
-    ImageButton btnBack;
+    CircleImageView btnBack;
     @SuppressLint("WrongViewCast")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,10 +75,12 @@ public class DirectionMap extends FragmentActivity implements OnMapReadyCallback
         LatLng des = dest.getPosition();
         strOrigin = origin.latitude+","+origin.longitude;
         strDest = des.latitude+","+des.longitude;
-        tvAddress = findViewById(R.id.tvAddress);
-        tvAddress.setText("255 Ba tháng hai, P10, Q10, TP HCM");
+        tvTo = findViewById(R.id.tvTo);
+        tvTo.setText("255 Ba tháng hai, P10, Q10, TP HCM");
+        tvFrom = findViewById(R.id.tvTo);
+        tvFrom.setText("255 Ba tháng hai, P10, Q10, TP HCM");
         btnGMap = findViewById(R.id.btnGMap);
-        btnBack = findViewById(R.id.btnBack);
+        btnBack = findViewById(R.id.btnBack2);
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -110,7 +113,7 @@ public class DirectionMap extends FragmentActivity implements OnMapReadyCallback
 
                     PolylineOptions polylineOptions = new PolylineOptions().
                             geodesic(true).
-                            color(Color.BLUE).
+                            color(getApplicationContext().getResources().getColor(R.color.back_btn)).
                             width(10);
 
                     for (int i = 0; i < route.points.size(); i++)
