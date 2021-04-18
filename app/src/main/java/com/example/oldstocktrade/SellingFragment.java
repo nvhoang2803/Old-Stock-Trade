@@ -1,5 +1,6 @@
 package com.example.oldstocktrade;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -40,6 +41,7 @@ public class SellingFragment extends Fragment {
     private FirebaseUser fuser;
     private String userID;
     private LinearLayout oopslayout;
+    MainActivity main = (MainActivity) getActivity();
     public SellingFragment(){
 
     }
@@ -60,7 +62,7 @@ public class SellingFragment extends Fragment {
                         lstProduct.add(tmp);
                     }
                 }
-                if (lstProduct.size() == 0){
+                if (lstProduct.size() != 0){
                     SoldFragment.removeNoStockLayout(oopslayout);
                 }
                 myrecycleview = (RecyclerView) v.findViewById(R.id.storage_recyclerview);
@@ -78,6 +80,14 @@ public class SellingFragment extends Fragment {
 
         return v;
 
+    }
+    public void editProduct(int position){
+        Intent intent = new Intent(getActivity(),PostActivity.class);
+        Bundle myBundle = new Bundle();
+        myBundle.putDouble ("lat",main.latitude);
+        myBundle.putDouble ("long",main.longitude);
+        intent.putExtras(myBundle);
+        startActivity(intent);
     }
 
 

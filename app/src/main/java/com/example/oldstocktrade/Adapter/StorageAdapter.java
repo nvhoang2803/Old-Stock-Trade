@@ -2,6 +2,7 @@ package com.example.oldstocktrade.Adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -15,9 +16,12 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.oldstocktrade.EditActivity;
+import com.example.oldstocktrade.MainActivity;
 import com.example.oldstocktrade.MessageActivity;
 import com.example.oldstocktrade.Model.Product;
 import com.example.oldstocktrade.Model.WishListItem;
+import com.example.oldstocktrade.PostActivity;
 import com.example.oldstocktrade.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -108,6 +112,7 @@ public class StorageAdapter extends RecyclerView.Adapter<StorageAdapter.MyViewHo
                         public boolean onMenuItemClick(MenuItem item) {
                             if (item.getItemId() == R.id.edit_item){
                                 // edit selling item
+                                editProduct(position);
                             } else if (item.getItemId() == R.id.remove_item){
                                 // remove item
                                 removeFromSelling(position);
@@ -175,5 +180,26 @@ public class StorageAdapter extends RecyclerView.Adapter<StorageAdapter.MyViewHo
         intent.putExtra("userid", mData.get(position).getSeller());
         mContext.startActivity(intent);
     }
-
+    public void editProduct(int position) {
+        Intent intent = new Intent(mContext, EditActivity.class);
+        Bundle myBundle = new Bundle();
+        myBundle.putString("Address", mData.get(position).getAddress());
+        myBundle.putString("ProID", mData.get(position).getProID());
+        myBundle.putString("Buyer", mData.get(position).getBuyer());
+        myBundle.putString("Seller", mData.get(position).getSeller());
+        myBundle.putString("Description", mData.get(position).getDescription());
+        myBundle.putDouble("Latitude", mData.get(position).getLatitude());
+        myBundle.putDouble("Longitude", mData.get(position).getLongitude());
+        myBundle.putString("Name", mData.get(position).getName());
+        myBundle.putDouble("Price", mData.get(position).getPrice());
+        myBundle.putInt("Report", mData.get(position).getReport());
+        myBundle.putInt("Status", mData.get(position).getStatus());
+        myBundle.putLong("Timestamp", mData.get(position).getTimestamp());
+        myBundle.putBoolean("VisibleToBuyer", mData.get(position).isVisibleToBuyer());
+        myBundle.putBoolean("VisibleToSeller", mData.get(position).isVisibleToSeller());
+        myBundle.putStringArrayList("ImageURL",mData.get(position).getImageURL());
+        myBundle.putFloat("Rate",mData.get(position).getRate());
+        intent.putExtras(myBundle);
+        mContext.startActivity(intent);
+    }
 }
