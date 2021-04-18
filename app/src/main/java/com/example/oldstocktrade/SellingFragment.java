@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 
 import com.example.oldstocktrade.Adapter.StorageAdapter;
@@ -38,6 +39,7 @@ public class SellingFragment extends Fragment {
     DatabaseReference mReference = FirebaseDatabase.getInstance().getReference();
     private FirebaseUser fuser;
     private String userID;
+    private LinearLayout oopslayout;
     public SellingFragment(){
 
     }
@@ -47,6 +49,8 @@ public class SellingFragment extends Fragment {
         lstProduct = new ArrayList<>();
         fuser = FirebaseAuth.getInstance().getCurrentUser();
         userID = fuser.getUid();
+        oopslayout = (LinearLayout) v.findViewById(R.id.oops_layout_selling);
+        SoldFragment.createNoStockLayout(oopslayout);
         mReference.child("Products").orderByChild("Seller").equalTo(userID).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -55,6 +59,9 @@ public class SellingFragment extends Fragment {
                     if (tmp.getStatus() == 1) {
                         lstProduct.add(tmp);
                     }
+                }
+                if (lstProduct.size() == 0){
+                    SoldFragment.removeNoStockLayout(oopslayout);
                 }
                 myrecycleview = (RecyclerView) v.findViewById(R.id.storage_recyclerview);
                 StorageAdapter recyclerAdapter = new StorageAdapter(getContext(),lstProduct,"selling");

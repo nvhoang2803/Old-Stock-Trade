@@ -10,6 +10,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import com.example.oldstocktrade.Adapter.HistoryAdapter;
 import com.example.oldstocktrade.Model.Product;
@@ -24,6 +26,9 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.view.ViewGroup.LayoutParams.FILL_PARENT;
+import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
+
 /**
  * A simple {@link Fragment} subclass.
  * Use the  factory method to
@@ -36,15 +41,22 @@ public class BoughtFragment extends Fragment {
     private DatabaseReference mReference = FirebaseDatabase.getInstance().getReference();
     private FirebaseUser fuser;
     private String userID;
-    public BoughtFragment(){
+    private LinearLayout oopslayout;
+    private ImageView oops;
+    BoughtFragment(){
 
     }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle saveInstanceState){
-        v = inflater.inflate(R.layout.fragment_sold, container, false);
+        v = inflater.inflate(R.layout.fragment_bought, container, false);
         lstProduct = new ArrayList<>();
         fuser = FirebaseAuth.getInstance().getCurrentUser();
         userID = fuser.getUid();
+        oopslayout = (LinearLayout) v.findViewById(R.id.oops_layout);
+        ViewGroup.LayoutParams layoutParams = oopslayout.getLayoutParams();
+        layoutParams.width = MATCH_PARENT;
+        layoutParams.height = MATCH_PARENT;
+        oopslayout.setLayoutParams(layoutParams);
         mReference.child("Products").orderByChild("Buyer").equalTo(userID).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -54,11 +66,20 @@ public class BoughtFragment extends Fragment {
                         lstProduct.add(tmp);
                     }
                 }
-                myrecycleview = (RecyclerView) v.findViewById(R.id.history_recyclerview);
-                HistoryAdapter recyclerAdapter = new HistoryAdapter(getContext(),lstProduct,"bought");
-                myrecycleview.setLayoutManager(new GridLayoutManager(getActivity(),2));
-                myrecycleview.setAdapter(recyclerAdapter);
-
+                if (lstProduct.size() == 0){
+                    layoutParams.width = MATCH_PARENT;
+                    layoutParams.height = MATCH_PARENT;
+                    oopslayout.setLayoutParams(layoutParams);
+                }
+                else {
+                    layoutParams.width = 0;
+                    layoutParams.height = 0;
+                    oopslayout.setLayoutParams(layoutParams);
+                    myrecycleview = (RecyclerView) v.findViewById(R.id.history_recyclerview);
+                    HistoryAdapter recyclerAdapter = new HistoryAdapter(getContext(),lstProduct,"bought");
+                    myrecycleview.setLayoutManager(new GridLayoutManager(getActivity(),2));
+                    myrecycleview.setAdapter(recyclerAdapter);
+                }
             }
 
             @Override

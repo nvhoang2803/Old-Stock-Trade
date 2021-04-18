@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import com.example.oldstocktrade.Adapter.HistoryAdapter;
 import com.example.oldstocktrade.Model.Product;
@@ -24,6 +25,8 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
+
 /**
  * A simple {@link Fragment} subclass.
  * Use the  factory method to
@@ -36,6 +39,7 @@ public class SoldFragment extends Fragment {
     DatabaseReference mReference = FirebaseDatabase.getInstance().getReference();
     private FirebaseUser fuser;
     private String userID;
+    private LinearLayout oopslayout;
     public SoldFragment(){
 
     }
@@ -45,6 +49,8 @@ public class SoldFragment extends Fragment {
         lstProduct = new ArrayList<>();
         fuser = FirebaseAuth.getInstance().getCurrentUser();
         userID = fuser.getUid();
+        oopslayout = (LinearLayout) v.findViewById(R.id.oops_layout_sold);
+        createNoStockLayout(oopslayout);
         mReference.child("Products").orderByChild("Seller").equalTo(userID).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -54,10 +60,16 @@ public class SoldFragment extends Fragment {
                         lstProduct.add(tmp);
                     }
                 }
-                myrecycleview = (RecyclerView) v.findViewById(R.id.history_recyclerview);
-                HistoryAdapter recyclerAdapter = new HistoryAdapter(getContext(),lstProduct,"sold");
-                myrecycleview.setLayoutManager(new GridLayoutManager(getActivity(),2));
-                myrecycleview.setAdapter(recyclerAdapter);
+                if (lstProduct.size() == 0){
+                    createNoStockLayout(oopslayout);
+                }
+                else {
+                    removeNoStockLayout(oopslayout);
+                    myrecycleview = (RecyclerView) v.findViewById(R.id.history_recyclerview);
+                    HistoryAdapter recyclerAdapter = new HistoryAdapter(getContext(), lstProduct, "sold");
+                    myrecycleview.setLayoutManager(new GridLayoutManager(getActivity(), 2));
+                    myrecycleview.setAdapter(recyclerAdapter);
+                }
 
             }
 
@@ -69,8 +81,19 @@ public class SoldFragment extends Fragment {
 
         return v;
 
-        
+
+    }
+    public static void createNoStockLayout(LinearLayout oopslayout){
+        ViewGroup.LayoutParams layoutParams = oopslayout.getLayoutParams();
+        layoutParams.width = MATCH_PARENT;
+        layoutParams.height = MATCH_PARENT;
+        oopslayout.setLayoutParams(layoutParams);
     }
 
-
+    public static void removeNoStockLayout(LinearLayout oopslayout){
+        ViewGroup.LayoutParams layoutParams = oopslayout.getLayoutParams();
+        layoutParams.width = 0;
+        layoutParams.height = 0;
+        oopslayout.setLayoutParams(layoutParams);
+    }
 }

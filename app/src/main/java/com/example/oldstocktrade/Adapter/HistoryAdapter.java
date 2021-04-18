@@ -5,14 +5,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.oldstocktrade.BoughtFragment;
 import com.example.oldstocktrade.Model.Product;
 import com.example.oldstocktrade.R;
+import com.example.oldstocktrade.SoldFragment;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -25,6 +28,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.MyViewHo
     List<Product> mData;
     String tabName;
     RecyclerView mRecyclerView;
+//    View parentView;
 
 
     public HistoryAdapter(Context mContext, List<Product> mData, String tabName) {
@@ -45,6 +49,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.MyViewHo
     public HistoryAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v;
         v = LayoutInflater.from(mContext).inflate(R.layout.history_item,parent,false);
+//        parentView = LayoutInflater.from(mContext).inflate(R.layout.fragment_sold,parent,false);
         MyViewHolder vHolder = new MyViewHolder(v);
         return vHolder;
     }
@@ -93,6 +98,13 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.MyViewHo
                 }
                 mData.remove(position);
                 mRecyclerView.removeViewAt(position);
+//                if (mData.size() == 0){
+//                    LinearLayout oopslayout = null;
+//                    if (tabName == "sold"){
+//                        oopslayout = (LinearLayout) parentView.findViewById(R.id.oops_layout_sold);
+//                    }
+//                    SoldFragment.createNoStockLayout(oopslayout);
+//                }
                 notifyItemRemoved(position);
                 notifyItemRangeChanged(position, mData.size());
             }

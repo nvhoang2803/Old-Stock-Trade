@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import com.example.oldstocktrade.Adapter.StorageAdapter;
 import com.example.oldstocktrade.Model.Product;
@@ -40,16 +41,19 @@ public class  WishListFragment extends Fragment {
     private FirebaseUser fuser;
     private String userID;
     private ArrayList<String> wishlist;
+    private LinearLayout oopslayout;
     public WishListFragment(){
 
     }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle saveInstanceState){
-        v = inflater.inflate(R.layout.fragment_selling, container, false);
+        v = inflater.inflate(R.layout.fragment_wish_list, container, false);
         lstProduct = new ArrayList<>();
         wishlist = new ArrayList<>();
         fuser = FirebaseAuth.getInstance().getCurrentUser();
         userID = fuser.getUid();
+        oopslayout = (LinearLayout) v.findViewById(R.id.oops_layout_wishlist);
+        SoldFragment.createNoStockLayout(oopslayout);
         mReference.child("Wishlist").orderByChild("userID").equalTo(userID).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -58,6 +62,7 @@ public class  WishListFragment extends Fragment {
                     mReference.child("Products/" + wl.getProID()).addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot childsnapshot) {
+                            SoldFragment.removeNoStockLayout(oopslayout);
                             Product product = childsnapshot.getValue(Product.class);
                             lstProduct.add(product);
                             myrecycleview = (RecyclerView) v.findViewById(R.id.storage_recyclerview);
