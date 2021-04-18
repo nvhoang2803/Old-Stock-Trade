@@ -20,95 +20,158 @@
         android:orientation="vertical"
         android:elevation="5dp"
         android:background="@drawable/bg_roundinfo"
+
         >
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-
-            android:textSize="18sp"
-            android:textAlignment="center"
-            android:textStyle="bold"
-            android:layout_marginTop="10dp"
-            android:text=""
-            android:maxLines="3"
-            android:id="@+id/tvAddress"/>
-        <LinearLayout
-            android:layout_marginTop="10dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:weightSum="3"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:layout_width="154dp"
-                android:layout_height="100dp"
-                android:layout_weight="1"
-                android:src="@drawable/distance" />
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="100dp"
-                android:layout_weight="1"
-                android:src="@drawable/driving"
-                />
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="100dp"
-                android:layout_weight="1"
-                android:src="@drawable/gmap"
-                android:background="?attr/selectableItemBackground"
-                android:id="@+id/btnGMap"
-                />
-        </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:weightSum="3"
+            android:layout_marginTop="10dp"
             android:orientation="horizontal"
-            android:textAlignment="center" >
+            android:paddingLeft="20dp">
+            <TextView
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:text="From:"
+                android:textColor="@color/back_btn"
+
+                />
 
             <TextView
-                android:layout_width="match_parent"
+
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Distance"
-                android:layout_weight="1"
-                android:textAlignment="center"
-                android:id="@+id/tvDistance"/>
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Duration"
-                android:layout_weight="1"
-                android:textAlignment="center"
-                android:id="@+id/tvDuration"/>
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Open GoogleMap"
-                android:layout_weight="1"
-                android:textAlignment="center"
-                android:id="@+id/tvGoogleMap"/>
+                android:text=""
+                android:maxLines="2"
+                android:ellipsize="end"
+                android:textSize="16sp"
+                android:id="@+id/tvFrom"/>
         </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp">
+            <TextView
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:text="To:"
+                android:textColor="@color/back_btn"
+                />
+
+            <TextView
+                android:id="@+id/tvTo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:maxLines="2"
+                android:ellipsize="end"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp">
+            <RelativeLayout
+                android:layout_alignParentStart="true"
+                android:layout_weight="1"
+                android:id="@+id/rlLeft"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <LinearLayout
+                    android:id="@+id/llInfo1"
+                    android:layout_alignParentStart="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+
+                        android:id="@+id/imgDis"
+                        android:src="@drawable/distance" />
+                    <TextView
+
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="Distance"
+
+                        android:layout_marginLeft="20dp"
+                        android:id="@+id/tvDistance"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_below="@+id/llInfo1">
+                    <ImageView
+                        android:layout_marginTop="10dp"
+                        android:layout_below="@+id/imgDis"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:id="@+id/imgDri"
+                        android:src="@drawable/ic_driving"/>
+
+                    <TextView
+                        android:textColor="@color/btn"
+                        android:id="@+id/tvDuration"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="20dp"
+
+                        android:text="Duration" />
+                </LinearLayout>
+
+            </RelativeLayout>
+
+
+            <ImageView
+                android:id="@+id/btnGMap"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginRight="10dp"
+                android:layout_alignParentEnd="true"
+                android:background="?attr/selectableItemBackground"
+                android:src="@drawable/gmap" />
+
+            <TextView
+                android:id="@+id/tvGoogleMap"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_below="@id/btnGMap"
+                android:layout_marginTop="0dp"
+                android:textAlignment="center"
+                android:textStyle="bold"
+                android:layout_alignLeft="@id/btnGMap"
+                android:textColor="@color/back_btn"
+                android:text="Open" />
+        </RelativeLayout>
+
+
+
+
 
 
     </LinearLayout>
-<!--    <ImageButton-->
-<!--        android:layout_width="40dp"-->
-<!--        android:layout_height="40dp"-->
-<!--        android:src="@drawable/ic_back"-->
-<!--        android:layout_above="@id/llDetail"-->
-<!--        android:id="@+id/btnBack"-->
-<!--        android:layout_marginLeft="10dp"-->
-<!--        android:layout_marginBottom="20dp"-->
-<!--        android:background="@drawable/bg_round_btn"-->
-<!--        />-->
+
     <de.hdodenhof.circleimageview.CircleImageView
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:src="@drawable/ic_back"
         android:layout_above="@id/llDetail"
-        
-
+        android:id="@+id/btnBack2"
         android:layout_marginLeft="10dp"
         />
 

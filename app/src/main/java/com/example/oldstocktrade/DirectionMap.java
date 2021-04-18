@@ -40,14 +40,16 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class DirectionMap extends FragmentActivity implements OnMapReadyCallback{
     GoogleMap map;
     MarkerOptions source, dest;
-    Polyline currentPolyline;
     String strOrigin,strDest;
-    TextView tvAddress;
+    TextView tvTo,tvFrom;
     ImageView btnGMap;
-    ImageButton btnBack;
+    CircleImageView btnBack;
+    double lat1=10.762397,long1=106.682752,lat2=10.7704246,long2=106.6724038;
     @SuppressLint("WrongViewCast")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +60,31 @@ public class DirectionMap extends FragmentActivity implements OnMapReadyCallback
                 // (MapFragment) getFragmentManager().findFragmentById(R.id.directionMap);
         mapFragment.getMapAsync(this);
 
+        Intent receiver = getIntent();
+
+        tvTo = findViewById(R.id.tvTo);
+        //tvTo.setText("255 Ba tháng hai, P10, Q10, TP HCM");
+        tvFrom = findViewById(R.id.tvFrom);
+        //tvFrom.setText("255 Ba tháng hai, P10, Q10, TP HCM");
+        String txtFrom="",txtTo="";
+        if(receiver!=null){
+            Bundle bundle = receiver.getExtras();
+            if(bundle!=null){
+                lat1 = bundle.getDouble("latitudeS");
+                long1 = bundle.getDouble("longitudeS");
+                lat2 = bundle.getDouble("latitudeD");
+                long2 = bundle.getDouble("longitudeD");
+                txtFrom = bundle.getString("addressS");
+                txtTo =bundle.getString("addressD");
+
+            }
+            Log.d("bundle", "onCreate: "+bundle);
+        }
+        tvTo.setText(txtTo);
+        tvFrom.setText(txtFrom);
+
+
+
         int height =150;
         int width = 150;
         BitmapDrawable bitmapdraw = (BitmapDrawable)getResources().getDrawable(R.drawable.icon_marker3);
@@ -67,17 +94,16 @@ public class DirectionMap extends FragmentActivity implements OnMapReadyCallback
         BitmapDrawable bitmapdraw1 = (BitmapDrawable)getResources().getDrawable(R.drawable.icon_marker);
         Bitmap b1 = bitmapdraw1.getBitmap();
         Bitmap smallMarker1 = Bitmap.createScaledBitmap(b1, width, height, false);
-        double lat1=10.762397,long1=106.682752,lat2=10.7704246,long2=106.6724038;
+        //double lat1=10.762397,long1=106.682752,lat2=10.7704246,long2=106.6724038;
         source = new MarkerOptions().position(new LatLng(lat1,long1)).icon(BitmapDescriptorFactory.fromBitmap(smallMarker));
         dest = new MarkerOptions().position(new LatLng(lat2,long2)).icon(BitmapDescriptorFactory.fromBitmap(smallMarker1));
         LatLng origin = source.getPosition();
         LatLng des = dest.getPosition();
         strOrigin = origin.latitude+","+origin.longitude;
         strDest = des.latitude+","+des.longitude;
-        tvAddress = findViewById(R.id.tvAddress);
-        tvAddress.setText("255 Ba tháng hai, P10, Q10, TP HCM");
+
         btnGMap = findViewById(R.id.btnGMap);
-        btnBack = findViewById(R.id.btnBack);
+        btnBack = findViewById(R.id.btnBack2);
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -110,7 +136,7 @@ public class DirectionMap extends FragmentActivity implements OnMapReadyCallback
 
                     PolylineOptions polylineOptions = new PolylineOptions().
                             geodesic(true).
-                            color(Color.BLUE).
+                            color(getApplicationContext().getResources().getColor(R.color.back_btn)).
                             width(10);
 
                     for (int i = 0; i < route.points.size(); i++)
@@ -124,11 +150,18 @@ public class DirectionMap extends FragmentActivity implements OnMapReadyCallback
                     }
 
                     LatLngBounds bounds = builder.build();
-                    int padding = 50; //
-                    CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds,
-                            padding);
-                    map.moveCamera(cu);
-                    map.animateCamera(cu, 2000, null);
+
+                    //CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, width, height, padding);
+//                    CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds,
+//                            0);
+//                    map.setPadding(150, 50, 50, 500);
+//                    map.moveCamera(cu);
+//                    map.animateCamera(cu, 2000, null);
+//                    map.setPadding(0,0,0,0);
+                    map.setPadding(200, 100, 100, 550);
+                    map.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 0));
+                    map.setPadding(0,0,0,0);
+
                 }
             }
         },strOrigin,strDest);

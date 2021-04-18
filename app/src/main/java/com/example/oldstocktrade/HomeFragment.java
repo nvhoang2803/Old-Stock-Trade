@@ -45,12 +45,12 @@ public class HomeFragment extends Fragment {
     //
     SearchFillAdapter searchfillAdapter;
 
-    Activity curActivity;
+    MainActivity curActivity;
 
     DatabaseReference mReference = FirebaseDatabase.getInstance().getReference();
     User curUser;
 
-    public HomeFragment(Activity act){
+    public HomeFragment(MainActivity act){
         curActivity = act;
     }
 
