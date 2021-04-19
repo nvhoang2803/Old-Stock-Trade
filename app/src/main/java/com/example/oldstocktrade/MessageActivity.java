@@ -45,6 +45,7 @@ import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -81,7 +82,7 @@ public class MessageActivity extends AppCompatActivity {
     private FirebaseUser fuser;
     private DatabaseReference reference;
     private ImageButton btn_send;
-    private ImageButton btn_img, btn_location;
+    private ImageButton btn_img, btn_location, btn_recv_location;
     private ImageButton btn_call;
     private EditText txt_msg;
     private String conversation_id = null;
@@ -115,6 +116,7 @@ public class MessageActivity extends AppCompatActivity {
         btn_send = findViewById(R.id.btn_send);
         btn_img = findViewById(R.id.btn_img);
         btn_location = findViewById(R.id.btn_location);
+        btn_recv_location = findViewById(R.id.btn_location1);
         btn_call = findViewById(R.id.btn_call);
         txt_msg = findViewById(R.id.txt_msg);
         recyclerView = findViewById(R.id.recycler);
@@ -195,75 +197,16 @@ public class MessageActivity extends AppCompatActivity {
         btn_location.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(MessageActivity.this, R.style.BottomSheetDialogdTheme);
-                View bottomSheetView = LayoutInflater.from(getApplicationContext()).inflate(
-                        R.layout.bottomsheet_sharelocation,
-                        (LinearLayout) findViewById(R.id.bottomsheetContainer)
-                );
-                bottomSheetDialog.setContentView(bottomSheetView);
-                bottomSheetDialog.show();
-                Log.d("btnLocation", "onClick: click on btnLocation");
-                mapView = bottomSheetView.findViewById(R.id.map);
-                Bundle mapViewBundle = null;
-                if (savedInstanceState != null) {
-                    mapViewBundle = savedInstanceState.getBundle(MAPVIEW_BUNDLE_KEY);
-                }
-
-                mapView.onCreate(mapViewBundle);
-                geocoder = new Geocoder(getApplicationContext());
-                client = LocationServices.getFusedLocationProviderClient(MessageActivity.this);
-                if (ActivityCompat.checkSelfPermission(MessageActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                    mapView.getMapAsync(new OnMapReadyCallback() {
-                        @Override
-                        public void onMapReady(GoogleMap googleMap) {
-                            Log.d("onmapready", "onMapReady: oko");
-                            mMap = googleMap;
-                            //mMap.getUiSettings().setZoomControlsEnabled(true);
-                            if (ActivityCompat.checkSelfPermission(MessageActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                                return;
-                            }
-                            mMap.setMyLocationEnabled(true);
-                            Task<Location> task = client.getLastLocation();
-                            task.addOnSuccessListener(new OnSuccessListener<Location>() {
-                                @Override
-                                public void onSuccess(Location location) {
-                                    if (location != null) {
-                                        ArrayList<Address> addresses = null;
-                                        try {
-                                            addresses = (ArrayList<Address>) geocoder.getFromLocation(location.getLatitude(),location.getLongitude(),1);
-                                        } catch (IOException e) {
-                                            e.printStackTrace();
-                                        }
-                                        LatLng now = new LatLng(location.getLatitude(),location.getLongitude());
-                                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(now,20));
-                                        //mMap.addMarker(new MarkerOptions().position(now).title("You're here"));
-                                        mapView.onResume();
-                                        if (addresses.size() != 0) {
-                                            Address address = addresses.get(0);
-                                            ((TextView) bottomSheetView.findViewById(R.id.margin)).setText(Double.toString(now.latitude) + "-" + Double.toString(now.longitude)+"-"+address.getAddressLine(0));
+                setBottomSheetDialog(savedInstanceState, true);
 
 
-                                        }
+            }
+        });
+        btn_recv_location.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setBottomSheetDialog(savedInstanceState, false);
 
-                                    }
-                                }
-                            });
-
-
-                        }});
-
-
-                } else {
-                    ActivityCompat.requestPermissions(MessageActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 44);
-                }
-
-
-                bottomSheetView.findViewById(R.id.btnShareLocation).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        //gui longitude, latitude, address
-                    }
-                });
 
             }
         });
@@ -294,6 +237,118 @@ public class MessageActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+    }
+
+    private void setBottomSheetDialog(Bundle savedInstanceState, boolean isSend) {
+        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(MessageActivity.this, R.style.BottomSheetDialogdTheme);
+        View bottomSheetView;
+        if(isSend){
+            bottomSheetView = LayoutInflater.from(getApplicationContext()).inflate(
+                    R.layout.bottomsheet_sharelocation,
+                    (LinearLayout) findViewById(R.id.bottomsheetContainer));
+        }
+        else
+            bottomSheetView = LayoutInflater.from(getApplicationContext()).inflate(
+                    R.layout.bottomsheet_receivelocation,
+                    (LinearLayout) findViewById(R.id.bottomsheetContainer));
+        bottomSheetDialog.setContentView(bottomSheetView);
+        bottomSheetDialog.show();
+        Log.d("btnLocation", "onClick: click on btnLocation");
+        mapView = bottomSheetView.findViewById(R.id.map);
+        Bundle mapViewBundle = null;
+        if (savedInstanceState != null) {
+            mapViewBundle = savedInstanceState.getBundle(MAPVIEW_BUNDLE_KEY);
+        }
+
+        mapView.onCreate(mapViewBundle);
+        geocoder = new Geocoder(getApplicationContext());
+        client = LocationServices.getFusedLocationProviderClient(MessageActivity.this);
+        if (ActivityCompat.checkSelfPermission(MessageActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            mapView.getMapAsync(new OnMapReadyCallback() {
+                @Override
+                public void onMapReady(GoogleMap googleMap) {
+                    Log.d("onmapready", "onMapReady: oko");
+                    mMap = googleMap;
+                    //mMap.getUiSettings().setZoomControlsEnabled(true);
+                    if (ActivityCompat.checkSelfPermission(MessageActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                        return;
+                    }
+                    mMap.setMyLocationEnabled(true);
+                    Task<Location> task = client.getLastLocation();
+                    task.addOnSuccessListener(new OnSuccessListener<Location>() {
+                        @Override
+                        public void onSuccess(Location location) {
+                            if(isSend){
+                                if (location != null) {
+                                    ArrayList<Address> addresses = null;
+                                    try {
+                                        addresses = (ArrayList<Address>) geocoder.getFromLocation(location.getLatitude(),location.getLongitude(),1);
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
+                                    LatLng now = new LatLng(location.getLatitude(),location.getLongitude());
+                                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(now,20));
+                                    //mMap.addMarker(new MarkerOptions().position(now).title("You're here"));
+                                    mapView.onResume();
+                                    if (addresses.size() != 0) {
+                                        Address address = addresses.get(0);
+                                        ((TextView) bottomSheetView.findViewById(R.id.margin)).setText(Double.toString(now.latitude) + "-" + Double.toString(now.longitude)+"-"+address.getAddressLine(0));
+
+
+                                    }
+                                    bottomSheetView.findViewById(R.id.btnShareLocation).setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            //gui longitude, latitude, address
+                                        }
+                                    });
+
+
+                                }
+
+                            }
+                            else{
+                                if (location != null) {
+
+                                    LatLng sender = new LatLng(10.801315806188832, 106.61737850991582);
+                                    mMap.addMarker(new MarkerOptions().position(sender).title("Sender"));
+                                    //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sender,20));
+                                    LatLngBounds.Builder builder = new LatLngBounds.Builder();
+                                    builder.include(sender);
+                                    builder.include(new LatLng(location.getLatitude(),location.getLongitude()));
+                                    LatLngBounds bounds = builder.build();
+                                    mMap.setPadding(100, 100, 100, 200);
+                                    mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 0));
+                                    mMap.setPadding(0,0,0,0);
+                                    mapView.onResume();
+                                    bottomSheetView.findViewById(R.id.btnGetLocation).setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
+                                                    Uri.parse("http://maps.google.com/maps?saddr="+Double.toString(location.getLatitude())+","+Double.toString(location.getLatitude())+"&daddr="+Double.toString(sender.latitude)+","+Double.toString(sender.longitude)));
+                                            startActivity(intent);
+                                        }
+                                    });
+
+
+                                    }
+
+                                }
+
+
+                        }
+                    });
+
+
+                }});
+
+
+        } else {
+            ActivityCompat.requestPermissions(MessageActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 44);
+        }
+
+
 
     }
 

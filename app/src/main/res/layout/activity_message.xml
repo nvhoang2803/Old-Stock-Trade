@@ -107,6 +107,13 @@
         <ImageButton
             android:layout_width="40dp"
             android:layout_height="40dp"
+            android:id="@+id/btn_location1"
+            android:background="@drawable/ic_location"
+            android:layout_toLeftOf="@+id/btn_location"
+            android:layout_margin="2dp"/>
+        <ImageButton
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:id="@+id/btn_img"
             android:background="@drawable/ic_image"
             android:layout_toLeftOf="@+id/btn_send"
