@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/bottomsheetContainer"
+    android:background="@drawable/bg_roundinfo"
+    android:orientation="vertical"
+
+    >
+    <View
+        android:layout_marginTop="5dp"
+        android:layout_width="30dp"
+        android:layout_height="3dp"
+        android:background="@color/back_btn"
+        android:layout_gravity="center_horizontal"
+
+        />
+    <TextView
+        android:padding="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Location Sharing"
+        android:textAlignment="center"
+        android:textSize="18dp"
+        android:textStyle="bold"/>
+    <RelativeLayout
+
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+
+        android:id="@+id/rlMap">
+        <com.google.android.gms.maps.MapView
+            android:id="@+id/map"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+
+            />
+
+        <Button
+            android:id="@+id/btnShareLocation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/margin"
+            android:elevation="2dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+
+            android:background="@drawable/bg_button"
+            android:text="Share Your Location" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/margin"
+            android:layout_alignParentBottom="true"
+            android:maxLines="1"/>
+    </RelativeLayout>
+
+
+</LinearLayout>
