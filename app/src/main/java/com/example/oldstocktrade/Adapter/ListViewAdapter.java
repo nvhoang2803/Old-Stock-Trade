@@ -45,8 +45,12 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Date;
+
+import xyz.hanks.library.bang.SmallBangView;
 
 public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ViewHolder> {
 
@@ -57,7 +61,6 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ViewHo
     DatabaseReference mReference = FirebaseDatabase.getInstance().getReference();
     StorageReference sr= FirebaseStorage.getInstance().getReference();
     ArrayList<Double> lonlat;
-
 
     public ListViewAdapter(ArrayList<Product> productArrayList, Activity curAcc, User a, ArrayList<String> a1,ArrayList<Double> lonlat) {
         this.userProductlike = a1;
@@ -110,12 +113,16 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ViewHo
         String timeD = "";
         String priceD = "";
         time = time /1000;
-        if (time / (60* 60 * 24) > 0){
-            timeD = (int) ( time / (60* 60 * 24)) + " days";
-        }else if (time / (60 * 60 ) > 0){
-            timeD =(int) ( time / (60* 60)) + " hours";
+        if (!(time / (60* 60 * 24 * 5) > 0)){
+            if (time / (60* 60 * 24) > 0){
+                timeD = (int) ( time / (60* 60 * 24)) + " days";
+            }else if (time / (60 * 60 ) > 0){
+                timeD =(int) ( time / (60* 60)) + " hours";
+            }else{
+                timeD = (int) (time / (60)) + " mins";
+            }
         }else{
-            timeD = (int) (time / (60)) + " mins";
+            timeD = new SimpleDateFormat("yyyy-MM-dd").format(new Date(productArrayList.get(position).getTimestamp()));
         }
         double price = productArrayList.get(position).getPrice();
         priceD = ChangeMoneyToString((int) price);
@@ -241,8 +248,6 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ViewHo
 //        String m= a.get(0);
 //        Picasso.get().load(a.get(0).toString()).into(holder.imageView);
 //        Glide.with(holder.imageView).load(a.get(0)).into(holder.imageView);
-
-
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -260,6 +265,20 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ViewHo
             }
         });
 
+
+//        holder.productLikeAa.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (holder.productLikeAa.isSelected()) {
+//                    holder.productLikeAa.setSelected(false);
+//                } else {
+//                    // if not selected only
+//                    // then show animation.
+//                    holder.productLikeAa.setSelected(true);
+//                    holder.productLikeAa.likeAnimation();
+//                }
+//            }
+//        });
 
         //Hanlde product like behavior
         holder.productLike.setOnClickListener(new View.OnClickListener() {
@@ -354,6 +373,7 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ViewHo
         LinearLayout productRating;
         ImageView imgProduct;
 
+
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             userName = itemView.findViewById(R.id.userName);
@@ -371,6 +391,7 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ViewHo
             productRating = itemView.findViewById(R.id.productRating);
             imageView= itemView.findViewById(R.id.imageView);
             imgProduct= itemView.findViewById(R.id.imageViewMain);
+
         }
 
 
@@ -383,7 +404,7 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ViewHo
         String result = "";
         priceD = String.valueOf(price);
         cur = priceD.length() - 3;
-        for (int i =0 ; i< ((int)(priceD.length() / 3));i++ ){
+        for (int i =0 ; i< ((int)((priceD.length() -1 ) / 3));i++ ){
             result = "." + priceD.substring(cur,cur +3)+ result;
             cur = cur -3;
         }

@@ -194,10 +194,10 @@
             android:id="@+id/product_like"
             android:layout_width="32dp"
             android:layout_height="32dp"
+            app:srcCompat="@drawable/ic_heart"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_heart" />
+            app:layout_constraintTop_toTopOf="parent"/>
 
         <ImageView
             android:id="@+id/product_comment"

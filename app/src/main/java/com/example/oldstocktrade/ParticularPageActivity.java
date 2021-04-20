@@ -66,7 +66,7 @@ public class ParticularPageActivity extends AppCompatActivity {
             int sizeImageURL= (int)(getIntent().getExtras().get("sizeImageURL"));
             longitudeS = (Double) (getIntent().getExtras().get("longitude"));
             latitudeS = (Double) (getIntent().getExtras().get("latitude"));
-            addressS = getIntent().getExtras().get("address").toString();
+            addressS = "111";
 
             descriptionPart= findViewById(R.id.descriptionPart);
             pricePart= findViewById(R.id.pricePart);

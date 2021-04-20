@@ -174,7 +174,6 @@ public class PostActivity extends AppCompatActivity {
                             }
                         });
             }
-
             String des, addr, seller, pri, ph, na;
             des= description.getText().toString();
             addr= address.getText().toString();
