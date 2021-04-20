@@ -197,7 +197,7 @@ public class MessageActivity extends AppCompatActivity {
         btn_location.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setBottomSheetDialog(savedInstanceState, true);
+                setBottomSheetDialog(savedInstanceState, true,0.0,0.0);
 
 
             }
@@ -205,7 +205,7 @@ public class MessageActivity extends AppCompatActivity {
         btn_recv_location.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setBottomSheetDialog(savedInstanceState, false);
+                setBottomSheetDialog(savedInstanceState, false, 10.766724451581517, 106.69376915409575);
 
 
             }
@@ -240,7 +240,7 @@ public class MessageActivity extends AppCompatActivity {
 
     }
 
-    private void setBottomSheetDialog(Bundle savedInstanceState, boolean isSend) {
+    private void setBottomSheetDialog(Bundle savedInstanceState, boolean isSend, Double lati, Double longi) {
         BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(MessageActivity.this, R.style.BottomSheetDialogdTheme);
         View bottomSheetView;
         if(isSend){
@@ -274,6 +274,7 @@ public class MessageActivity extends AppCompatActivity {
                     if (ActivityCompat.checkSelfPermission(MessageActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                         return;
                     }
+                    mapView.onResume();
                     mMap.setMyLocationEnabled(true);
                     Task<Location> task = client.getLastLocation();
                     task.addOnSuccessListener(new OnSuccessListener<Location>() {
@@ -290,7 +291,7 @@ public class MessageActivity extends AppCompatActivity {
                                     LatLng now = new LatLng(location.getLatitude(),location.getLongitude());
                                     mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(now,20));
                                     //mMap.addMarker(new MarkerOptions().position(now).title("You're here"));
-                                    mapView.onResume();
+
                                     if (addresses.size() != 0) {
                                         Address address = addresses.get(0);
                                         ((TextView) bottomSheetView.findViewById(R.id.margin)).setText(Double.toString(now.latitude) + "-" + Double.toString(now.longitude)+"-"+address.getAddressLine(0));
@@ -310,8 +311,9 @@ public class MessageActivity extends AppCompatActivity {
                             }
                             else{
                                 if (location != null) {
-
-                                    LatLng sender = new LatLng(10.801315806188832, 106.61737850991582);
+//                                    lati = 10.801315806188832;
+//                                    longi = 106.61737850991582;
+                                    LatLng sender = new LatLng(lati, longi);
                                     mMap.addMarker(new MarkerOptions().position(sender).title("Sender"));
                                     //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sender,20));
                                     LatLngBounds.Builder builder = new LatLngBounds.Builder();
@@ -540,8 +542,8 @@ public class MessageActivity extends AppCompatActivity {
             mapViewBundle = new Bundle();
             outState.putBundle(MAPVIEW_BUNDLE_KEY, mapViewBundle);
         }
-
-        mapView.onSaveInstanceState(mapViewBundle);
+        if(mapView!= null)
+            mapView.onSaveInstanceState(mapViewBundle);
     }
 
 }
