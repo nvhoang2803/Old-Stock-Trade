@@ -102,6 +102,9 @@ public class MessageActivity extends AppCompatActivity {
     private Geocoder geocoder;
     ValueEventListener valueEventListener;
     MapView mapView = null;
+    Boolean isSend;
+    View bottomSheetView;
+    Double lati,longi;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -265,95 +268,113 @@ public class MessageActivity extends AppCompatActivity {
         geocoder = new Geocoder(getApplicationContext());
         client = LocationServices.getFusedLocationProviderClient(MessageActivity.this);
         if (ActivityCompat.checkSelfPermission(MessageActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            mapView.getMapAsync(new OnMapReadyCallback() {
-                @Override
-                public void onMapReady(GoogleMap googleMap) {
-                    Log.d("onmapready", "onMapReady: oko");
-                    mMap = googleMap;
-                    //mMap.getUiSettings().setZoomControlsEnabled(true);
-                    if (ActivityCompat.checkSelfPermission(MessageActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                        return;
-                    }
-                    mapView.onResume();
-                    mMap.setMyLocationEnabled(true);
-                    Task<Location> task = client.getLastLocation();
-                    task.addOnSuccessListener(new OnSuccessListener<Location>() {
-                        @Override
-                        public void onSuccess(Location location) {
-                            if(isSend){
-                                if (location != null) {
-                                    ArrayList<Address> addresses = null;
-                                    try {
-                                        addresses = (ArrayList<Address>) geocoder.getFromLocation(location.getLatitude(),location.getLongitude(),1);
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
-                                    }
-                                    LatLng now = new LatLng(location.getLatitude(),location.getLongitude());
-                                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(now,20));
-                                    //mMap.addMarker(new MarkerOptions().position(now).title("You're here"));
+            getCurrentLocation(isSend, bottomSheetView,lati,longi);
 
-                                    if (addresses.size() != 0) {
-                                        Address address = addresses.get(0);
-                                        ((TextView) bottomSheetView.findViewById(R.id.margin)).setText(Double.toString(now.latitude) + "-" + Double.toString(now.longitude)+"-"+address.getAddressLine(0));
-
-
-                                    }
-                                    bottomSheetView.findViewById(R.id.btnShareLocation).setOnClickListener(new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View v) {
-                                            //gui longitude, latitude, address
-                                        }
-                                    });
-
-
-                                }
-
-                            }
-                            else{
-                                if (location != null) {
-//                                    lati = 10.801315806188832;
-//                                    longi = 106.61737850991582;
-                                    LatLng sender = new LatLng(lati, longi);
-                                    mMap.addMarker(new MarkerOptions().position(sender).title("Sender"));
-                                    //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sender,20));
-                                    LatLngBounds.Builder builder = new LatLngBounds.Builder();
-                                    builder.include(sender);
-                                    builder.include(new LatLng(location.getLatitude(),location.getLongitude()));
-                                    LatLngBounds bounds = builder.build();
-                                    mMap.setPadding(100, 100, 100, 200);
-                                    mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 0));
-                                    mMap.setPadding(0,0,0,0);
-                                    mapView.onResume();
-                                    bottomSheetView.findViewById(R.id.btnGetLocation).setOnClickListener(new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View v) {
-                                            Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
-                                                    Uri.parse("http://maps.google.com/maps?saddr="+Double.toString(location.getLatitude())+","+Double.toString(location.getLatitude())+"&daddr="+Double.toString(sender.latitude)+","+Double.toString(sender.longitude)));
-                                            startActivity(intent);
-                                        }
-                                    });
-
-
-                                    }
-
-                                }
-
-
-                        }
-                    });
-
-
-                }});
 
 
         } else {
+            this.isSend =isSend;this.bottomSheetView = bottomSheetView; this.lati = lati; this.longi = longi;//save data to serve in onRequestPermissionResult
             ActivityCompat.requestPermissions(MessageActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 44);
+
         }
 
 
 
     }
 
+    private void getCurrentLocation(boolean isSend, View bottomSheetView, Double lati, Double longi) {
+        mapView.getMapAsync(new OnMapReadyCallback() {
+            @Override
+            public void onMapReady(GoogleMap googleMap) {
+                Log.d("onmapready", "onMapReady: oko");
+                mMap = googleMap;
+                //mMap.getUiSettings().setZoomControlsEnabled(true);
+                if (ActivityCompat.checkSelfPermission(MessageActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    return;
+                }
+
+                mapView.onResume();
+                mMap.setMyLocationEnabled(true);
+                Task<Location> task = client.getLastLocation();
+                task.addOnSuccessListener(new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        if(isSend){
+                            if (location != null) {
+                                ArrayList<Address> addresses = null;
+                                try {
+                                    addresses = (ArrayList<Address>) geocoder.getFromLocation(location.getLatitude(),location.getLongitude(),1);
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                                LatLng now = new LatLng(location.getLatitude(),location.getLongitude());
+                                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(now,20));
+                                //mMap.addMarker(new MarkerOptions().position(now).title("You're here"));
+
+                                if (addresses != null && addresses.size() != 0) {
+                                    Address address = addresses.get(0);
+                                    ((TextView) bottomSheetView.findViewById(R.id.margin)).setText(Double.toString(now.latitude) + "#" + Double.toString(now.longitude)+"#"+address.getAddressLine(0));
+
+
+                                }
+                                bottomSheetView.findViewById(R.id.btnShareLocation).setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        //gui longitude, latitude, address
+                                    }
+                                });
+
+
+                            }
+
+                        }
+                        else{
+                            if (location != null) {
+//                                    lati = 10.801315806188832;
+//                                    longi = 106.61737850991582;
+                                LatLng sender = new LatLng(lati, longi);
+                                mMap.addMarker(new MarkerOptions().position(sender).title("Sender"));
+                                //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sender,20));
+                                LatLngBounds.Builder builder = new LatLngBounds.Builder();
+                                builder.include(sender);
+                                builder.include(new LatLng(location.getLatitude(),location.getLongitude()));
+                                LatLngBounds bounds = builder.build();
+                                mMap.setPadding(100, 100, 100, 200);
+                                mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 0));
+                                mMap.setPadding(0,0,0,0);
+                                mapView.onResume();
+                                bottomSheetView.findViewById(R.id.btnGetLocation).setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
+                                                Uri.parse("http://maps.google.com/maps?saddr="+Double.toString(location.getLatitude())+","+Double.toString(location.getLongitude())+"&daddr="+Double.toString(sender.latitude)+","+Double.toString(sender.longitude)));
+                                        startActivity(intent);
+                                    }
+                                });
+
+
+                            }
+
+                        }
+
+
+                    }
+                });
+
+
+            }});
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == 44) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                getCurrentLocation(isSend, bottomSheetView,lati,longi);
+            }
+        }
+
+    }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
