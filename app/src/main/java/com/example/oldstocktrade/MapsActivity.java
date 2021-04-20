@@ -158,7 +158,7 @@ public class MapsActivity extends FragmentActivity {
             // for ActivityCompat#requestPermissions for more details.
             return;
         }
-
+        mapFragment.onResume();
         Task<Location> task = client.getLastLocation();
         task.addOnSuccessListener(new OnSuccessListener<Location>() {
             @Override
