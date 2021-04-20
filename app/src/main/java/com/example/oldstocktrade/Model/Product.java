@@ -154,14 +154,14 @@ public class Product {
 
     }
 
-    public Product(String address, String buyer, String description, ArrayList<String> imageURL, double latitude, double Longitude, String name, double price, String proID, int report,
+    public Product(String address, String buyer, String description, ArrayList<String> imageURL, double latitude, double longitude, String name, double price, String proID, int report,
                    String seller, int status, long timestamp, float rate) {
         Address = address;
         Buyer = buyer;
         Description = description;
         ImageURL = imageURL;
         Latitude = latitude;
-        Longitude = Longitude;
+        Longitude = longitude;
         Name = name;
         Price = price;
         ProID = proID;

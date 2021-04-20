@@ -164,11 +164,6 @@ public class MapsActivity extends FragmentActivity {
             @Override
             public void onSuccess(Location location) {
                 if (location != null) {
-//                    mapFragment.getMapAsync(new OnMapReadyCallback() {
-//                        @Override
-//                        public void onMapReady(GoogleMap googleMap) {
-//                            mMap = googleMap;
-
                             setMyLocation();
                             LatLng pos;
                             if(isCurrent==false&&lati!=null&&longi!=null){

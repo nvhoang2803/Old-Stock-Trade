@@ -262,6 +262,7 @@ public class ProfileActivity extends AppCompatActivity {
                         @Override
                         public void onFailure(@NonNull Exception e) {
                             Toast.makeText(ProfileActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                            pd.dismiss();
                         }
                     });
 
@@ -283,6 +284,7 @@ public class ProfileActivity extends AppCompatActivity {
 
             }
             else {
+                pd.dismiss();
                 Toast.makeText(ProfileActivity.this, "Your phone number is invalid.",Toast.LENGTH_SHORT).show();
             }
 

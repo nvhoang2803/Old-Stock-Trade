@@ -4,23 +4,32 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyboardShortcutGroup;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -28,9 +37,21 @@ import com.example.oldstocktrade.Adapter.MessageAdapter;
 import com.example.oldstocktrade.Model.Chat;
 import com.example.oldstocktrade.Model.Conversation;
 import com.example.oldstocktrade.Model.User;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -44,13 +65,16 @@ import com.google.firebase.storage.StorageTask;
 
 import org.w3c.dom.Text;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MessageActivity extends AppCompatActivity {
+    private static final String MAPVIEW_BUNDLE_KEY = "BUNDLE_KEY";
     private CircleImageView profile_image;
     private TextView txt_username;
     private RecyclerView recyclerView;
@@ -58,7 +82,7 @@ public class MessageActivity extends AppCompatActivity {
     private FirebaseUser fuser;
     private DatabaseReference reference;
     private ImageButton btn_send;
-    private ImageButton btn_img;
+    private ImageButton btn_img, btn_location, btn_recv_location;
     private ImageButton btn_call;
     private EditText txt_msg;
     private String conversation_id = null;
@@ -73,7 +97,12 @@ public class MessageActivity extends AppCompatActivity {
     private String userid = "";
     private ProgressDialog dialog;
     private User user;
+    private GoogleMap mMap;
+    private FusedLocationProviderClient client;
+    private Geocoder geocoder;
     ValueEventListener valueEventListener;
+    MapView mapView = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -86,6 +115,8 @@ public class MessageActivity extends AppCompatActivity {
         txt_username = findViewById(R.id.username);
         btn_send = findViewById(R.id.btn_send);
         btn_img = findViewById(R.id.btn_img);
+        btn_location = findViewById(R.id.btn_location);
+        btn_recv_location = findViewById(R.id.btn_location1);
         btn_call = findViewById(R.id.btn_call);
         txt_msg = findViewById(R.id.txt_msg);
         recyclerView = findViewById(R.id.recycler);
@@ -123,13 +154,14 @@ public class MessageActivity extends AppCompatActivity {
                 user = snapshot.getValue(User.class);
                 txt_username.setText(user.getUsername().toString());
                 imageURL = user.getImageURL();
-                if (imageURL.equals("default"))
+                if (imageURL.equals("" +
+                        "default"))
                     profile_image.setImageResource(R.mipmap.ic_launcher_round);
                 else Glide.with(MessageActivity.this).load(imageURL).into(profile_image);
-                if (user.getStatus().equals("online")){
+                if (user.getStatus().equals("online")) {
                     img_on.setVisibility(View.VISIBLE);
                     img_off.setVisibility(View.GONE);
-                }else {
+                } else {
                     img_off.setVisibility(View.VISIBLE);
                     img_on.setVisibility(View.GONE);
                 }
@@ -143,15 +175,15 @@ public class MessageActivity extends AppCompatActivity {
         //reference.addValueEventListener(valueEventListener);
 
         // Find conversation between 2 users
-        findConversationId(fuser.getUid(),userid);
+        findConversationId(fuser.getUid(), userid);
 
         // Send message
         btn_send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String msg = txt_msg.getText().toString();
-                if (!msg.equals("")){
-                    sendMessage(fuser.getUid(),userid,msg);
+                if (!msg.equals("")) {
+                    sendMessage(fuser.getUid(), userid, msg);
                     txt_msg.setText("");
                     View view = getCurrentFocus();
                     if (view != null) {
@@ -159,6 +191,23 @@ public class MessageActivity extends AppCompatActivity {
                         manager.hideSoftInputFromWindow(view.getWindowToken(), 0);
                     }
                 }
+            }
+        });
+        //share your location
+        btn_location.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setBottomSheetDialog(savedInstanceState, true);
+
+
+            }
+        });
+        btn_recv_location.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setBottomSheetDialog(savedInstanceState, false);
+
+
             }
         });
         btn_img.setOnClickListener(new View.OnClickListener() {
@@ -188,6 +237,118 @@ public class MessageActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+    }
+
+    private void setBottomSheetDialog(Bundle savedInstanceState, boolean isSend) {
+        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(MessageActivity.this, R.style.BottomSheetDialogdTheme);
+        View bottomSheetView;
+        if(isSend){
+            bottomSheetView = LayoutInflater.from(getApplicationContext()).inflate(
+                    R.layout.bottomsheet_sharelocation,
+                    (LinearLayout) findViewById(R.id.bottomsheetContainer));
+        }
+        else
+            bottomSheetView = LayoutInflater.from(getApplicationContext()).inflate(
+                    R.layout.bottomsheet_receivelocation,
+                    (LinearLayout) findViewById(R.id.bottomsheetContainer));
+        bottomSheetDialog.setContentView(bottomSheetView);
+        bottomSheetDialog.show();
+        Log.d("btnLocation", "onClick: click on btnLocation");
+        mapView = bottomSheetView.findViewById(R.id.map);
+        Bundle mapViewBundle = null;
+        if (savedInstanceState != null) {
+            mapViewBundle = savedInstanceState.getBundle(MAPVIEW_BUNDLE_KEY);
+        }
+
+        mapView.onCreate(mapViewBundle);
+        geocoder = new Geocoder(getApplicationContext());
+        client = LocationServices.getFusedLocationProviderClient(MessageActivity.this);
+        if (ActivityCompat.checkSelfPermission(MessageActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            mapView.getMapAsync(new OnMapReadyCallback() {
+                @Override
+                public void onMapReady(GoogleMap googleMap) {
+                    Log.d("onmapready", "onMapReady: oko");
+                    mMap = googleMap;
+                    //mMap.getUiSettings().setZoomControlsEnabled(true);
+                    if (ActivityCompat.checkSelfPermission(MessageActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                        return;
+                    }
+                    mMap.setMyLocationEnabled(true);
+                    Task<Location> task = client.getLastLocation();
+                    task.addOnSuccessListener(new OnSuccessListener<Location>() {
+                        @Override
+                        public void onSuccess(Location location) {
+                            if(isSend){
+                                if (location != null) {
+                                    ArrayList<Address> addresses = null;
+                                    try {
+                                        addresses = (ArrayList<Address>) geocoder.getFromLocation(location.getLatitude(),location.getLongitude(),1);
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
+                                    LatLng now = new LatLng(location.getLatitude(),location.getLongitude());
+                                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(now,20));
+                                    //mMap.addMarker(new MarkerOptions().position(now).title("You're here"));
+                                    mapView.onResume();
+                                    if (addresses.size() != 0) {
+                                        Address address = addresses.get(0);
+                                        ((TextView) bottomSheetView.findViewById(R.id.margin)).setText(Double.toString(now.latitude) + "-" + Double.toString(now.longitude)+"-"+address.getAddressLine(0));
+
+
+                                    }
+                                    bottomSheetView.findViewById(R.id.btnShareLocation).setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            //gui longitude, latitude, address
+                                        }
+                                    });
+
+
+                                }
+
+                            }
+                            else{
+                                if (location != null) {
+
+                                    LatLng sender = new LatLng(10.801315806188832, 106.61737850991582);
+                                    mMap.addMarker(new MarkerOptions().position(sender).title("Sender"));
+                                    //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sender,20));
+                                    LatLngBounds.Builder builder = new LatLngBounds.Builder();
+                                    builder.include(sender);
+                                    builder.include(new LatLng(location.getLatitude(),location.getLongitude()));
+                                    LatLngBounds bounds = builder.build();
+                                    mMap.setPadding(100, 100, 100, 200);
+                                    mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 0));
+                                    mMap.setPadding(0,0,0,0);
+                                    mapView.onResume();
+                                    bottomSheetView.findViewById(R.id.btnGetLocation).setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
+                                                    Uri.parse("http://maps.google.com/maps?saddr="+Double.toString(location.getLatitude())+","+Double.toString(location.getLatitude())+"&daddr="+Double.toString(sender.latitude)+","+Double.toString(sender.longitude)));
+                                            startActivity(intent);
+                                        }
+                                    });
+
+
+                                    }
+
+                                }
+
+
+                        }
+                    });
+
+
+                }});
+
+
+        } else {
+            ActivityCompat.requestPermissions(MessageActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 44);
+        }
+
+
 
     }
 
@@ -324,14 +485,63 @@ public class MessageActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        if (mapView!=null)
+            mapView.onStart();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (mapView!=null)
+            mapView.onStop();
+    }
+
+    @Override
     protected void onResume() {
+
         super.onResume();
         reference.addValueEventListener(valueEventListener);
+        if (mapView!=null)
+            mapView.onResume();
+
     }
 
     @Override
     protected void onPause() {
+        if (mapView!=null)
+            mapView.onPause();
         super.onPause();
         reference.removeEventListener(valueEventListener);
+
     }
+
+    @Override
+    protected void onDestroy() {
+        if (mapView!=null)
+            mapView.onDestroy();
+        super.onDestroy();
+    }
+
+    @Override
+    public void onLowMemory() {
+
+        super.onLowMemory();
+        if (mapView!=null)
+            mapView.onLowMemory();
+    }
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        Bundle mapViewBundle = outState.getBundle(MAPVIEW_BUNDLE_KEY);
+        if (mapViewBundle == null) {
+            mapViewBundle = new Bundle();
+            outState.putBundle(MAPVIEW_BUNDLE_KEY, mapViewBundle);
+        }
+
+        mapView.onSaveInstanceState(mapViewBundle);
+    }
+
 }

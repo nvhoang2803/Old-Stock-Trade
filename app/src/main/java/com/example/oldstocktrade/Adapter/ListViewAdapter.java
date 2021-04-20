@@ -58,12 +58,14 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ViewHo
     StorageReference sr= FirebaseStorage.getInstance().getReference();
     ArrayList<Double> lonlat;
 
+
     public ListViewAdapter(ArrayList<Product> productArrayList, Activity curAcc, User a, ArrayList<String> a1,ArrayList<Double> lonlat) {
         this.userProductlike = a1;
         this.curActivity = curAcc;
         this.productArrayList = productArrayList;
         this.tmp = a;
         this.lonlat = lonlat;
+
     }
 
     @NonNull
@@ -250,6 +252,10 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ViewHo
                 partIntent.putExtra("id", id);
                 partIntent.putExtra("userID", userID);
                 partIntent.putExtra("sizeImageURL", arrImage.length);
+                partIntent.putExtra("longitude", ((MainActivity) curActivity).longitude);
+                partIntent.putExtra("latitude",((MainActivity) curActivity).latitude);
+                partIntent.putExtra("address",((MainActivity) curActivity).address);
+                Log.d("PackInHomeView", "onClick: ");
                 v.getContext().startActivity(partIntent);
             }
         });

@@ -88,6 +88,11 @@
                 android:layout_height="wrap_content" />
 
             <Button
+                android:id="@+id/btnDirection"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Direction" />
+            <Button
                 android:id="@+id/call"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

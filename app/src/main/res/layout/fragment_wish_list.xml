@@ -1,14 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".WishListFragment">
-
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    tools:context=".SellingFragment"
+    android:orientation="vertical">
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:id="@+id/oops_layout_wishlist"
+        android:orientation="vertical"
+        android:gravity="center">
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:src="@drawable/ic_oops"
+            android:layout_gravity="center_horizontal"></ImageView>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="You haven't added anything to the wish list yet..."
+            android:textStyle="bold"
+            android:textSize="30dp"
+            android:gravity="center_horizontal"
+            android:layout_marginHorizontal="30dp"></TextView>
+    </LinearLayout>
+    <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
-
-</FrameLayout>
+        android:id="@+id/storage_recyclerview">
+    </androidx.recyclerview.widget.RecyclerView>
+</LinearLayout>
