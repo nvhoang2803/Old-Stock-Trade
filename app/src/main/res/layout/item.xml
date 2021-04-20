@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:clickable="false"
     android:gravity="center">
 
     <!-- image viwer to view the images -->
@@ -9,6 +10,7 @@
         android:id="@+id/imageViewMain"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:clickable="false"
         android:scaleType="fitCenter" />
 
 </LinearLayout>

@@ -43,7 +43,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.squareup.picasso.Picasso;
+
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -193,15 +193,14 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ViewHo
                     productArrayList.get(position).getLongitude(),
                     productArrayList.get(position).getLatitude());
         }
-
         dis = Math.floor(dis);
-
         holder.productDistance.setText((int) dis + "km");
         holder.userName.setText(productArrayList.get(position).getName());
         //Handle ImageSlider
         String[] arrImage = productArrayList.get(position).getImageURL().toArray(new String[0]);
         ImageSlider imgSliderAdapter = new ImageSlider(curActivity,arrImage);
         holder.productImage.setAdapter(imgSliderAdapter);
+
 
 //        Glide.with(holder.imgProduct).load(arrImage[0]).into(holder.imgProduct);
         //Handle ImageSlider Dot
