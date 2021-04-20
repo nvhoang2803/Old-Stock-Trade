@@ -115,17 +115,17 @@ public class PostActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CODE_LOCATION) {
             if (resultCode == RESULT_OK) {
-
                 // Get String data from Intent
-                String location = data.getStringExtra("location");
-                String straddress = data.getStringExtra("address");
-                // Set text view with string
-                Log.d("Location", "onActivityResult: "+location);;//split location bang - se ra longitude va latitude roi luu vao db
-                address.setText(straddress);
-                String a[]= location.split("-");
-                lat= Double.parseDouble(a[0]);
-                lon= Double.parseDouble(a[1]);
-
+                if ( data.getStringExtra("location").length() != 0){
+                    String location = data.getStringExtra("location");
+                    String straddress = data.getStringExtra("address");
+                    // Set text view with string
+                    Log.d("Location", "onActivityResult: "+location);;//split location bang - se ra longitude va latitude roi luu vao db
+                    address.setText(straddress);
+                    String a[]= location.split("-");
+                    lat= Double.parseDouble(a[0]);
+                    lon= Double.parseDouble(a[1]);
+                }
             }
         }
         if(requestCode == PICK_IMAGE){
@@ -182,7 +182,7 @@ public class PostActivity extends AppCompatActivity {
             pri= price.getText().toString();
             na= name.getText().toString();
             long ts= System.currentTimeMillis();
-            Product product= new Product(addr, "None", des, aImage, lat, lon, na, Double.parseDouble(pri), id, 0, seller, 0, ts, 0);
+            Product product= new Product(addr, "None", des, aImage, lat, lon, na, Double.parseDouble(pri), id, 0, seller, 1, ts, 0);
             HashMap<String, Object> map= new HashMap<>();
             map.put("ProID", product.getProID());
             map.put("Address", product.getAddress());
