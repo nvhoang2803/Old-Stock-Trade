@@ -61,6 +61,14 @@
                 <ImageButton
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:background="@drawable/ic_shopping_bag"
+                    android:id="@+id/btn_sell"
+                    android:layout_centerInParent="true"
+                    android:layout_toLeftOf="@+id/btn_call"
+                    android:layout_marginRight="15dp"/>
+                <ImageButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:background="@drawable/ic_telephone"
                     android:id="@+id/btn_call"
                     android:layout_alignParentEnd="true"

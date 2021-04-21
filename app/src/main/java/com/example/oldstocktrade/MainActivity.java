@@ -7,6 +7,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -18,6 +19,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
+import com.example.oldstocktrade.Model.Contact;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -98,8 +100,11 @@ public class MainActivity extends AppCompatActivity {
                     selectedFragment = new StorageFragment();
                     break;
                 case R.id.nav_delivery:
-                    selectedFragment = new DeliveryFragment();
-                    break;
+                    Intent i = new Intent(MainActivity.this, ContactActivity.class);
+                    startActivity(i);
+                    return true;
+                    //selectedFragment = new DeliveryFragment();
+                    //break;
                 case R.id.nav_settings:
                     selectedFragment = new SettingsFragment();
                     break;
@@ -123,8 +128,9 @@ public class MainActivity extends AppCompatActivity {
 
                 break;
             case R.id.nav_delivery:
-                selectedFragment = new DeliveryFragment();
-                break;
+                Intent i = new Intent(MainActivity.this, ContactActivity.class);
+                startActivity(i);
+                return;
             case R.id.nav_settings:
                 selectedFragment = new SettingsFragment();
                 break;

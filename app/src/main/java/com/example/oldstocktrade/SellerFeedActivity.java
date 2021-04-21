@@ -78,10 +78,11 @@ public class SellerFeedActivity extends AppCompatActivity {
                 mProducts.clear();
                 for (DataSnapshot data : snapshot.getChildren()){
                     Product product = data.getValue(Product.class);
-                    mProducts.add(product);
+                    if (product.getStatus() == 1)
+                        mProducts.add(product);
                 }
                 product_amount.setText(mProducts.size() +"");
-                productAdapter = new ProductAdapter(SellerFeedActivity.this,mProducts);
+                productAdapter = new ProductAdapter(SellerFeedActivity.this,mProducts, true, null);
                 recyclerView.setLayoutManager(new GridLayoutManager(SellerFeedActivity.this,2));
                 recyclerView.setAdapter(productAdapter);
             }

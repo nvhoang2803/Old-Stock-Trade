@@ -109,6 +109,7 @@ public class MessageActivity extends AppCompatActivity {
     private GoogleMap mMap;
     private FusedLocationProviderClient client;
     private Geocoder geocoder;
+    private  ImageButton btn_sell;
     ValueEventListener valueEventListener;
     MapView mapView = null;
     Boolean isSend;
@@ -130,6 +131,7 @@ public class MessageActivity extends AppCompatActivity {
         btn_location = findViewById(R.id.btn_location);
         btn_recv_location = findViewById(R.id.btn_location1);
         btn_call = findViewById(R.id.btn_call);
+        btn_sell = findViewById(R.id.btn_sell);
         txt_msg = findViewById(R.id.txt_msg);
         recyclerView = findViewById(R.id.recycler);
         recyclerView.setHasFixedSize(true);
@@ -217,6 +219,7 @@ public class MessageActivity extends AppCompatActivity {
         btn_recv_location.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Lat of long of sender
                 setBottomSheetDialog(savedInstanceState, false, 10.766724451581517, 106.69376915409575);
 
 
@@ -249,7 +252,14 @@ public class MessageActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
+        btn_sell.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MessageActivity.this, SellProductActivity.class).addFlags(Intent.FLAG_ACTIVITY_FORWARD_RESULT);
+                intent.putExtra("userid",user.getId());
+                startActivity(intent);
+            }
+        });
     }
 
     private void setBottomSheetDialog(Bundle savedInstanceState, boolean isSend, Double lati, Double longi) {

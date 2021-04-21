@@ -8,8 +8,10 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -69,10 +71,17 @@ public class PendingItemAdapter extends RecyclerView.Adapter<PendingItemAdapter.
         });
         switch (status){
             case 1:
+                List<String> users = mItems.get(position).getUsers();
+                BuyerAdapter buyerAdapter = new BuyerAdapter(context,users);
+
+                holder.status1.setLayoutManager(new LinearLayoutManager(context));
+                holder.status1.setAdapter(buyerAdapter);
                 holder.status1.setVisibility(View.VISIBLE);
+                Toast.makeText(context, users.size()+"",Toast.LENGTH_SHORT);
                 break;
             case 2:
                 holder.status2.setVisibility(View.VISIBLE);
+
                 break;
             case 3:
                 holder.status3.setVisibility(View.VISIBLE);

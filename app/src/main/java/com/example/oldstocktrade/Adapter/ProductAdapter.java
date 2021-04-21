@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -43,11 +44,15 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.MyViewHo
     Context mContext;
     List<Product> mData;
     RecyclerView mRecyclerView;
+    boolean isHidden;
+    String userID;
 
 
-    public ProductAdapter(Context mContext, List<Product> mData) {
+    public ProductAdapter(Context mContext, List<Product> mData, boolean isHidden,String userID) {
         this.mContext = mContext;
         this.mData = mData;
+        this.isHidden = isHidden;
+        this.userID = userID;
     }
 
     @Override
@@ -85,6 +90,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.MyViewHo
             proDate = (TextView) itemView.findViewById(R.id.proTransactedDate);
             proPrice = (TextView) itemView.findViewById(R.id.proPrice);
             btn_buy = itemView.findViewById(R.id.btn_buy);
+            btn_buy.setVisibility(View.GONE);
         }
     }
 
@@ -96,56 +102,34 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.MyViewHo
         holder.proDate.setText(DateFormat.getDateInstance().format(date));
         Glide.with(holder.proImage).load(mData.get(position).getImageURL().get(0))
                 .into(holder.proImage);
-        holder.btn_buy.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AlertDialog dialog = new AlertDialog.Builder(mContext)
-                        .setTitle("Confirm dialog")
-                        .setMessage("Do you want to buy this product?")
-                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                FirebaseUser fuser = FirebaseAuth.getInstance().getCurrentUser();
+        if (!isHidden) {
+            holder.btn_buy.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    AlertDialog dialog = new AlertDialog.Builder(mContext)
+                            .setTitle("Confirm dialog")
+                            .setMessage("Do you want to sell this product?")
+                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Products").child(mData.get(position).getProID());
+                                    HashMap<String,Object> hashMap = new HashMap<>();
+                                    hashMap.put("Buyer", userID);
+                                    hashMap.put("Status", 0);
+                                    hashMap.put("Timestamp", System.currentTimeMillis());
+                                    ref.updateChildren(hashMap);
+                                    Toast.makeText(mContext,"Sold successfully",Toast.LENGTH_SHORT);
+                                }
+                            })
+                            .setNegativeButton("No",null)
+                            .setIcon(android.R.drawable.ic_dialog_alert)
+                            .show();
 
-                                String proID = mData.get(position).getProID();
-                                DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users").child(fuser.getUid()).child("Buying").child(proID);
-                                HashMap<String, Object> hashMap = new HashMap<>();
-                                hashMap.put("proID",proID);
-                                hashMap.put("status",1);
-                                ref.setValue(hashMap);
-                                String sellerID = mData.get(position).getSeller();
-                                final DatabaseReference ref_pending = FirebaseDatabase.getInstance().getReference("Users").child(sellerID).child("Pending").child(proID);
-                                ref_pending.addListenerForSingleValueEvent(new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                        PendingItem item = snapshot.getValue(PendingItem.class);
+                }
+            });
+            holder.btn_buy.setVisibility(View.VISIBLE);
+        }
 
-                                        if (item != null){
-                                            ref_pending.child("Users").child(Integer.toString(item.getUsers().size())).setValue(fuser.getUid());
-                                        }
-                                        else {
-                                            HashMap<String,Object> hashMap1 = new HashMap<>();
-                                            hashMap1.put("status",1);
-                                            hashMap1.put("proID",proID);
-                                            ref_pending.setValue(hashMap1);
-                                            ref_pending.child("Users").child(Integer.toString(0)).setValue(fuser.getUid());
-                                        }
-                                    }
-
-                                    @Override
-                                    public void onCancelled(@NonNull DatabaseError error) {
-
-                                    }
-                                });
-
-                            }
-                        })
-                        .setNegativeButton("No",null)
-                        .setIcon(android.R.drawable.ic_dialog_alert)
-                        .show();
-
-            }
-        });
 
     }
 

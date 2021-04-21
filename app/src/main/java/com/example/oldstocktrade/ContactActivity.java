@@ -5,6 +5,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
 
 import android.os.Bundle;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -27,6 +31,7 @@ public class ContactActivity extends AppCompatActivity {
     private ViewPageAdapter adapter;
     private CircleImageView user_image;
     private TextView username;
+    private ImageButton btn_back;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,6 +42,13 @@ public class ContactActivity extends AppCompatActivity {
         adapter = new ViewPageAdapter(getSupportFragmentManager());
         user_image = findViewById(R.id.user_image);
         username  =findViewById(R.id.username);
+        btn_back = findViewById(R.id.btn_back);
+        btn_back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users").child(firebaseUser.getUid());
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -54,9 +66,21 @@ public class ContactActivity extends AppCompatActivity {
 
             }
         });
-        adapter.addFragment(new AllUsersFragment(), "All users");
-        adapter.addFragment(new ContactFragment(),"Recent");
+        adapter.addFragment(new ContactFragment(),"Chats");
         viewPager.setAdapter(adapter);
         tabLayout.setupWithViewPager(viewPager);
+        tabLayout.getTabAt(0).setIcon(R.drawable.ic_conversation);
+        ViewGroup tabs = (ViewGroup) tabLayout.getChildAt(0);
+
+        for (int i = 0; i < tabs.getChildCount() - 1; i++) {
+            View tab = tabs.getChildAt(i);
+            LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) tab.getLayoutParams();
+            layoutParams.weight = 1;
+            layoutParams.setMarginEnd(12);
+            layoutParams.setMarginEnd(12);
+            layoutParams.width = 100;
+            tab.setLayoutParams(layoutParams);
+            tabLayout.requestLayout();
+        }
     }
 }

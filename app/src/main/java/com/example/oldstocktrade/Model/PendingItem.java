@@ -11,10 +11,13 @@ public class PendingItem {
         return Users;
     }
 
-    public PendingItem(String proID, int status, ArrayList<String> Users) {
+    public void setUsers(ArrayList<String> users) {
+        Users = users;
+    }
+
+    public PendingItem(String proID, int status) {
         this.proID = proID;
         this.status = status;
-        this.Users = Users;
     }
 
     public PendingItem() {
