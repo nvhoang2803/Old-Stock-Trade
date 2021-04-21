@@ -36,7 +36,6 @@ public class EditActivity extends AppCompatActivity {
     private ImageView btnLocation;
     private EditText name;
     private ImageView chooseImage;
-    private TextView alert;
     private GridView chosenImages;
     private ArrayList<Uri> a= new ArrayList<Uri>();
     private Uri uriImage;
@@ -61,7 +60,6 @@ public class EditActivity extends AppCompatActivity {
         name= findViewById(R.id.name);
         chooseImage= findViewById(R.id.chooseImage);
         chosenImages= findViewById(R.id.chosenImages);
-        alert= findViewById(R.id.alert);
 
         Intent receive = getIntent();
         if(receive!=null){

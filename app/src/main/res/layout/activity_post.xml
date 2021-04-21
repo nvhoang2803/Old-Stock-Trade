@@ -130,7 +130,8 @@
             android:layout_height="wrap_content"
             android:padding="15dp"
             android:background="@drawable/input_text"
-            android:id="@+id/price"/>
+            android:id="@+id/price"
+            android:inputType="number"/>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -146,25 +147,17 @@
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:src="@drawable/ic_upload_photo"
-                android:id="@+id/chooseImage"></ImageView>
+                android:id="@+id/chooseImage"/>
         </LinearLayout>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Here will be alert"
-            android:textColor="@color/quantum_googred"
-            android:textAlignment="center"
-            android:layout_marginTop="30dp"
-            android:visibility="gone"
-            android:id="@+id/alert"/>
+
             <GridView
                 android:layout_marginVertical="15dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/chosenImages"
                 android:numColumns="3"
-                android:background="@drawable/image_gridview"></GridView>
+                android:background="@drawable/image_gridview"/>
     </LinearLayout>
 
 </LinearLayout>

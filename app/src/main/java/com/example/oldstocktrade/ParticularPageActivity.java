@@ -1,6 +1,7 @@
 package com.example.oldstocktrade;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
@@ -50,7 +51,7 @@ public class ParticularPageActivity extends AppCompatActivity {
     private TextView nameUser, phoneUser;
     private DatabaseReference df;
     private ViewPager productImagePart;
-    private Button btnReport, call, sendSMS, deletePart,btnDirection;
+    private Button btnReport, call, sendSMS, deletePart,btnDirection, chat;
     private ImageView arrow;
     private Double longitudeS = 0.0,latitudeS = 0.0,longitudeD = 0.0,latitudeD = 0.0;
     String addressS,addressD;
@@ -82,6 +83,7 @@ public class ParticularPageActivity extends AppCompatActivity {
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
             String myID= user.getUid();
             btnDirection = findViewById(R.id.btnDirection);
+            chat= findViewById(R.id.chat);
             btnDirection.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -213,85 +215,13 @@ public class ParticularPageActivity extends AppCompatActivity {
                 }
             });
 
-
-
-//
-//                    View view = LayoutInflater.from(this).inflate(R.layout.layout_bottomesheet_comment,
-//                            this.findViewById(R.id.bottomshett_comment_container));
-//
-//                    view.findViewById(R.id.bottomsheet_commend_send).setOnClickListener(new View.OnClickListener() {
-//                        @Override
-//                        public void onClick(View v) {
-//
-//                        }
-//                    });
-//                    ImageView tIm = view.findViewById(R.id.current_user_image);
-//                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-//                    df.child("Users").orderByChild(receiveUserID).equalTo(user.getUid())
-//                            .addListenerForSingleValueEvent(new ValueEventListener() {
-//                                @Override
-//                                public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                                    for (DataSnapshot ds: snapshot.getChildren()){
-//                                        tmp = ds.getValue(User.class);
-//                                        Glide.with(tIm).load(tmp.getImageURL()).into(tIm);
-//                                    }
-//                                }
-//                                @Override
-//                                public void onCancelled(@NonNull DatabaseError error) {
-//
-//                                }
-//                            });
-//                    Button sendComment = view.findViewById(R.id.bottomsheet_commend_send);
-//                    sendComment.setOnClickListener(new View.OnClickListener() {
-//                        @RequiresApi(api = Build.VERSION_CODES.M)
-//                        @Override
-//                        public void onClick(View v) {
-//                            String mKey = df.child("Comments").push().getKey();
-//                            Comment newCommet = new Comment(
-//                                    ((TextView) view.findViewById(R.id.current_user_comment)).getText().toString(),
-//                                    tmp.getId(),
-//                                    receiveID,
-//                                    System.currentTimeMillis(),
-//                                    tmp.getId());
-//                            df.child("Comments").child(mKey).setValue(newCommet);
-//                            ((TextView) view.findViewById(R.id.current_user_comment)).setText("");
-//                            hanldeComment(view,receiveID);
-//                        }
-//                    });
-//                    hanldeComment(view,receiveID);
-//            ViewGroup layout= (ViewGroup) findViewById(R.id.viewPart);
-//            layout.addView(view,0);
-//
-////                    ???
-//                }
-//
-//            public void hanldeComment(View bottomShettView,String proID){
-//                df.child("Comments").orderByChild("id").equalTo(proID).
-//                        addListenerForSingleValueEvent(new ValueEventListener() {
-//                            @RequiresApi(api = Build.VERSION_CODES.N)
-//                            @Override
-//                            public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                                ArrayList<Comment> arrComment = new ArrayList<>();
-//                                for (DataSnapshot ds: snapshot.getChildren()){
-//                                    Comment tmp = ds.getValue(Comment.class);
-//                                    arrComment.add(tmp);
-//                                }
-//                                arrComment.sort(Comparator.comparing(Comment::getTimestamp));
-//
-//                                ListViewCommentAdapter listViewCommentAdapter = new ListViewCommentAdapter(arrComment,ParticularPageActivity.this);
-//
-//                                RecyclerView commentView = bottomShettView.findViewById(R.id.bottomsheet_coment);
-//                                commentView.setAdapter(listViewCommentAdapter);
-//                                commentView.setLayoutManager(new LinearLayoutManager(ParticularPageActivity.this));
-//
-//                            }
-//                            @Override
-//                            public void onCancelled(@NonNull DatabaseError error) {
-//
-//                            }
-//                        });
-
-
-
+            chat.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent= new Intent(ParticularPageActivity.this, MessageActivity.class).addFlags(Intent.FLAG_ACTIVITY_FORWARD_RESULT);
+                    intent.putExtra("userid", receiveUserID);
+                    startActivity(intent);
+                }
+            });
         }
 }
