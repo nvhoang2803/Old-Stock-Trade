@@ -32,7 +32,6 @@ import static android.app.Activity.RESULT_OK;
 
 public class SettingsFragment extends Fragment {
     private final int REQUEST_CODE_LOCATION = 100;
-    Button btnMap,btnDirection;
     TextView txtUsername,txtLocation;
     private FirebaseUser fuser;
     RelativeLayout btnSignout,btnPost,btn_profile,btnYourLocation,btnWishlist,btnSelling,btnSold,btnBought,btnContact;
@@ -54,11 +53,11 @@ public class SettingsFragment extends Fragment {
             btnBought = view.findViewById(R.id.btnBought);
             btnContact = view.findViewById(R.id.btnContact);
             btnPost = view.findViewById(R.id.btnPost);
-            btnMap = view.findViewById(R.id.btnMap);
+
             avatar = view.findViewById(R.id.avatar);
             txtUsername = view.findViewById(R.id.UserName);
             txtLocation = view.findViewById(R.id.txtMyLocation);
-            btnDirection = view.findViewById(R.id.btnDirection);
+
             btn_profile = view.findViewById(R.id.btn_profile);
             fuser = FirebaseAuth.getInstance().getCurrentUser();
             ref = FirebaseDatabase.getInstance().getReference("Users").child(fuser.getUid());
@@ -146,20 +145,6 @@ public class SettingsFragment extends Fragment {
 
                 }
             });
-            btnDirection.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(getActivity(),DirectionMap.class));
-
-            }
-            });
-            btnMap.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    startActivity(new Intent(getActivity(),MapsActivity.class));
-
-                }
-            });
 
             btn_profile.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -179,13 +164,13 @@ public class SettingsFragment extends Fragment {
                 // Get String data from Intent
                 String location = data.getStringExtra("location");
                 String straddress = data.getStringExtra("address");
-                String[] loc = location.split("-");
+                String[] loc = location.split("#");
                 main.latitude = Double.valueOf(loc[0]);
                 main.longitude = Double.valueOf(loc[1]);
                 txtLocation.setText(straddress);
                 main.address = straddress;
                 // Set text view with string
-                Log.d("Location", "onActivityResult: "+location);;//split location bang - se ra longitude va latitude roi luu vao db
+                Log.d("Location", "onActivityResult: "+location);;//split location bang # se ra longitude va latitude roi luu vao db
 
             }
         }

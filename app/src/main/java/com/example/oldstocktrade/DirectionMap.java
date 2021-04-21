@@ -152,7 +152,7 @@ public class DirectionMap extends FragmentActivity implements OnMapReadyCallback
 
                     LatLngBounds bounds = builder.build();
 
-                    map.setPadding(200, 100, 100, 550);
+                    map.setPadding(300, 100, 100, 650);
                     map.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 0));
                     map.setPadding(0,0,0,0);
 

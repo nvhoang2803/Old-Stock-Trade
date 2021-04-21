@@ -15,8 +15,9 @@
     <LinearLayout
         android:id="@+id/llDetail"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="220dp"
         android:layout_alignParentBottom="true"
+
         android:orientation="vertical"
         android:elevation="5dp"
         android:background="@drawable/bg_roundinfo"

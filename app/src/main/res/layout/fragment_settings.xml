@@ -306,37 +306,7 @@
 
             />
     </RelativeLayout>
-<!--    <Button-->
-<!--        android:layout_alignParentTop="true"-->
-<!--        android:id="@+id/btnSignout"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:text="Signout" />-->
-<!--    <Button-->
-<!--        android:layout_toEndOf="@id/btnSignout"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:id="@+id/btnPost"-->
 
-<!--        android:text="POST"></Button>-->
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Direction"
-        android:id="@+id/btnDirection"/>
-
-    <Button
-        android:id="@+id/btnMap"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toEndOf="@id/btnPost"
-
-        android:text="MAP"></Button>
-    <!--    <Button-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:text="Profile"-->
-<!--        android:id="@+id/btn_profile"/>-->
 
 
 </LinearLayout>

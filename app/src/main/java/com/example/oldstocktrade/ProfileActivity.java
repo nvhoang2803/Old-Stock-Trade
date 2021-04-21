@@ -68,7 +68,7 @@ public class ProfileActivity extends AppCompatActivity {
     private String imageUrl;
     private Uri imageUri = null;
     private User user;
-    RequestOptions newImageSignature;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
