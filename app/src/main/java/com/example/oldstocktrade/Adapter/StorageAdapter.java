@@ -1,13 +1,17 @@
 package com.example.oldstocktrade.Adapter;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
@@ -45,7 +49,7 @@ public class StorageAdapter extends RecyclerView.Adapter<StorageAdapter.MyViewHo
     List<Product> mData;
     String tabName;
     RecyclerView mRecyclerView;
-
+    private ProgressDialog progressDialog;
 
     public StorageAdapter(Context mContext, List<Product> mData, String tabName) {
         this.mContext = mContext;
@@ -137,8 +141,9 @@ public class StorageAdapter extends RecyclerView.Adapter<StorageAdapter.MyViewHo
         );
     }
     public void removeFromSelling(int position){
-        DatabaseReference mProduct = FirebaseDatabase.getInstance().getReference("Products").child(mData.get(position).getProID());
-        mProduct.removeValue();
+        progressDialog= new ProgressDialog(mContext);
+        progressDialog.setMessage("Removing...");
+        progressDialog.show();
         FirebaseUser fuser = FirebaseAuth.getInstance().getCurrentUser();
         Query mWishList = FirebaseDatabase.getInstance().getReference("Wishlist").orderByChild("proID").equalTo(mData.get(position).getProID());
         mWishList.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -150,16 +155,18 @@ public class StorageAdapter extends RecyclerView.Adapter<StorageAdapter.MyViewHo
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
                                 if (task.isSuccessful()) {
-                                    mData.remove(position);
-                                    mRecyclerView.removeViewAt(position);
-                                    notifyItemRemoved(position);
-                                    notifyItemRangeRemoved(position, mData.size());
                                 } else {
                                 }
                             }
                         });;
                     };
                 }
+                DatabaseReference mProduct = FirebaseDatabase.getInstance().getReference("Products").child(mData.get(position).getProID());
+                mProduct.removeValue();
+                notifyItemRemoved(position);
+                notifyItemRangeRemoved(position, mData.size());
+                mData.remove(position);
+                progressDialog.dismiss();
             }
 
             @Override
@@ -167,6 +174,7 @@ public class StorageAdapter extends RecyclerView.Adapter<StorageAdapter.MyViewHo
 
             }
         });
+        mRecyclerView.removeViewAt(position);
     }
     public void removeFromWishList(int position){
         FirebaseUser fuser = FirebaseAuth.getInstance().getCurrentUser();
@@ -218,4 +226,32 @@ public class StorageAdapter extends RecyclerView.Adapter<StorageAdapter.MyViewHo
         intent.putExtras(myBundle);
         mContext.startActivity(intent);
     }
+//    private class MyTask extends AsyncTask<Void, Void, Void> {
+//
+//        @Override
+//        protected void onPreExecute() {
+//            super.onPreExecute();
+////            AlphaAnimation inAnimation = new AlphaAnimation(0f, 1f);
+////            inAnimation.setDuration(200);
+////            progressDialog= new ProgressDialog(mContext);
+////            progressDialog.setMessage("Image Uploading please wait............");
+////            progressDialog.show();
+//        }
+//
+//        @Override
+//        protected void onPostExecute(Void aVoid) {
+//            super.onPostExecute(aVoid);
+////            AlphaAnimation outAnimation;
+////            outAnimation = new AlphaAnimation(1f, 0f);
+////            outAnimation.setDuration(200);
+//            progressDialog.dismiss();
+//        }
+//
+//        @Override
+//        protected Void doInBackground(Void... params) {
+//            removeFromSelling(position);
+//            return null;
+//        }
+//    }
+
 }

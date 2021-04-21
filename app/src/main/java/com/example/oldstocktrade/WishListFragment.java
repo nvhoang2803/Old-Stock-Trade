@@ -62,9 +62,11 @@ public class  WishListFragment extends Fragment {
                     mReference.child("Products/" + wl.getProID()).addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot childsnapshot) {
-                            SoldFragment.removeNoStockLayout(oopslayout);
                             Product product = childsnapshot.getValue(Product.class);
-                            lstProduct.add(product);
+                            if(product != null && !(product.getSeller().equals(userID))){
+                                lstProduct.add(product);
+                                SoldFragment.removeNoStockLayout(oopslayout);
+                            }
                             myrecycleview = (RecyclerView) v.findViewById(R.id.storage_recyclerview);
                             StorageAdapter recyclerAdapter = new StorageAdapter(getContext(),lstProduct,"wishlist");
                             myrecycleview.setLayoutManager(new GridLayoutManager(getActivity(),2));
@@ -76,6 +78,7 @@ public class  WishListFragment extends Fragment {
 
                         }
                     });
+
                 }
             }
 

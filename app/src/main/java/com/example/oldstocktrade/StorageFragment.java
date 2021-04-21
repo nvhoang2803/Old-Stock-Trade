@@ -60,8 +60,26 @@ public class StorageFragment extends Fragment {
         });
         viewPager.setAdapter(adapter);
         tabLayout.setupWithViewPager(viewPager);
+        viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+
+            @Override
+            public void onPageSelected(int position) {
+                // on changing the page
+                // make respected tab selected
+                adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onPageScrolled(int arg0, float arg1, int arg2) {
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int arg0) {
+            }
+        });
         //--------phan de chon item setting dan toi tab tuong thich
         if(typetab!=-1){
+            adapter.notifyDataSetChanged();
             TabLayout.Tab tab = tabLayout.getTabAt(typetab);
             tab.select();
         }

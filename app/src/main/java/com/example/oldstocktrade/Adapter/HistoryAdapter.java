@@ -98,13 +98,6 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.MyViewHo
                 }
                 mData.remove(position);
                 mRecyclerView.removeViewAt(position);
-//                if (mData.size() == 0){
-//                    LinearLayout oopslayout = null;
-//                    if (tabName == "sold"){
-//                        oopslayout = (LinearLayout) parentView.findViewById(R.id.oops_layout_sold);
-//                    }
-//                    SoldFragment.createNoStockLayout(oopslayout);
-//                }
                 notifyItemRemoved(position);
                 notifyItemRangeChanged(position, mData.size());
             }

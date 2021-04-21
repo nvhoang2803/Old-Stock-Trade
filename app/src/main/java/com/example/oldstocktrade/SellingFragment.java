@@ -47,6 +47,10 @@ public class SellingFragment extends Fragment {
 
     }
 
+    public View getView() {
+        return v;
+    }
+
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle saveInstanceState){
         v = inflater.inflate(R.layout.fragment_selling, container, false);
         lstProduct = new ArrayList<>();
