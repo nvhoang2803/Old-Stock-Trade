@@ -52,11 +52,8 @@ public class BoughtFragment extends Fragment {
         lstProduct = new ArrayList<>();
         fuser = FirebaseAuth.getInstance().getCurrentUser();
         userID = fuser.getUid();
-        oopslayout = (LinearLayout) v.findViewById(R.id.oops_layout);
-        ViewGroup.LayoutParams layoutParams = oopslayout.getLayoutParams();
-        layoutParams.width = MATCH_PARENT;
-        layoutParams.height = MATCH_PARENT;
-        oopslayout.setLayoutParams(layoutParams);
+        oopslayout = (LinearLayout) v.findViewById(R.id.oops_layout_bought);
+        SoldFragment.createNoStockLayout(oopslayout);
         mReference.child("Products").orderByChild("Buyer").equalTo(userID).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -67,14 +64,10 @@ public class BoughtFragment extends Fragment {
                     }
                 }
                 if (lstProduct.size() == 0){
-                    layoutParams.width = MATCH_PARENT;
-                    layoutParams.height = MATCH_PARENT;
-                    oopslayout.setLayoutParams(layoutParams);
+                    SoldFragment.createNoStockLayout(oopslayout);
                 }
                 else {
-                    layoutParams.width = 0;
-                    layoutParams.height = 0;
-                    oopslayout.setLayoutParams(layoutParams);
+                    SoldFragment.removeNoStockLayout(oopslayout);
                     myrecycleview = (RecyclerView) v.findViewById(R.id.history_recyclerview);
                     HistoryAdapter recyclerAdapter = new HistoryAdapter(getContext(),lstProduct,"bought");
                     myrecycleview.setLayoutManager(new GridLayoutManager(getActivity(),2));

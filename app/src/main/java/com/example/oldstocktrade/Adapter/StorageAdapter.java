@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -23,6 +24,8 @@ import com.example.oldstocktrade.Model.Product;
 import com.example.oldstocktrade.Model.WishListItem;
 import com.example.oldstocktrade.PostActivity;
 import com.example.oldstocktrade.R;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -90,6 +93,9 @@ public class StorageAdapter extends RecyclerView.Adapter<StorageAdapter.MyViewHo
 
     @Override
     public void onBindViewHolder(@NonNull StorageAdapter.MyViewHolder holder, int position) {
+        if (mData.get(position) == null){
+            return;
+        }
         holder.proName.setText(mData.get(position).getName());
         holder.proPrice.setText(Long.toString(Math.round(mData.get(position).getPrice())));
         Date date = new Date(mData.get(position).getTimestamp());
@@ -133,12 +139,26 @@ public class StorageAdapter extends RecyclerView.Adapter<StorageAdapter.MyViewHo
     public void removeFromSelling(int position){
         DatabaseReference mProduct = FirebaseDatabase.getInstance().getReference("Products").child(mData.get(position).getProID());
         mProduct.removeValue();
-        Query mWishList = FirebaseDatabase.getInstance().getReference("WishList").orderByChild("proID").equalTo(mData.get(position).getProID());
+        FirebaseUser fuser = FirebaseAuth.getInstance().getCurrentUser();
+        Query mWishList = FirebaseDatabase.getInstance().getReference("Wishlist").orderByChild("proID").equalTo(mData.get(position).getProID());
         mWishList.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot wishlistSnapshot: snapshot.getChildren()) {
-                    wishlistSnapshot.getRef().removeValue();
+                    if(wishlistSnapshot.getValue(WishListItem.class).getUserID().equals(fuser.getUid())){
+                        wishlistSnapshot.getRef().removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    mData.remove(position);
+                                    mRecyclerView.removeViewAt(position);
+                                    notifyItemRemoved(position);
+                                    notifyItemRangeRemoved(position, mData.size());
+                                } else {
+                                }
+                            }
+                        });;
+                    };
                 }
             }
 
@@ -147,10 +167,6 @@ public class StorageAdapter extends RecyclerView.Adapter<StorageAdapter.MyViewHo
 
             }
         });
-        mData.remove(position);
-        mRecyclerView.removeViewAt(position);
-        notifyItemRemoved(position);
-        notifyItemRangeRemoved(position, mData.size());
     }
     public void removeFromWishList(int position){
         FirebaseUser fuser = FirebaseAuth.getInstance().getCurrentUser();
