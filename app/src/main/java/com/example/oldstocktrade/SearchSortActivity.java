@@ -300,10 +300,10 @@ public class SearchSortActivity extends AppCompatActivity {
                         }else {
                             for (DataSnapshot ds: snapshot.getChildren()){
                                 tmp = ds.getValue(Product.class);
-                                if (tmp.getName() != null && (( tmp.getName().toLowerCase().contains(query.toLowerCase())
+                                if (tmp.getName() != null && tmp.getStatus() == 1 && ((( tmp.getName().toLowerCase().contains(query.toLowerCase())
                                         || VnCharacteristic.removeAccent(tmp.getName()).toLowerCase().contains(query.toLowerCase()) )) ||
                                         ( tmp.getDescription().toLowerCase().contains(query.toLowerCase())
-                                                || VnCharacteristic.removeAccent(tmp.getDescription()).toLowerCase().contains(query.toLowerCase()) )){
+                                                || VnCharacteristic.removeAccent(tmp.getDescription()).toLowerCase().contains(query.toLowerCase())) )){
                                     arr.add(tmp);
                                 }
                             }
@@ -562,10 +562,10 @@ public class SearchSortActivity extends AppCompatActivity {
                                 for (DataSnapshot ds: snapshot.getChildren()){
                                     Product tmp = ds.getValue(Product.class);
                                     String txt = tmp.getName();
-                                    if (txt != null &&(( tmp.getName().toLowerCase().contains(newText.toLowerCase())
+                                    if (txt != null && tmp.getStatus() == 1 && ((( tmp.getName().toLowerCase().contains(newText.toLowerCase())
                                             || VnCharacteristic.removeAccent(tmp.getName()).toLowerCase().contains(newText.toLowerCase()) )) ||
                                             ( tmp.getDescription().toLowerCase().contains(newText.toLowerCase())
-                                                    || VnCharacteristic.removeAccent(tmp.getDescription()).toLowerCase().contains(newText.toLowerCase()) )   ){
+                                                    || VnCharacteristic.removeAccent(tmp.getDescription()).toLowerCase().contains(newText.toLowerCase()) ))   ){
                                         searcharr.add(tmp.getName());
                                     }
                                 }

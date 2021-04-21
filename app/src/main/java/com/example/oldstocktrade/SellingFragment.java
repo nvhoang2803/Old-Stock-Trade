@@ -42,6 +42,7 @@ public class SellingFragment extends Fragment {
     private String userID;
     private LinearLayout oopslayout;
     MainActivity main = (MainActivity) getActivity();
+
     public SellingFragment(){
 
     }

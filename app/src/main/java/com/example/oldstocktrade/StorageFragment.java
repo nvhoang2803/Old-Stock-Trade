@@ -42,6 +42,22 @@ public class StorageFragment extends Fragment {
 
         adapter.addFragment(new SellingFragment(), getString(R.string.title_storage_selling));
         adapter.addFragment(new WishListFragment(), getString(R.string.title_storage_wishlist));
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
         viewPager.setAdapter(adapter);
         tabLayout.setupWithViewPager(viewPager);
         //--------phan de chon item setting dan toi tab tuong thich
@@ -50,6 +66,5 @@ public class StorageFragment extends Fragment {
             tab.select();
         }
         //----------------------
-
     }
 }

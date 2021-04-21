@@ -60,6 +60,7 @@
                 android:id="@+id/userImage"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:background="@mipmap/ic_launcher"
                 android:scaleType="centerCrop"
                 tools:layout_editor_absoluteX="165dp"
                 tools:layout_editor_absoluteY="132dp" />

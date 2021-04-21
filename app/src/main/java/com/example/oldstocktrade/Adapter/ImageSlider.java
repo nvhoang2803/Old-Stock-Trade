@@ -45,13 +45,10 @@ public class ImageSlider extends PagerAdapter {
     public Object instantiateItem(@NonNull ViewGroup container, final int position) {
         // inflating the item.xml
         View itemView = mLayoutInflater.inflate(R.layout.item, container, false);
-
         // referencing the image view from the item.xml file
         ImageView imageView = (ImageView) itemView.findViewById(R.id.imageViewMain);
-
         // setting the image in the imageView
         Glide.with(imageView).load(arr[position]).into(imageView);
-
         // Adding the View
         Objects.requireNonNull(container).addView(itemView);
 

@@ -61,6 +61,7 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ViewHo
     DatabaseReference mReference = FirebaseDatabase.getInstance().getReference();
     StorageReference sr= FirebaseStorage.getInstance().getReference();
     ArrayList<Double> lonlat;
+    String[] arrImage;
 
     public ListViewAdapter(ArrayList<Product> productArrayList, Activity curAcc, User a, ArrayList<String> a1,ArrayList<Double> lonlat) {
         this.userProductlike = a1;
@@ -94,7 +95,10 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ViewHo
                                 Glide.with(holder.userImage).load("https://image.flaticon.com/icons/png/512/17/17004.png")
                                         .into(holder.userImage);
                             }
-                            holder.productSellerName.setText(appleSnapshot.getValue(User.class).getUsername());
+                            if (appleSnapshot.getValue(User.class).getUsername() != null){
+                                holder.productSellerName.setText(appleSnapshot.getValue(User.class).getUsername());
+                            }
+
                         }
                     }
                     @Override
@@ -181,11 +185,17 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ViewHo
             }
         });
 
-        holder.productAddress.setText(productArrayList.get(position).getAddress());
+        if (productArrayList.get(position).getAddress() != null){
+            holder.productAddress.setText(productArrayList.get(position).getAddress());
+        }
         //
+
         holder.productTime.setText(timeD + " - " + priceD + " VND");
         //
-        holder.productDetail.setText(productArrayList.get(position).getDescription());
+        if (productArrayList.get(position).getDescription() != null){
+            holder.productDetail.setText(productArrayList.get(position).getDescription());
+        }
+
         //Caculate distance from currenLocation to product location
         double dis = 0;
 
@@ -204,9 +214,22 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ViewHo
         holder.productDistance.setText((int) dis + "km");
         holder.userName.setText(productArrayList.get(position).getName());
         //Handle ImageSlider
-        String[] arrImage = productArrayList.get(position).getImageURL().toArray(new String[0]);
-        ImageSlider imgSliderAdapter = new ImageSlider(curActivity,arrImage);
-        holder.productImage.setAdapter(imgSliderAdapter);
+        ImageSlider imgSliderAdapter;
+        arrImage = new String[0];
+        if (productArrayList.get(position).getImageURL() != null){
+            arrImage = productArrayList.get(position).getImageURL().toArray(new String[0]);
+            if (arrImage.length != 0){
+                imgSliderAdapter = new ImageSlider(curActivity,arrImage);
+            }else{
+                imgSliderAdapter = new ImageSlider(curActivity, new String[]{"https://st3.depositphotos.com/23594922/31822/v/600/depositphotos_318221368-stock-illustration-missing-picture-page-for-website.jpg"});
+            }
+            holder.productImage.setAdapter(imgSliderAdapter);
+        }else{
+            imgSliderAdapter = new ImageSlider(curActivity, new String[]{"https://st3.depositphotos.com/23594922/31822/v/600/depositphotos_318221368-stock-illustration-missing-picture-page-for-website.jpg"});
+            holder.productImage.setAdapter(imgSliderAdapter);
+        }
+
+
 
 
 //        Glide.with(holder.imgProduct).load(arrImage[0]).into(holder.imgProduct);
@@ -314,12 +337,10 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ViewHo
                 }
             }
         });
-
         if (productArrayList.get(position).getStatus() != 1){
             holder.productStatus.setVisibility(View.VISIBLE);
             holder.productStatus.bringToFront();
         }
-
     }
 
     public void hanldeComment(View bottomShettView,String proID){

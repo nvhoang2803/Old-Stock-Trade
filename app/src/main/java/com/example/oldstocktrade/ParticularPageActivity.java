@@ -46,7 +46,6 @@ import java.util.Comparator;
 
 
 public class ParticularPageActivity extends AppCompatActivity {
-
     private TextView descriptionPart, pricePart, dayPostPart, addressPart;
     private TextView nameUser, phoneUser;
     private DatabaseReference df;
