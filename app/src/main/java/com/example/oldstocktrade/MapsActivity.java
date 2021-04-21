@@ -58,10 +58,10 @@ public class MapsActivity extends FragmentActivity {
     EditText searchView;
     FusedLocationProviderClient client;
     Button btnConfirm;
-    TextView txtAddress,txtTude;
+    TextView txtAddress, txtTude;
     Geocoder geocoder;
     ImageButton btnBack;
-    Double lati = null,longi=null;
+    Double lati = null, longi = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,9 +84,9 @@ public class MapsActivity extends FragmentActivity {
         });
 
         Intent recieve = getIntent();
-        if(recieve!=null){
+        if (recieve != null) {
             Bundle myBundle = recieve.getExtras();
-            if(myBundle!=null){
+            if (myBundle != null) {
                 lati = myBundle.getDouble("lat");
                 longi = myBundle.getDouble("long");
             }
@@ -95,7 +95,7 @@ public class MapsActivity extends FragmentActivity {
         }
 
 
-        Places.initialize(getApplicationContext(),getString(R.string.google_maps_key));
+        Places.initialize(getApplicationContext(), getString(R.string.google_maps_key));
 
         View locationButton = ((View) findViewById(Integer.parseInt("1")).getParent()).findViewById(Integer.parseInt("2"));
         RelativeLayout.LayoutParams rlp = (RelativeLayout.LayoutParams) locationButton.getLayoutParams();
@@ -105,10 +105,13 @@ public class MapsActivity extends FragmentActivity {
         rlp.setMargins(0, 180, 180, 0);
         client = LocationServices.getFusedLocationProviderClient(this);
         if (ActivityCompat.checkSelfPermission(MapsActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            btnConfirm.setEnabled(true);
             mapFragment.getMapAsync(new OnMapReadyCallback() {
                 @Override
                 public void onMapReady(GoogleMap googleMap) {
                     mMap = googleMap;
+                    setMyLocation();
+                    getCurrentLocation(false);
                     mMap.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
                         @Override
                         public boolean onMyLocationButtonClick() {
@@ -116,9 +119,11 @@ public class MapsActivity extends FragmentActivity {
                             return false;
                         }
                     });
-                }});
-            getCurrentLocation(false);
+                }
+            });
+
         } else {
+            btnConfirm.setEnabled(false);
             ActivityCompat.requestPermissions(MapsActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 44);
         }
         btnConfirm.setOnClickListener(new View.OnClickListener() {
@@ -137,56 +142,51 @@ public class MapsActivity extends FragmentActivity {
             public void onClick(View v) {
                 Log.d("Onclick Search View", "onClick: ");
                 List<Place.Field> fieldList = Arrays.asList(Place.Field.ADDRESS
-                        ,Place.Field.LAT_LNG,Place.Field.NAME);
-                Intent intent = new Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN,fieldList).setCountry("VN").build(MapsActivity.this);
+                        , Place.Field.LAT_LNG, Place.Field.NAME);
+                Intent intent = new Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN, fieldList).setCountry("VN").build(MapsActivity.this);
                 startActivityForResult(intent, 100);
             }
         });
-
 
 
     }
 
     private void getCurrentLocation(boolean isCurrent) {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
+
             return;
         }
 
+        mMap.setMyLocationEnabled(true);
         Task<Location> task = client.getLastLocation();
         task.addOnSuccessListener(new OnSuccessListener<Location>() {
             @Override
             public void onSuccess(Location location) {
                 if (location != null) {
-                            setMyLocation();
-                            LatLng pos;
-                            if(isCurrent==false&&lati!=null&&longi!=null){
-                                pos = new LatLng(lati,longi);
-                            }else{
-                                pos = new LatLng(location.getLatitude(),location.getLongitude());
-                            }
+                    Log.d("OnsuccessLocation", "onSuccess: "+location+' '+lati+" "+longi);
+                    LatLng pos;
+                    if (isCurrent == false && lati != 0.0 && longi != 0.0) {
+                        pos = new LatLng(lati, longi);
+                    } else {
+                        pos = new LatLng(location.getLatitude(), location.getLongitude());
+                    }
 
-                            ArrayList<Address> addresses = null;
-                            try {
-                                addresses = (ArrayList<Address>) geocoder.getFromLocation(pos.latitude,pos.longitude,1);
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(pos,15));
-                            mMap.addMarker(new MarkerOptions().position(pos).title("You're here"));
-                            if (addresses.size() != 0) {
-                                Address address = addresses.get(0);
-                                txtAddress.setText(address.getAddressLine(0));
-                                txtTude.setText(Double.toString(pos.latitude) + "-" + Double.toString(pos.longitude));
+                    ArrayList<Address> addresses = null;
+                    try {
+                        addresses = (ArrayList<Address>) geocoder.getFromLocation(pos.latitude, pos.longitude, 1);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(pos, 15));
+                    mMap.addMarker(new MarkerOptions().position(pos).title("You're here"));
+                    if (addresses != null && addresses.size() != 0) {
+                        Address address = addresses.get(0);
+                        txtAddress.setText(address.getAddressLine(0));
+                        txtTude.setText(Double.toString(pos.latitude) + "#" + Double.toString(pos.longitude));
 
 
-                            }
+                    }
+                    mapFragment.onResume();
 
                 }
             }
@@ -202,15 +202,36 @@ public class MapsActivity extends FragmentActivity {
         }
         mMap.setMyLocationEnabled(true);
 
-
-
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if(requestCode==44){
-            if(grantResults.length>0 &&grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                getCurrentLocation(false);
+        if (requestCode == 44) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                btnConfirm.setEnabled(true);
+
+                mapFragment.getMapAsync(new OnMapReadyCallback() {
+                    @Override
+                    public void onMapReady(GoogleMap googleMap) {
+
+                        mMap = googleMap;
+                        getCurrentLocation(false);
+                        if (ActivityCompat.checkSelfPermission(MapsActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(MapsActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                            return;
+                        }
+                        mMap.setMyLocationEnabled(true);
+                        setMyLocation();
+
+                        mMap.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
+                            @Override
+                            public boolean onMyLocationButtonClick() {
+                                getCurrentLocation(true);
+                                return false;
+                            }
+                        });
+                    }});
+
+
             }
         }
 
@@ -226,7 +247,7 @@ public class MapsActivity extends FragmentActivity {
             mMap.addMarker(new MarkerOptions().position(latLng).title(place.getName()));
             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
             txtAddress.setText(place.getAddress());
-            txtTude.setText(Double.toString(latLng.latitude)+"-"+Double.toString(latLng.longitude));
+            txtTude.setText(Double.toString(latLng.latitude)+"#"+Double.toString(latLng.longitude));
 
         }else if(resultCode == AutocompleteActivity.RESULT_ERROR){
             Status status = Autocomplete.getStatusFromIntent(data);

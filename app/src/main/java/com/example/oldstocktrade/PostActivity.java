@@ -122,7 +122,7 @@ public class PostActivity extends AppCompatActivity {
                     // Set text view with string
                     Log.d("Location", "onActivityResult: "+location);;//split location bang - se ra longitude va latitude roi luu vao db
                     address.setText(straddress);
-                    String a[]= location.split("-");
+                    String a[]= location.split("#");
                     lat= Double.parseDouble(a[0]);
                     lon= Double.parseDouble(a[1]);
                 }
@@ -174,7 +174,6 @@ public class PostActivity extends AppCompatActivity {
                             }
                         });
             }
-
             String des, addr, seller, pri, ph, na;
             des= description.getText().toString();
             addr= address.getText().toString();

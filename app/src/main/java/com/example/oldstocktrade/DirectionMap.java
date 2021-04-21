@@ -49,13 +49,14 @@ public class DirectionMap extends FragmentActivity implements OnMapReadyCallback
     TextView tvTo,tvFrom;
     ImageView btnGMap;
     CircleImageView btnBack;
+    SupportMapFragment mapFragment;
     double lat1=10.762397,long1=106.682752,lat2=10.7704246,long2=106.6724038;
     @SuppressLint("WrongViewCast")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_direction_map);
-        SupportMapFragment mapFragment =  (SupportMapFragment) getSupportFragmentManager()
+        mapFragment =  (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.directionMap);
                 // (MapFragment) getFragmentManager().findFragmentById(R.id.directionMap);
         mapFragment.getMapAsync(this);
@@ -151,14 +152,7 @@ public class DirectionMap extends FragmentActivity implements OnMapReadyCallback
 
                     LatLngBounds bounds = builder.build();
 
-                    //CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, width, height, padding);
-//                    CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds,
-//                            0);
-//                    map.setPadding(150, 50, 50, 500);
-//                    map.moveCamera(cu);
-//                    map.animateCamera(cu, 2000, null);
-//                    map.setPadding(0,0,0,0);
-                    map.setPadding(200, 100, 100, 550);
+                    map.setPadding(300, 100, 100, 650);
                     map.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 0));
                     map.setPadding(0,0,0,0);
 
@@ -178,6 +172,7 @@ public class DirectionMap extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         map = googleMap;
+        mapFragment.onResume();
         map.addMarker(source);
         map.addMarker(dest);
         map.animateCamera(CameraUpdateFactory.newLatLngZoom(source.getPosition(), 15));
