@@ -171,8 +171,9 @@ public class PostActivity extends AppCompatActivity {
 
         if (addr.matches("") || des.matches("") || pri.matches("") || na.matches("") || a.size() == 0) {
             AnnouncementPostAdapter postAdapter = new AnnouncementPostAdapter();
-            postAdapter.show(getSupportFragmentManager(), "example dialog");
+            postAdapter.show(getSupportFragmentManager(), "dialog");
         } else {
+            String[] aURL= new String[a.size()];
             progressDialog = new ProgressDialog(this);
             progressDialog.setMessage("Image Uploading please wait............");
             progressDialog.show();
@@ -189,7 +190,7 @@ public class PostActivity extends AppCompatActivity {
                                     @Override
                                     public void onSuccess(Uri uri) {
                                         String url = String.valueOf(uri);
-//                                        aImage.add(url);
+//                                        aURL[count]= url;
                                         df.child(id).child("ImageURL").child(String.valueOf(count)).setValue(url);
                                         count++;
                                     }
@@ -222,8 +223,8 @@ public class PostActivity extends AppCompatActivity {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-//                for(int j=0;j<aImage.size();j++){
-//                    df.child(id).child("ImageURL").child(String.valueOf(j)).setValue(aImage.get(j));
+//                for(int j=0;j<aURL.length;j++){
+//                    df.child(id).child("ImageURL").child(String.valueOf(j)).setValue(aURL[j]);
 //                }
 //                df.child(id).setValue(map);
 //                final Handler handel2= new Handler();
@@ -233,7 +234,7 @@ public class PostActivity extends AppCompatActivity {
 //                        startActivity(new Intent(PostActivity.this, MainActivity.class));
 //                        finish();
 //                    }
-//                },1000);
+//                },2000);
                 startActivity(new Intent(PostActivity.this, MainActivity.class));
                 finish();
             }

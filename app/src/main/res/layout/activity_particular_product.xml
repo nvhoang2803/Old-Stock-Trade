@@ -19,19 +19,14 @@
             android:orientation="vertical"
             android:padding="10dp"
             tools:context=".ParticularPageActivity"
-            tools:ignore="MissingConstraints">
+            tools:ignore="NestedScrolling"
+            android:background="@color/background">
 
             <ImageView
                 android:id="@+id/btnBack"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_left_arrow" />
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/ic_left_arrow" />
 
 <!--            <Button-->
 <!--                android:id="@+id/deletePart"-->
@@ -40,17 +35,23 @@
 <!--                android:background="@color/quantum_googred"-->
 <!--                android:text="Delete" />-->
 
-            <Button
-                android:id="@+id/btnReport"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Report" />
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <Button
+                    android:id="@+id/btnReport"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Report"
+                    android:layout_alignParentRight="true"/>
+            </RelativeLayout>
+
 
             <androidx.viewpager.widget.ViewPager
                 android:id="@+id/productImagePart"
-                android:layout_width="match_parent"
-                android:layout_height="277dp"
-                tools:ignore="MissingConstraints" />
+                android:layout_width="wrap_content"
+                android:layout_height="300dp"
+                tools:ignore="NestedScrolling" />
 
             <TextView
                 android:id="@+id/descriptionPart"
@@ -68,14 +69,15 @@
                 android:layout_height="wrap_content" />
 
             <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Seller Information:"
+                android:textSize="20dp" />
+
+            <TextView
                 android:id="@+id/addressPart"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Seller Information" />
 
             <TextView
                 android:id="@+id/nameUser"
@@ -93,24 +95,32 @@
                 android:layout_height="wrap_content"
                 android:text="Direction" />
 
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
             <Button
                 android:id="@+id/call"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Call" />
+                android:text="Call"
+                android:layout_alignParentLeft="true"/>
 
             <Button
                 android:id="@+id/sendSMS"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Send SMS" />
+                android:text="Send SMS"
+                android:layout_centerInParent="true"/>
 
             <Button
                 android:id="@+id/chat"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Chat" />
-
+                android:text="Chat"
+                android:layout_alignParentRight="true"
+                />
+            </RelativeLayout>
 
         </LinearLayout>
     </ScrollView>

@@ -103,7 +103,6 @@ public class ParticularPageActivity extends AppCompatActivity {
             arrow.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    startActivity(new Intent(ParticularPageActivity.this,MainActivity.class));
                     finish();
                 }
             });
@@ -190,23 +189,29 @@ public class ParticularPageActivity extends AppCompatActivity {
                     String pu= snapshot.child("phone").getValue().toString();
                     nameUser.setText("Username: "+ nu);
                     phoneUser.setText("Phone user: "+ pu);
+                    if(pu.matches("")|| receiveUserID.equals(myID))
+                    {
+                        call.setEnabled(false);
+                        sendSMS.setEnabled(false);
+                    }
+                    else{
+                        call.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Intent intent= new Intent(Intent.ACTION_DIAL);
+                                intent.setData(Uri.parse("tel:"+pu));
+                                startActivity(intent);
+                            }
+                        });
 
-                    call.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Intent intent= new Intent(Intent.ACTION_DIAL);
-                            intent.setData(Uri.parse("tel:"+pu));
-                            startActivity(intent);
-                        }
-                    });
-
-                    sendSMS.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Intent intent= new Intent(Intent.ACTION_VIEW, Uri.parse("sms:"+pu));
-                            startActivity(intent);
-                        }
-                    });
+                        sendSMS.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Intent intent= new Intent(Intent.ACTION_VIEW, Uri.parse("sms:"+pu));
+                                startActivity(intent);
+                            }
+                        });
+                    }
                 }
 
                 @Override
@@ -215,13 +220,18 @@ public class ParticularPageActivity extends AppCompatActivity {
                 }
             });
 
-            chat.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent= new Intent(ParticularPageActivity.this, MessageActivity.class).addFlags(Intent.FLAG_ACTIVITY_FORWARD_RESULT);
-                    intent.putExtra("userid", receiveUserID);
-                    startActivity(intent);
-                }
-            });
+            if(receiveUserID.equals(myID)){
+                chat.setEnabled(false);
+            }else{
+                chat.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent= new Intent(ParticularPageActivity.this, MessageActivity.class).addFlags(Intent.FLAG_ACTIVITY_FORWARD_RESULT);
+                        intent.putExtra("userid", receiveUserID);
+                        startActivity(intent);
+                    }
+                });
+            }
+
         }
 }
