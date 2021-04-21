@@ -13,6 +13,9 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
 import android.location.Address;
@@ -27,12 +30,16 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.CustomTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.example.oldstocktrade.Adapter.MessageAdapter;
 import com.example.oldstocktrade.Model.Chat;
 import com.example.oldstocktrade.Model.Conversation;
@@ -44,6 +51,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -51,6 +59,7 @@ import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -245,6 +254,7 @@ public class MessageActivity extends AppCompatActivity {
 
     private void setBottomSheetDialog(Bundle savedInstanceState, boolean isSend, Double lati, Double longi) {
         BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(MessageActivity.this, R.style.BottomSheetDialogdTheme);
+
         View bottomSheetView;
         if(isSend){
             bottomSheetView = LayoutInflater.from(getApplicationContext()).inflate(
@@ -255,6 +265,7 @@ public class MessageActivity extends AppCompatActivity {
             bottomSheetView = LayoutInflater.from(getApplicationContext()).inflate(
                     R.layout.bottomsheet_receivelocation,
                     (LinearLayout) findViewById(R.id.bottomsheetContainer));
+        bottomSheetDialog.getBehavior().setState(BottomSheetBehavior.STATE_EXPANDED);
         bottomSheetDialog.setContentView(bottomSheetView);
         bottomSheetDialog.show();
         Log.d("btnLocation", "onClick: click on btnLocation");
@@ -332,8 +343,35 @@ public class MessageActivity extends AppCompatActivity {
                             if (location != null) {
 //                                    lati = 10.801315806188832;
 //                                    longi = 106.61737850991582;
+                                String username = txt_username.getText().toString();
                                 LatLng sender = new LatLng(lati, longi);
-                                mMap.addMarker(new MarkerOptions().position(sender).title("Sender"));
+                                String imageSource = imageURL;
+                                //edit marker: avatar
+                                Glide.with(MessageActivity.this)
+                                        .asBitmap()
+                                        .load(imageURL.equals("" + "default")?R.mipmap.ic_launcher_round:imageURL)
+                                        .apply(new RequestOptions().override(150, 150))
+                                        .circleCrop()
+                                        .into(new CustomTarget<Bitmap>() {
+                                            @Override
+                                            public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                                                mMap.addMarker(new MarkerOptions()
+                                                        .position(sender)
+                                                        .title(username)
+                                                        .icon(BitmapDescriptorFactory.fromBitmap(resource))
+                                                );
+
+                                            }
+
+                                            @Override
+                                            public void onLoadCleared(@Nullable Drawable placeholder) {
+                                            }
+                                        });
+
+
+
+
+                                //mMap.addMarker(new MarkerOptions().position(sender).title("Sender"));
                                 //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sender,20));
                                 LatLngBounds.Builder builder = new LatLngBounds.Builder();
                                 builder.include(sender);
@@ -346,7 +384,7 @@ public class MessageActivity extends AppCompatActivity {
                                 bottomSheetView.findViewById(R.id.btnGetLocation).setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
-                                        Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
+                                        Intent intent = new Intent(Intent.ACTION_VIEW,
                                                 Uri.parse("http://maps.google.com/maps?saddr="+Double.toString(location.getLatitude())+","+Double.toString(location.getLongitude())+"&daddr="+Double.toString(sender.latitude)+","+Double.toString(sender.longitude)));
                                         startActivity(intent);
                                     }

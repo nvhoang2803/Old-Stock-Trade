@@ -50,7 +50,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 
-import xyz.hanks.library.bang.SmallBangView;
+
 
 public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ViewHolder> {
 
