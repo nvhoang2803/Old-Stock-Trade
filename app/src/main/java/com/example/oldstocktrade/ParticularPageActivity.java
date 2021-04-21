@@ -51,7 +51,7 @@ public class ParticularPageActivity extends AppCompatActivity {
     private TextView nameUser, phoneUser;
     private DatabaseReference df;
     private ViewPager productImagePart;
-    private Button btnReport, call, sendSMS, deletePart,btnDirection, chat;
+    private Button btnReport, call, sendSMS, btnDirection, chat;
     private ImageView arrow;
     private Double longitudeS = 0.0,latitudeS = 0.0,longitudeD = 0.0,latitudeD = 0.0;
     String addressS,addressD;
@@ -79,7 +79,7 @@ public class ParticularPageActivity extends AppCompatActivity {
             arrow= findViewById(R.id.btnBack);
             call= findViewById(R.id.call);
             sendSMS= findViewById(R.id.sendSMS);
-            deletePart= findViewById(R.id.deletePart);
+//            deletePart= findViewById(R.id.deletePart);
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
             String myID= user.getUid();
             btnDirection = findViewById(R.id.btnDirection);
@@ -112,18 +112,18 @@ public class ParticularPageActivity extends AppCompatActivity {
                 @SuppressLint("ClickableViewAccessibility")
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    if((snapshot.child("Seller").getValue().toString()).equals(myID)){
-                        deletePart.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                df.child("Products").child(receiveID).removeValue();
-                                startActivity(new Intent(ParticularPageActivity.this,MainActivity.class));
-                                finish();
-                            }
-                        });
-                    }else{
-                        deletePart.setVisibility(View.GONE);
-                    }
+//                    if((snapshot.child("Seller").getValue().toString()).equals(myID)){
+//                        deletePart.setOnClickListener(new View.OnClickListener() {
+//                            @Override
+//                            public void onClick(View v) {
+//                                df.child("Products").child(receiveID).removeValue();
+//                                startActivity(new Intent(ParticularPageActivity.this,MainActivity.class));
+//                                finish();
+//                            }
+//                        });
+//                    }else{
+//                        deletePart.setVisibility(View.GONE);
+//                    }
                     String des= snapshot.child("Description").getValue().toString();
                     String price= snapshot.child("Price").getValue().toString();
                     longitudeD = Double.parseDouble(snapshot.child("Longitude").getValue().toString());

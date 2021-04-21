@@ -48,7 +48,7 @@ public class PostActivity extends AppCompatActivity {
     private ArrayList<Uri> a = new ArrayList<Uri>();
     private Uri uriImage;
     private ProgressDialog progressDialog;
-    private static int count = 0;
+    private int count = 0;
     private Double lon = null, lat = null;
     int countElement = 0;
 
@@ -130,9 +130,9 @@ public class PostActivity extends AppCompatActivity {
                     Log.d("Location", "onActivityResult: " + location);
                     ;//split location bang - se ra longitude va latitude roi luu vao db
                     address.setText(straddress);
-                    String a[]= location.split("#");
-                    lat= Double.parseDouble(a[0]);
-                    lon= Double.parseDouble(a[1]);
+                    String a[] = location.split("#");
+                    lat = Double.parseDouble(a[0]);
+                    lon = Double.parseDouble(a[1]);
 
                 }
             }
@@ -151,13 +151,10 @@ public class PostActivity extends AppCompatActivity {
                         a.add(uriImage);
                     }
                     chosenImages.setAdapter(new ImageAdapter(this, a));
-                } else {
-                    Toast.makeText(this, "Please select multiple image", Toast.LENGTH_SHORT).show();
                 }
             }
         }
     }
-
 
     private void uploadMultipleImage() {
         String des, addr, seller, pri, na;
@@ -240,7 +237,7 @@ public class PostActivity extends AppCompatActivity {
                 startActivity(new Intent(PostActivity.this, MainActivity.class));
                 finish();
             }
-        }, a.size()*1000);
+        }, a.size()*1500);
 
     }
 }

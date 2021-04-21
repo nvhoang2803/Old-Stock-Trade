@@ -33,12 +33,12 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/ic_left_arrow" />
 
-            <Button
-                android:id="@+id/deletePart"
-                android:layout_width="398dp"
-                android:layout_height="wrap_content"
-                android:background="@color/quantum_googred"
-                android:text="Delete" />
+<!--            <Button-->
+<!--                android:id="@+id/deletePart"-->
+<!--                android:layout_width="398dp"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:background="@color/quantum_googred"-->
+<!--                android:text="Delete" />-->
 
             <Button
                 android:id="@+id/btnReport"
