@@ -91,7 +91,7 @@ public class MessageActivity extends AppCompatActivity {
     private FirebaseUser fuser;
     private DatabaseReference reference;
     private ImageButton btn_send;
-    private ImageButton btn_img, btn_location, btn_recv_location;
+    private ImageButton btn_img, btn_location;
     private ImageButton btn_call;
     private EditText txt_msg;
     private String conversation_id = null;
@@ -130,7 +130,7 @@ public class MessageActivity extends AppCompatActivity {
         btn_send = findViewById(R.id.btn_send);
         btn_img = findViewById(R.id.btn_img);
         btn_location = findViewById(R.id.btn_location);
-        btn_recv_location = findViewById(R.id.btn_location1);
+        //btn_recv_location = findViewById(R.id.btn_location1);
         btn_call = findViewById(R.id.btn_call);
         btn_sell = findViewById(R.id.btn_sell);
         txt_msg = findViewById(R.id.txt_msg);
@@ -217,15 +217,15 @@ public class MessageActivity extends AppCompatActivity {
 
             }
         });
-        btn_recv_location.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Lat of long of sender
-                setBottomSheetDialog(savedInstanceState, false, 10.766724451581517, 106.69376915409575);
-
-
-            }
-        });
+//        btn_recv_location.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                // Lat of long of sender
+//                setBottomSheetDialog(savedInstanceState, false, 10.766724451581517, 106.69376915409575);
+//
+//
+//            }
+//        });
         btn_img.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

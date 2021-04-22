@@ -90,10 +90,10 @@ public class HomeFragment extends Fragment {
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         Product tmp;
                         for (DataSnapshot ds: snapshot.getChildren()){
-//                            tmp = ds.getValue(Product.class);
-//                            if (tmp.getStatus() == 1){
-//                                arr.add(tmp);
-//                            }
+                            tmp = ds.getValue(Product.class);
+                            if (tmp.getStatus() == 1){
+                                arr.add(tmp);
+                            }
                         }
                         arr.sort(Comparator.comparing(Product::getTimestamp).reversed());
                         mReference.child("Wishlist").orderByChild("userID").
