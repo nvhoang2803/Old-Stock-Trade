@@ -125,7 +125,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
             });
         }else if (chat.getType().equals("location")){
             holder.message.setVisibility(View.VISIBLE);
-            holder.message.setText("Current location.");
+            holder.message.setText("Current location");
             holder.image.setVisibility(View.GONE);
             holder.message.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -134,7 +134,8 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
                         String data[] = chat.getMessage().split(",",2);
                         Double lat = Double.parseDouble(data[0]);
                         Double lon = Double.parseDouble(data[1]);
-                        ((MessageActivity) context).showLocation(lat,lon);
+                        ((MessageActivity) context).showLocation(lat,lon, holder.getItemViewType()==MSG_TYPE_LEFT?true:false);
+
                     }
                 }
             });
