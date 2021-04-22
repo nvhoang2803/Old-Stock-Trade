@@ -105,17 +105,18 @@ public class MessageActivity extends AppCompatActivity {
     private Uri fileUri;
     private String userid = "";
     private ProgressDialog dialog;
-    private User user;
+    private User user, me;
     private GoogleMap mMap;
     private FusedLocationProviderClient client;
     private Geocoder geocoder;
     private  ImageButton btn_sell;
     ValueEventListener valueEventListener;
     MapView mapView = null;
-    Boolean isSend;
+    Boolean isSend,isReceiver;
     View bottomSheetView;
     Double lati,longi;
     Bundle savedInstanceState2;
+    private String myavatarURL;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -162,6 +163,18 @@ public class MessageActivity extends AppCompatActivity {
 
 
         fuser = FirebaseAuth.getInstance().getCurrentUser();
+        FirebaseDatabase.getInstance().getReference().child("Users").child(fuser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                User user = snapshot.getValue(User.class);
+                myavatarURL = user.getImageURL();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
         reference = FirebaseDatabase.getInstance().getReference("Users").child(userid);
         valueEventListener = new ValueEventListener() {
             @Override
@@ -212,7 +225,7 @@ public class MessageActivity extends AppCompatActivity {
         btn_location.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setBottomSheetDialog(savedInstanceState, true,0.0,0.0);
+                setBottomSheetDialog(savedInstanceState, true,0.0,0.0,false);
 
 
             }
@@ -263,7 +276,7 @@ public class MessageActivity extends AppCompatActivity {
         });
     }
     BottomSheetDialog bottomSheetDialog;
-    private void setBottomSheetDialog(Bundle savedInstanceState, boolean isSend, Double lati, Double longi) {
+    private void setBottomSheetDialog(Bundle savedInstanceState, boolean isSend, Double lati, Double longi,boolean isReceiver) {
         bottomSheetDialog = new BottomSheetDialog(MessageActivity.this, R.style.BottomSheetDialogdTheme);
 
         View bottomSheetView;
@@ -290,12 +303,12 @@ public class MessageActivity extends AppCompatActivity {
         geocoder = new Geocoder(getApplicationContext());
         client = LocationServices.getFusedLocationProviderClient(MessageActivity.this);
         if (ActivityCompat.checkSelfPermission(MessageActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            getCurrentLocation(isSend, bottomSheetView,lati,longi);
+            getCurrentLocation(isSend, bottomSheetView,lati,longi,isReceiver);
 
 
 
         } else {
-            this.isSend =isSend;this.bottomSheetView = bottomSheetView; this.lati = lati; this.longi = longi;//save data to serve in onRequestPermissionResult
+            this.isSend =isSend;this.bottomSheetView = bottomSheetView; this.lati = lati; this.longi = longi; this.isReceiver = isReceiver;//save data to serve in onRequestPermissionResult
             ActivityCompat.requestPermissions(MessageActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 44);
 
         }
@@ -304,7 +317,7 @@ public class MessageActivity extends AppCompatActivity {
 
     }
 
-    private void getCurrentLocation(boolean isSend, View bottomSheetView, Double lati, Double longi) {
+    private void getCurrentLocation(boolean isSend, View bottomSheetView, Double lati, Double longi, boolean isReceiver) {
         mapView.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(GoogleMap googleMap) {
@@ -330,7 +343,7 @@ public class MessageActivity extends AppCompatActivity {
                                     e.printStackTrace();
                                 }
                                 LatLng now = new LatLng(location.getLatitude(),location.getLongitude());
-                                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(now,20));
+                                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(now,15));
                                 //mMap.addMarker(new MarkerOptions().position(now).title("You're here"));
 
                                 if (addresses != null && addresses.size() != 0) {
@@ -358,11 +371,13 @@ public class MessageActivity extends AppCompatActivity {
 //                                    longi = 106.61737850991582;
                                 String username = txt_username.getText().toString();
                                 LatLng sender = new LatLng(lati, longi);
-                                String imageSource = imageURL;
+
                                 //edit marker: avatar
+
+                                String avatarMarker = isReceiver?imageURL:myavatarURL;
                                 Glide.with(MessageActivity.this)
                                         .asBitmap()
-                                        .load(imageURL.equals("" + "default")?R.mipmap.ic_launcher_round:imageURL)
+                                        .load(avatarMarker.equals("" + "default")?R.mipmap.ic_launcher_round:avatarMarker)
                                         .apply(new RequestOptions().override(150, 150))
                                         .circleCrop()
                                         .into(new CustomTarget<Bitmap>() {
@@ -421,7 +436,7 @@ public class MessageActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == 44) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                getCurrentLocation(isSend, bottomSheetView,lati,longi);
+                getCurrentLocation(isSend, bottomSheetView,lati,longi,isReceiver);
             }
         }
 
@@ -504,8 +519,8 @@ public class MessageActivity extends AppCompatActivity {
         });
 
     }
-    public void showLocation(Double latitude, Double longitude){
-        setBottomSheetDialog(savedInstanceState2, false, latitude, longitude);
+    public void showLocation(Double latitude, Double longitude, boolean isReceiver){
+        setBottomSheetDialog(savedInstanceState2, false, latitude, longitude,isReceiver);
     }
     void sendLocation(String sender, String receiver, Double latitude, Double longitude) {
         if (conversation_reference == null) {
