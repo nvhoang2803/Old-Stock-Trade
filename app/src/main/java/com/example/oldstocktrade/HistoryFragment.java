@@ -1,5 +1,6 @@
 package com.example.oldstocktrade;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -51,5 +52,12 @@ public class HistoryFragment extends Fragment {
             tab.select();
         }
         //----------------------
+        view.findViewById(R.id.btn_contact).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(getActivity(), ContactActivity.class);
+                startActivity(i);
+            }
+        });
     }
 }

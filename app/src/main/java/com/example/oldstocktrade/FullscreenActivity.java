@@ -2,21 +2,29 @@ package com.example.oldstocktrade;
 
 import android.annotation.SuppressLint;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlertDialog;
+import android.app.DownloadManager;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.provider.ContactsContract;
 import android.view.MotionEvent;
 import android.view.View;
+import android.webkit.URLUtil;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -115,8 +123,8 @@ public class FullscreenActivity extends AppCompatActivity {
         mVisible = true;
         mControlsView = findViewById(R.id.fullscreen_content_controls);
         mContentView = findViewById(R.id.fullscreen_content);
-        String i = getIntent().getStringExtra("image");
-        Glide.with(this).load(i).into((ImageView) mContentView);
+        img_link = getIntent().getStringExtra("image");
+        Glide.with(this).load(img_link).into((ImageView) mContentView);
          //ref = getIntent().getExtras().getParcelable("conversation_ref");
 
 
@@ -134,28 +142,73 @@ public class FullscreenActivity extends AppCompatActivity {
         // operations to prevent the jarring behavior of controls going away
         // while interacting with the UI.
         findViewById(R.id.dummy_button).setOnTouchListener(mDelayHideTouchListener);
-        findViewById(R.id.btn_delete).setOnClickListener(new View.OnClickListener() {
+//        findViewById(R.id.btn_delete).setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                AlertDialog dialog = new AlertDialog.Builder(FullscreenActivity.this)
+//                        .setTitle("Delete image")
+//                        .setMessage("Do you want to remove image?")
+//                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialog, int which) {
+//                                // Remove image
+//                                //StorageReference sto_ref = FirebaseStorage.getInstance().getReferenceFromUrl(i);
+//                                //String name = sto_ref.getName();
+//                                //Toast.makeText(FullscreenActivity.this,name,Toast.LENGTH_SHORT);
+//                            }
+//                        })
+//                        .setNegativeButton("No",null)
+//                        .setIcon(android.R.drawable.ic_dialog_alert)
+//                        .show();
+//            }
+//        });
+        findViewById(R.id.btn_download).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AlertDialog dialog = new AlertDialog.Builder(FullscreenActivity.this)
-                        .setTitle("Delete image")
-                        .setMessage("Do you want to remove image?")
-                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                new AlertDialog.Builder(FullscreenActivity.this)
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setTitle("Download image")
+                        .setMessage("Are you sure to download ?")
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener()
+                        {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                // Remove image
-                                //StorageReference sto_ref = FirebaseStorage.getInstance().getReferenceFromUrl(i);
-                                //String name = sto_ref.getName();
-                                //Toast.makeText(FullscreenActivity.this,name,Toast.LENGTH_SHORT);
+                                String filename = URLUtil.guessFileName(img_link, null, null);
+                                download(filename);
                             }
                         })
-                        .setNegativeButton("No",null)
-                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setNegativeButton("No", null)
                         .show();
             }
         });
     }
 
+    String img_link;
+    private void download(String filename) {
+        StorageReference storageRef = FirebaseStorage.getInstance().getReference().child("Images/" + filename);
+        storageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                downloadFile(FullscreenActivity.this, filename, Environment.DIRECTORY_DOWNLOADS, img_link);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+
+            }
+        });
+    }
+
+    private void downloadFile(Context context, String fileName, String destinationDirectory, String url) {
+        DownloadManager downloadManager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
+        Uri uri = Uri.parse(url);
+        DownloadManager.Request request = new DownloadManager.Request(uri);
+
+        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+        request.setDestinationInExternalFilesDir(context, destinationDirectory, fileName);
+
+        downloadManager.enqueue(request);
+    }
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);

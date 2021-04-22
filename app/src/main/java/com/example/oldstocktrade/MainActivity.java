@@ -99,12 +99,6 @@ public class MainActivity extends AppCompatActivity {
                 case R.id.nav_storage:
                     selectedFragment = new StorageFragment();
                     break;
-                case R.id.nav_delivery:
-                    Intent i = new Intent(MainActivity.this, ContactActivity.class);
-                    startActivity(i);
-                    return true;
-                    //selectedFragment = new DeliveryFragment();
-                    //break;
                 case R.id.nav_settings:
                     selectedFragment = new SettingsFragment();
                     break;
@@ -127,10 +121,6 @@ public class MainActivity extends AppCompatActivity {
                 selectedFragment = new StorageFragment(type);
 
                 break;
-            case R.id.nav_delivery:
-                Intent i = new Intent(MainActivity.this, ContactActivity.class);
-                startActivity(i);
-                return;
             case R.id.nav_settings:
                 selectedFragment = new SettingsFragment();
                 break;
