@@ -37,7 +37,7 @@ public class SellProductActivity extends AppCompatActivity {
 
         btn_back = findViewById(R.id.btn_back);
         recyclerView = findViewById(R.id.recycler);
-        no_product.findViewById(R.id.no_product);
+        no_product = findViewById(R.id.no_product);
         Intent intent = getIntent();
         String buyerID = intent.getStringExtra("userid");
 

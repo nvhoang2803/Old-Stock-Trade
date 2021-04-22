@@ -117,6 +117,10 @@ public class ContactFragment extends Fragment {
             if (chat.getSender().equals(firebaseUser.getUid()))
                 message = "You sent an image";
             else message= "You received an image";
+        }else if (chat.getType().equals("location")){
+            if (chat.getSender().equals(firebaseUser.getUid()))
+                message = "You shared your current location";
+            else message= "You received a location";
         }
         if (mUsers.size() == 0){
             mUsers.add(user);

@@ -1,26 +1,55 @@
 package com.example.oldstocktrade.Adapter;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
+import android.net.Uri;
+import android.os.Bundle;
 import android.os.Parcelable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.CustomTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.example.oldstocktrade.ContactFragment;
 import com.example.oldstocktrade.FullscreenActivity;
+import com.example.oldstocktrade.MessageActivity;
 import com.example.oldstocktrade.Model.Chat;
 import com.example.oldstocktrade.R;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -29,6 +58,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -90,6 +121,21 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
                     i.putExtra("image", chat.getMessage());
                     //i.putExtra("conversation_ref", (Parcelable) conversation_ref);
                     context.startActivity(i);
+                }
+            });
+        }else if (chat.getType().equals("location")){
+            holder.message.setVisibility(View.VISIBLE);
+            holder.message.setText("Current location.");
+            holder.image.setVisibility(View.GONE);
+            holder.message.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (context instanceof MessageActivity) {
+                        String data[] = chat.getMessage().split(",",2);
+                        Double lat = Double.parseDouble(data[0]);
+                        Double lon = Double.parseDouble(data[1]);
+                        ((MessageActivity) context).showLocation(lat,lon);
+                    }
                 }
             });
         }
@@ -186,4 +232,5 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         else return MSG_TYPE_LEFT;
         //return super.getItemViewType(position);
     }
+
 }

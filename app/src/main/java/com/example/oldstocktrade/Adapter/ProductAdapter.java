@@ -1,5 +1,6 @@
 package com.example.oldstocktrade.Adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -119,6 +120,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.MyViewHo
                                     hashMap.put("Timestamp", System.currentTimeMillis());
                                     ref.updateChildren(hashMap);
                                     Toast.makeText(mContext,"Sold successfully",Toast.LENGTH_SHORT);
+                                    ((Activity) mContext).finish();
                                 }
                             })
                             .setNegativeButton("No",null)

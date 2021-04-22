@@ -115,12 +115,13 @@ public class MessageActivity extends AppCompatActivity {
     Boolean isSend;
     View bottomSheetView;
     Double lati,longi;
-
+    Bundle savedInstanceState2;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_message);
+        savedInstanceState2 = savedInstanceState;
         // Set up
         img_on = findViewById(R.id.img_on);
         img_off = findViewById(R.id.img_off);
@@ -261,9 +262,9 @@ public class MessageActivity extends AppCompatActivity {
             }
         });
     }
-
+    BottomSheetDialog bottomSheetDialog;
     private void setBottomSheetDialog(Bundle savedInstanceState, boolean isSend, Double lati, Double longi) {
-        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(MessageActivity.this, R.style.BottomSheetDialogdTheme);
+        bottomSheetDialog = new BottomSheetDialog(MessageActivity.this, R.style.BottomSheetDialogdTheme);
 
         View bottomSheetView;
         if(isSend){
@@ -341,7 +342,9 @@ public class MessageActivity extends AppCompatActivity {
                                 bottomSheetView.findViewById(R.id.btnShareLocation).setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
-                                        //gui longitude, latitude, address
+                                        //Send to receiver
+                                        sendLocation(fuser.getUid(),userid, now.latitude, now.longitude);
+                                        bottomSheetDialog.dismiss();
                                     }
                                 });
 
@@ -500,6 +503,27 @@ public class MessageActivity extends AppCompatActivity {
             }
         });
 
+    }
+    public void showLocation(Double latitude, Double longitude){
+        setBottomSheetDialog(savedInstanceState2, false, latitude, longitude);
+    }
+    void sendLocation(String sender, String receiver, Double latitude, Double longitude) {
+        if (conversation_reference == null) {
+            createConversation(sender,receiver);
+        }
+        DatabaseReference ref_chats = conversation_reference.child("Chats").push();
+        String msg = Double.toString(latitude) +","+Double.toString(longitude);
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put("sender",sender);
+        hashMap.put("receiver",receiver);
+        hashMap.put("message",msg);
+        hashMap.put("type","location");
+        hashMap.put("id",ref_chats.getKey());
+        hashMap.put("time", System.currentTimeMillis());
+        ref_chats.setValue(hashMap);
+
+        reference.child("Conversations").child(conversation_reference.getKey()).child("recent_msg").setValue(hashMap);
+        ref.child(conversation_reference.getKey()).child("recent_msg").setValue(hashMap);
     }
     void sendMessage(String sender,String receiver, String msg){
         if (conversation_reference == null) {
