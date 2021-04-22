@@ -100,6 +100,7 @@ public class PostActivity extends AppCompatActivity {
         post.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                post.setEnabled(false);
                 uploadMultipleImage();
             }
         });
@@ -217,8 +218,8 @@ public class PostActivity extends AppCompatActivity {
         map.put("Timestamp", product.getTimestamp());
         map.put("VisibleToBuyer", product.isVisibleToBuyer());
         map.put("VisibleToSeller", product.isVisibleToSeller());
-        df.child(id).setValue(map);
-        progressDialog.dismiss();
+//        df.child(id).setValue(map);
+//        progressDialog.dismiss();
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
@@ -235,6 +236,8 @@ public class PostActivity extends AppCompatActivity {
 //                        finish();
 //                    }
 //                },2000);
+                df.child(id).setValue(map);
+                progressDialog.dismiss();
                 startActivity(new Intent(PostActivity.this, MainActivity.class));
                 finish();
             }
