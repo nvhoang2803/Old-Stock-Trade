@@ -139,10 +139,10 @@ public class ParticularPageActivity extends AppCompatActivity {
                     String[] arrImage = a.toArray(new String[0]);
                     ImageSlider imgSliderAdapter = new ImageSlider(ParticularPageActivity.this,arrImage);
                     productImagePart.setAdapter(imgSliderAdapter);
-                    descriptionPart.setText("Description: "+ des);
-                    pricePart.setText("Price: "+price);
-                    dayPostPart.setText("Day Post: "+dayPost);
-                    addressPart.setText("Address: "+ add);
+                    descriptionPart.setText(des);
+                    pricePart.setText(price);
+                    dayPostPart.setText(dayPost);
+                    addressPart.setText(add);
                     df.child("Report").child(receiveID).addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot2) {
@@ -187,8 +187,8 @@ public class ParticularPageActivity extends AppCompatActivity {
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     String nu= snapshot.child("username").getValue().toString();
                     String pu= snapshot.child("phone").getValue().toString();
-                    nameUser.setText("Username: "+ nu);
-                    phoneUser.setText("Phone user: "+ pu);
+                    nameUser.setText(nu);
+                    phoneUser.setText(pu);
                     if(pu.matches("")|| receiveUserID.equals(myID))
                     {
                         call.setEnabled(false);
