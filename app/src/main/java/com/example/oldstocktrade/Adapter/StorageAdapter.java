@@ -1,10 +1,12 @@
 package com.example.oldstocktrade.Adapter;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -26,6 +28,7 @@ import com.example.oldstocktrade.MainActivity;
 import com.example.oldstocktrade.MessageActivity;
 import com.example.oldstocktrade.Model.Product;
 import com.example.oldstocktrade.Model.WishListItem;
+import com.example.oldstocktrade.ParticularPageActivity;
 import com.example.oldstocktrade.PostActivity;
 import com.example.oldstocktrade.R;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -50,11 +53,12 @@ public class StorageAdapter extends RecyclerView.Adapter<StorageAdapter.MyViewHo
     String tabName;
     RecyclerView mRecyclerView;
     private ProgressDialog progressDialog;
-
-    public StorageAdapter(Context mContext, List<Product> mData, String tabName) {
+    private Activity curActivity;
+    public StorageAdapter(Context mContext,Activity curActivity, List<Product> mData, String tabName) {
         this.mContext = mContext;
         this.mData = mData;
         this.tabName = tabName;
+        this.curActivity = curActivity;
     }
 
     @Override
@@ -139,6 +143,22 @@ public class StorageAdapter extends RecyclerView.Adapter<StorageAdapter.MyViewHo
             }
         }
         );
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String id= mData.get(position).getProID();
+                String userID= mData.get(position).getSeller();
+                Intent partIntent= new Intent(v.getContext(), ParticularPageActivity.class);
+                partIntent.putExtra("id", id);
+                partIntent.putExtra("userID", userID);
+                partIntent.putExtra("sizeImageURL", mData.get(position).getImageURL().size());
+                partIntent.putExtra("longitude", ((MainActivity) curActivity).longitude);
+                partIntent.putExtra("latitude",((MainActivity) curActivity).latitude);
+                partIntent.putExtra("address",((MainActivity) curActivity).address);
+                Log.d("PackInHomeView", "onClick: ");
+                v.getContext().startActivity(partIntent);
+            }
+        });
     }
     public void removeFromSelling(int position){
         progressDialog= new ProgressDialog(mContext);
@@ -174,7 +194,9 @@ public class StorageAdapter extends RecyclerView.Adapter<StorageAdapter.MyViewHo
 
             }
         });
-        mRecyclerView.removeViewAt(position);
+        if(mRecyclerView != null){
+            mRecyclerView.removeViewAt(position);
+        }
     }
     public void removeFromWishList(int position){
         FirebaseUser fuser = FirebaseAuth.getInstance().getCurrentUser();

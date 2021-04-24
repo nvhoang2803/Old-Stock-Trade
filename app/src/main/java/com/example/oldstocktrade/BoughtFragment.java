@@ -1,5 +1,6 @@
 package com.example.oldstocktrade;
 
+import android.app.Activity;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -43,8 +44,9 @@ public class BoughtFragment extends Fragment {
     private String userID;
     private LinearLayout oopslayout;
     private ImageView oops;
-    BoughtFragment(){
-
+    private Activity curActivity;
+    BoughtFragment(Activity curActivity){
+        this.curActivity = curActivity;
     }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle saveInstanceState){
@@ -69,7 +71,7 @@ public class BoughtFragment extends Fragment {
                 else {
                     SoldFragment.removeNoStockLayout(oopslayout);
                     myrecycleview = (RecyclerView) v.findViewById(R.id.history_recyclerview);
-                    HistoryAdapter recyclerAdapter = new HistoryAdapter(getContext(),lstProduct,"bought");
+                    HistoryAdapter recyclerAdapter = new HistoryAdapter(getContext(), curActivity, lstProduct,"bought");
                     myrecycleview.setLayoutManager(new GridLayoutManager(getActivity(),2));
                     myrecycleview.setAdapter(recyclerAdapter);
                 }

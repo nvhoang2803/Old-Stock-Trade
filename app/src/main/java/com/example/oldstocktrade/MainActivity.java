@@ -94,10 +94,10 @@ public class MainActivity extends AppCompatActivity {
                     selectedFragment = new HomeFragment(MainActivity.this);
                     break;
                 case R.id.nav_history:
-                    selectedFragment = new HistoryFragment();
+                    selectedFragment = new HistoryFragment(MainActivity.this);
                     break;
                 case R.id.nav_storage:
-                    selectedFragment = new StorageFragment();
+                    selectedFragment = new StorageFragment(MainActivity.this);
                     break;
                 case R.id.nav_settings:
                     selectedFragment = new SettingsFragment();
@@ -115,10 +115,10 @@ public class MainActivity extends AppCompatActivity {
                 selectedFragment = new HomeFragment(MainActivity.this);
                 break;
             case R.id.nav_history:
-                selectedFragment = new HistoryFragment(type);
+                selectedFragment = new HistoryFragment(MainActivity.this, type);
                 break;
             case R.id.nav_storage:
-                selectedFragment = new StorageFragment(type);
+                selectedFragment = new StorageFragment(MainActivity.this, type);
 
                 break;
             case R.id.nav_settings:

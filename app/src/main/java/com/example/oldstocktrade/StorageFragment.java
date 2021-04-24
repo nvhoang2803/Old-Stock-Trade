@@ -20,11 +20,14 @@ public class StorageFragment extends Fragment {
     private ViewPageAdapter adapter;
     //-------------phan de setting chon toi
     private int typetab = -1;
-    public StorageFragment(int type) {
-        typetab = type;
-    }
-    public StorageFragment() {
+    private MainActivity curActivity;
 
+    public StorageFragment(MainActivity activity, int typetab) {
+        curActivity = activity;
+        this.typetab = typetab;
+    }
+    public StorageFragment(MainActivity activity) {
+        curActivity = activity;
     }
     //-----------------
     @Nullable
@@ -41,8 +44,8 @@ public class StorageFragment extends Fragment {
         viewPager = (ViewPager) view.findViewById(R.id.viewpager_id);
         adapter = new ViewPageAdapter(getChildFragmentManager());
 
-        adapter.addFragment(new SellingFragment(), getString(R.string.title_storage_selling));
-        adapter.addFragment(new WishListFragment(), getString(R.string.title_storage_wishlist));
+        adapter.addFragment(new SellingFragment(curActivity), getString(R.string.title_storage_selling));
+        adapter.addFragment(new WishListFragment(curActivity), getString(R.string.title_storage_wishlist));
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {

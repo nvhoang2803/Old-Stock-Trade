@@ -1,5 +1,6 @@
 package com.example.oldstocktrade;
 
+import android.app.Activity;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -40,8 +41,9 @@ public class SoldFragment extends Fragment {
     private FirebaseUser fuser;
     private String userID;
     private LinearLayout oopslayout;
-    public SoldFragment(){
-
+    private Activity curActivity;
+    public SoldFragment(MainActivity curActivity){
+        this.curActivity = curActivity;
     }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle saveInstanceState){
@@ -66,7 +68,7 @@ public class SoldFragment extends Fragment {
                 else {
                     removeNoStockLayout(oopslayout);
                     myrecycleview = (RecyclerView) v.findViewById(R.id.history_recyclerview);
-                    HistoryAdapter recyclerAdapter = new HistoryAdapter(getContext(), lstProduct, "sold");
+                    HistoryAdapter recyclerAdapter = new HistoryAdapter(getContext(),curActivity, lstProduct, "sold");
                     myrecycleview.setLayoutManager(new GridLayoutManager(getActivity(), 2));
                     myrecycleview.setAdapter(recyclerAdapter);
                 }

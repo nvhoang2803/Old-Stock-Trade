@@ -1,6 +1,9 @@
 package com.example.oldstocktrade.Adapter;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +16,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.oldstocktrade.BoughtFragment;
+import com.example.oldstocktrade.MainActivity;
 import com.example.oldstocktrade.Model.Product;
+import com.example.oldstocktrade.ParticularPageActivity;
 import com.example.oldstocktrade.R;
 import com.example.oldstocktrade.SoldFragment;
 import com.google.firebase.database.DatabaseReference;
@@ -28,13 +33,13 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.MyViewHo
     List<Product> mData;
     String tabName;
     RecyclerView mRecyclerView;
-//    View parentView;
+    Activity curActivity;
 
-
-    public HistoryAdapter(Context mContext, List<Product> mData, String tabName) {
+    public HistoryAdapter(Context mContext, Activity curActivity, List<Product> mData, String tabName) {
         this.mContext = mContext;
         this.mData = mData;
         this.tabName = tabName;
+        this.curActivity = curActivity;
     }
 
     @Override
@@ -60,12 +65,17 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.MyViewHo
         return mData.size();
     }
 
+    public interface ItemClickListener {
+        void onClick(View view, int position,boolean isLongClick);
+    }
+
     public static class MyViewHolder  extends RecyclerView.ViewHolder{
         private ImageView proImage;
         private TextView proName;
         private TextView proDate;
         private TextView proPrice;
         private ImageView btnDelete;
+
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
             proImage = (ImageView) itemView.findViewById(R.id.proImage);
@@ -74,6 +84,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.MyViewHo
             proPrice = (TextView) itemView.findViewById(R.id.proPrice);
             btnDelete = (ImageView) itemView.findViewById(R.id.btn_historydelete);
         }
+
     }
 
     @Override
@@ -103,5 +114,22 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.MyViewHo
             }
         }
         );
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String id= mData.get(position).getProID();
+                String userID= mData.get(position).getSeller();
+                Intent partIntent= new Intent(v.getContext(), ParticularPageActivity.class);
+                partIntent.putExtra("id", id);
+                partIntent.putExtra("userID", userID);
+                partIntent.putExtra("sizeImageURL", mData.get(position).getImageURL().size());
+                partIntent.putExtra("longitude", ((MainActivity) curActivity).longitude);
+                partIntent.putExtra("latitude",((MainActivity) curActivity).latitude);
+                partIntent.putExtra("address",((MainActivity) curActivity).address);
+                Log.d("PackInHomeView", "onClick: ");
+                v.getContext().startActivity(partIntent);
+            }
+        });
     }
 }
