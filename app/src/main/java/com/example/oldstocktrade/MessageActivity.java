@@ -474,6 +474,7 @@ public class MessageActivity extends AppCompatActivity {
                         Uri downloadUrl = task.getResult();
 
                         HashMap<String, Object> hashMap = new HashMap<>();
+                        hashMap.put("id", messagePushID);
                         hashMap.put("sender",fuser.getUid());
                         hashMap.put("receiver",userid);
                         hashMap.put("message",downloadUrl.toString());

@@ -168,7 +168,16 @@ public class HomeFragment extends Fragment {
                                         listViewProduct = view.findViewById(R.id.listViewProduct);
                                         //Display adapter product
                                         //Let Lon and lat attr of map in arraylist and add to last position ,otherwise let null if Mainactivty are on line
-                                        ListViewAdapter listViewProductAdapter = new ListViewAdapter(arr,curActivity,curUser,userLike,null);
+                                        ArrayList<Double> lonlat = new ArrayList<>();
+                                        if ((MainActivity) getActivity() != null){
+                                            lonlat.add(((MainActivity) getActivity()).longitude);
+                                            lonlat.add(((MainActivity) getActivity()).latitude);
+                                        }else{
+                                            lonlat.add(10.3341779);
+                                            lonlat.add(107.077694);
+                                        }
+
+                                        ListViewAdapter listViewProductAdapter = new ListViewAdapter(arr,getActivity(),curUser,userLike,lonlat);
                                         listViewProduct.setAdapter(listViewProductAdapter);
                                         listViewProduct.setLayoutManager(new LinearLayoutManager(curActivity));
                                         pullToRefresh.setRefreshing(false);
