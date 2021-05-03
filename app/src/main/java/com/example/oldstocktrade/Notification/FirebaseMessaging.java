@@ -1,6 +1,5 @@
 package com.example.oldstocktrade.Notification;
 
-import android.annotation.SuppressLint;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -19,8 +18,6 @@ import androidx.core.app.NotificationCompat;
 import com.example.oldstocktrade.MessageActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
@@ -53,16 +50,16 @@ public class FirebaseMessaging extends FirebaseMessagingService {
         String body = remoteMessage.getData().get("body");
 
         RemoteMessage.Notification notification = remoteMessage.getNotification();
-        int i = Integer.parseInt(user.replaceAll("\\D",""));
-        Intent intent = new Intent(this, MessageActivity.class).addFlags(Intent.FLAG_ACTIVITY_FORWARD_RESULT);
+        int i = Integer.parseInt(user.replaceAll("[\\D]",""));
+        Intent intent = new Intent(this, MessageActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.putExtra("userid", user);
         PendingIntent pendingIntent = PendingIntent.getActivity(this,i,intent,PendingIntent.FLAG_ONE_SHOT);
 
         Uri defSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
                 .setSmallIcon(Integer.parseInt(icon))
-                .setContentText(body)
                 .setContentTitle(title)
+                .setContentText(body)
                 .setAutoCancel(true)
                 .setSound(defSoundUri)
                 .setContentIntent(pendingIntent);
@@ -82,7 +79,7 @@ public class FirebaseMessaging extends FirebaseMessagingService {
         String body = remoteMessage.getData().get("body");
 
         RemoteMessage.Notification notification = remoteMessage.getNotification();
-        int i = Integer.parseInt(user.replaceAll("\\D",""));
+        int i = Integer.parseInt(user.replaceAll("[\\D]",""));
         Intent intent = new Intent(this, MessageActivity.class).addFlags(Intent.FLAG_ACTIVITY_FORWARD_RESULT);
         intent.putExtra("userid", user);
         PendingIntent pendingIntent = PendingIntent.getActivity(this,i,intent,PendingIntent.FLAG_ONE_SHOT);
@@ -96,21 +93,5 @@ public class FirebaseMessaging extends FirebaseMessagingService {
             j = i;
         }
         notification1.getManager().notify(j, builder.build());
-    }
-
-    @Override
-    public void onNewToken(@NonNull String s) {
-        super.onNewToken(s);
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user != null){
-            updateToken(s);
-        }
-    }
-
-    private void updateToken(String tokenRe) {
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Tokens");
-        Token token = new Token(tokenRe);
-        ref.child(user.getUid()).setValue(token);
     }
 }

@@ -31,12 +31,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.CustomTarget;
@@ -45,7 +39,10 @@ import com.example.oldstocktrade.Adapter.MessageAdapter;
 import com.example.oldstocktrade.Model.Chat;
 import com.example.oldstocktrade.Model.Conversation;
 import com.example.oldstocktrade.Model.User;
+import com.example.oldstocktrade.Notification.APIService;
+import com.example.oldstocktrade.Notification.Client;
 import com.example.oldstocktrade.Notification.Data;
+import com.example.oldstocktrade.Notification.Response;
 import com.example.oldstocktrade.Notification.Sender;
 import com.example.oldstocktrade.Notification.Token;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -76,18 +73,15 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
-import com.google.gson.Gson;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import retrofit2.Call;
+import retrofit2.Callback;
 
 public class MessageActivity extends AppCompatActivity {
     private static final String MAPVIEW_BUNDLE_KEY = "BUNDLE_KEY";
@@ -125,8 +119,8 @@ public class MessageActivity extends AppCompatActivity {
     Bundle savedInstanceState2;
     private String myavatarURL;
 
-    private RequestQueue requestQueue;
-    private boolean notify = false;
+    APIService apiService;
+    boolean notify = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -147,13 +141,11 @@ public class MessageActivity extends AppCompatActivity {
         txt_msg = findViewById(R.id.txt_msg);
         recyclerView = findViewById(R.id.recycler);
         recyclerView.setHasFixedSize(true);
-
-        requestQueue = Volley.newRequestQueue(getApplicationContext());
-
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getApplicationContext());
         linearLayoutManager.setStackFromEnd(true);
         recyclerView.setLayoutManager(linearLayoutManager);
 
+        apiService = Client.getClient("https://fcm.googleapis.com/").create(APIService.class);
 
         // Create toolbar
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -499,6 +491,7 @@ public class MessageActivity extends AppCompatActivity {
 
                         reference.child("Conversations").child(conversation_reference.getKey()).child("recent_msg").setValue(hashMap);
                         ref.child(conversation_reference.getKey()).child("recent_msg").setValue(hashMap);
+                        createNotification("Sent you an image.", userid);
                         dialog.dismiss();
                     }
                     else dialog.dismiss();
@@ -555,7 +548,9 @@ public class MessageActivity extends AppCompatActivity {
 
         reference.child("Conversations").child(conversation_reference.getKey()).child("recent_msg").setValue(hashMap);
         ref.child(conversation_reference.getKey()).child("recent_msg").setValue(hashMap);
+        createNotification("Sent you a location.", receiver);
     }
+
     void sendMessage(String sender,String receiver, String msg){
         if (conversation_reference == null) {
             createConversation(sender,receiver);
@@ -572,17 +567,15 @@ public class MessageActivity extends AppCompatActivity {
 
         reference.child("Conversations").child(conversation_reference.getKey()).child("recent_msg").setValue(hashMap);
         ref.child(conversation_reference.getKey()).child("recent_msg").setValue(hashMap);
-        String message = msg;
-        final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Users").child(sender);
+        createNotification(msg, receiver);
+    }
+    private void createNotification(String message, String receiver){
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Users").child(fuser.getUid());
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 User user = snapshot.getValue(User.class);
-
-                if (notify){
                     sendNotification(receiver, user.getUsername(), message);
-                }
-                notify = false;
             }
 
             @Override
@@ -600,33 +593,25 @@ public class MessageActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot ds: snapshot.getChildren()){
                     Token token = ds.getValue(Token.class);
-                    Log.d("USER","user: " + receiver);
-                    Log.d("TOKEN","token: " + token.getToken());
-                    Data data = new Data(fuser.getUid(), username + ": " + message, "New Message", receiver, R.drawable.ic_conversation);
+                    Data data = new Data(fuser.getUid(), username + ": " + message, "New Message", userid, R.drawable.ic_conversation);
                     Sender sender = new Sender(data, token.getToken());
-                    try {
-                        JSONObject senderJsonObj = new JSONObject(new Gson().toJson(sender));
-                        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest("https://fcm.googleapis.com/fcm/send", senderJsonObj,
-                                new Response.Listener<JSONObject>() {
-                                    @Override
-                                    public void onResponse(JSONObject response) {
-                                        Log.d("JSON_RESPONSE","onResponse: " + response.toString());
+                    apiService.sendNotification(sender)
+                            .enqueue(new Callback<Response>() {
+                                @Override
+                                public void onResponse(Call<Response> call, retrofit2.Response<Response> response) {
+                                    if (response.code() == 200){
+                                        if (response.body().success != 1){
+                                            Toast.makeText(MessageActivity.this, "Failed!", Toast.LENGTH_SHORT).show();
+                                        }
                                     }
-                                }, error -> {
-                                    Log.d("JSON_ERROR","onResponse: " + error.toString());
-                                }) {
-                            @Override
-                            public Map<String, String> getHeaders() throws AuthFailureError {
-                                Map<String, String> headers = new HashMap<>();
-                                headers.put("Content-Type", "application/json");
-                                headers.put("Authorization","key=AAAAuWtzCqc:APA91bFdAol7-Giy0saalJdS5hTAUw_aWYgws8KK8XCyh4rsG5JMb8CK8YrXPnQUWbXGqOz5n2wS3rVuN9J7vuLKvRGdWznUyzun72yjpJrHnj90Zwv1TqAOusxB4RKd-zIFHVDuEvLA");
-                                return headers;
-                            }
-                        };
-                        requestQueue.add(jsonObjectRequest);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
+
+                                }
+
+                                @Override
+                                public void onFailure(Call<Response> call, Throwable t) {
+
+                                }
+                            });
                 }
             }
 
@@ -676,7 +661,7 @@ public class MessageActivity extends AppCompatActivity {
     public void updateToken(String token){
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Tokens");
         Token mToken = new Token(token);
-        ref.child(userid).setValue(mToken);
+        ref.child(fuser.getUid()).setValue(mToken);
     }
 
     @Override

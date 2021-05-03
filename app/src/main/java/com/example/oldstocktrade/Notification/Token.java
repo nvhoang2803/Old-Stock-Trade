@@ -1,7 +1,7 @@
 package com.example.oldstocktrade.Notification;
 
 public class Token {
-    String token;
+    private String token;
      public Token(String token){
          this.token = token;
      }
