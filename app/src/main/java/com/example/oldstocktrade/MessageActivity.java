@@ -14,28 +14,29 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.inputmethodservice.Keyboard;
-import android.inputmethodservice.KeyboardView;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.KeyboardShortcutGroup;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.CustomTarget;
@@ -44,13 +45,15 @@ import com.example.oldstocktrade.Adapter.MessageAdapter;
 import com.example.oldstocktrade.Model.Chat;
 import com.example.oldstocktrade.Model.Conversation;
 import com.example.oldstocktrade.Model.User;
+import com.example.oldstocktrade.Notification.Data;
+import com.example.oldstocktrade.Notification.Sender;
+import com.example.oldstocktrade.Notification.Token;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
@@ -67,12 +70,16 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
+import com.google.gson.Gson;
 
-import org.w3c.dom.Text;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -117,6 +124,9 @@ public class MessageActivity extends AppCompatActivity {
     Double lati,longi;
     Bundle savedInstanceState2;
     private String myavatarURL;
+
+    private RequestQueue requestQueue;
+    private boolean notify = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -137,9 +147,13 @@ public class MessageActivity extends AppCompatActivity {
         txt_msg = findViewById(R.id.txt_msg);
         recyclerView = findViewById(R.id.recycler);
         recyclerView.setHasFixedSize(true);
+
+        requestQueue = Volley.newRequestQueue(getApplicationContext());
+
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getApplicationContext());
         linearLayoutManager.setStackFromEnd(true);
         recyclerView.setLayoutManager(linearLayoutManager);
+
 
         // Create toolbar
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -161,8 +175,8 @@ public class MessageActivity extends AppCompatActivity {
         Intent intent = getIntent();
         userid = intent.getStringExtra("userid");
 
-
         fuser = FirebaseAuth.getInstance().getCurrentUser();
+        updateToken(FirebaseInstanceId.getInstance().getToken());
         FirebaseDatabase.getInstance().getReference().child("Users").child(fuser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -209,6 +223,7 @@ public class MessageActivity extends AppCompatActivity {
         btn_send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                notify = true;
                 String msg = txt_msg.getText().toString();
                 if (!msg.equals("")) {
                     sendMessage(fuser.getUid(), userid, msg);
@@ -557,7 +572,71 @@ public class MessageActivity extends AppCompatActivity {
 
         reference.child("Conversations").child(conversation_reference.getKey()).child("recent_msg").setValue(hashMap);
         ref.child(conversation_reference.getKey()).child("recent_msg").setValue(hashMap);
+        String message = msg;
+        final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Users").child(sender);
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                User user = snapshot.getValue(User.class);
+
+                if (notify){
+                    sendNotification(receiver, user.getUsername(), message);
+                }
+                notify = false;
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
+
+    private void sendNotification(String receiver, String username, String message) {
+        DatabaseReference allTokens = FirebaseDatabase.getInstance().getReference("Tokens");
+        Query query = allTokens.orderByKey().equalTo(receiver);
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot ds: snapshot.getChildren()){
+                    Token token = ds.getValue(Token.class);
+                    Log.d("USER","user: " + receiver);
+                    Log.d("TOKEN","token: " + token.getToken());
+                    Data data = new Data(fuser.getUid(), username + ": " + message, "New Message", receiver, R.drawable.ic_conversation);
+                    Sender sender = new Sender(data, token.getToken());
+                    try {
+                        JSONObject senderJsonObj = new JSONObject(new Gson().toJson(sender));
+                        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest("https://fcm.googleapis.com/fcm/send", senderJsonObj,
+                                new Response.Listener<JSONObject>() {
+                                    @Override
+                                    public void onResponse(JSONObject response) {
+                                        Log.d("JSON_RESPONSE","onResponse: " + response.toString());
+                                    }
+                                }, error -> {
+                                    Log.d("JSON_ERROR","onResponse: " + error.toString());
+                                }) {
+                            @Override
+                            public Map<String, String> getHeaders() throws AuthFailureError {
+                                Map<String, String> headers = new HashMap<>();
+                                headers.put("Content-Type", "application/json");
+                                headers.put("Authorization","key=AAAAuWtzCqc:APA91bFdAol7-Giy0saalJdS5hTAUw_aWYgws8KK8XCyh4rsG5JMb8CK8YrXPnQUWbXGqOz5n2wS3rVuN9J7vuLKvRGdWznUyzun72yjpJrHnj90Zwv1TqAOusxB4RKd-zIFHVDuEvLA");
+                                return headers;
+                            }
+                        };
+                        requestQueue.add(jsonObjectRequest);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
     void createConversation(String sender, String receiver){
         DatabaseReference ref_con = FirebaseDatabase.getInstance().getReference("Conversations");
         HashMap<String, Object> hashMap = new HashMap<>();
@@ -593,6 +672,11 @@ public class MessageActivity extends AppCompatActivity {
             });
         }
 
+    }
+    public void updateToken(String token){
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Tokens");
+        Token mToken = new Token(token);
+        ref.child(userid).setValue(mToken);
     }
 
     @Override
