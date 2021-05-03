@@ -1,200 +1,257 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/barlayout"
+        tools:ignore="MissingConstraints">
+            <androidx.appcompat.widget.Toolbar
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/toolbar"
+                android:background="@color/background_color"
+                tools:ignore="MissingConstraints">
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <ImageView
+                    android:id="@+id/btnBack"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/ic_back"/>
+            </RelativeLayout>
+            </androidx.appcompat.widget.Toolbar>
+    </com.google.android.material.appbar.AppBarLayout>
+
+
     <ScrollView
         android:id="@+id/viewPart"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fillViewport="true"
-        tools:layout_editor_absoluteX="72dp"
-        tools:layout_editor_absoluteY="0dp">
+        android:layout_below="@+id/barlayout">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:padding="10dp"
             tools:context=".ParticularPageActivity"
-            tools:ignore="NestedScrolling"
-            android:background="@color/background">
+            tools:ignore="NestedScrolling">
 
-            <ImageView
-                android:id="@+id/btnBack"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:background="@drawable/ic_back" />
-
-<!--            <Button-->
-<!--                android:id="@+id/deletePart"-->
-<!--                android:layout_width="398dp"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:background="@color/quantum_googred"-->
-<!--                android:text="Delete" />-->
+            <androidx.viewpager.widget.ViewPager
+                android:id="@+id/productImagePart"
+                android:layout_width="match_parent"
+                android:layout_height="360dp"
+                tools:ignore="NestedScrolling" />
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="30dp">
+                android:layout_height="wrap_content">
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginLeft="10dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/name"
+                        android:textStyle="bold"
+                        android:layout_marginTop="2dp"
+                        android:textColor="@color/black"
+                        android:textSize="20dp"/>
+
+                    <TextView
+                        android:id="@+id/pricePart"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:textColor="@color/quantum_googred"
+                        android:textSize="20dp"/>
+
+                    <TextView
+                        android:id="@+id/dayPostPart"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"/>
+                </LinearLayout>
+
+
                 <Button
                     android:id="@+id/btnReport"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Report"
                     android:layout_alignParentRight="true"
-                    android:background="@color/quantum_googred"/>
+                    android:layout_centerInParent="true"
+                    android:background="@drawable/rounded_button"
+                    android:layout_marginRight="10dp"
+                    android:textColor="@color/white"
+                    />
             </RelativeLayout>
 
-
-            <androidx.viewpager.widget.ViewPager
-                android:id="@+id/productImagePart"
+            <View
                 android:layout_width="match_parent"
-                android:layout_height="300dp"
-                tools:ignore="NestedScrolling" />
-
-            <LinearLayout
-                android:layout_marginTop="10dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:text="Description"
-                        android:layout_weight="1"/>
-                    <TextView
-                        android:id="@+id/descriptionPart"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="3"/>
-            </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:text="Price"
-                        android:layout_weight="1"/>
-                    <TextView
-                        android:id="@+id/pricePart"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="3"/>
-                </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:text="Day post"
-                    android:layout_weight="1"/>
-                <TextView
-                    android:id="@+id/dayPostPart"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="3"/>
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:text="Address"
-                    android:layout_weight="1"/>
-                <TextView
-                    android:id="@+id/addressPart"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="3"/>
-            </LinearLayout>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Seller Information:"
-                android:textSize="16dp"
-                android:paddingTop="20dp"/>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:text="Username"
-                    android:layout_weight="1"/>
-                <TextView
-                    android:id="@+id/nameUser"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="3"/>
-            </LinearLayout>
+                android:layout_height="0.25dp"
+                android:background="@color/brown"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="5dp"
+                />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginBottom="30dp">
-                <TextView
-                    android:layout_width="0dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:layout_marginLeft="10dp">
+                <LinearLayout
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Phone user"
-                    android:layout_weight="1"/>
-                <TextView
-                    android:id="@+id/phoneUser"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="3"/>
+                    android:layout_alignRight="@+id/contactText"
+                    android:orientation="vertical"
+                    android:layout_marginLeft="10dp">
+                    <TextView
+                        android:id="@+id/nameUser"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/black"
+                        android:textStyle="bold"
+                        />
+
+                    <TextView
+                        android:id="@+id/phoneUser"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+                </LinearLayout>
+                <ImageView
+                    android:id="@+id/btnDirection"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:src="@drawable/ic_place"
+                    android:background="@drawable/frame_icon"
+                    android:layout_marginLeft="20dp"/>
+
             </LinearLayout>
 
-            <RelativeLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.25dp"
+                android:background="@color/brown"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="10dp"
+                />
 
-                <Button
-                    android:id="@+id/call"
-                    android:layout_width="130dp"
-                    android:layout_height="match_parent"
-                    android:layout_alignParentLeft="true"
-                    android:text="Call" />
-
-                <Button
-                    android:id="@+id/sendSMS"
-                    android:layout_width="130dp"
-                    android:layout_height="match_parent"
-                    android:layout_toStartOf="@+id/chat"
-                    android:text="Send SMS" />
-
-                <Button
-                    android:id="@+id/chat"
-                    android:layout_width="130dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginEnd="1dp"
-                    android:layout_alignParentRight="true"
-                    android:text="Chat" />
-            </RelativeLayout>
-
-            <Button
-                android:id="@+id/btnDirection"
+            <TextView
+                android:id="@+id/descriptionPart"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Direction" />
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginLeft="10dp"
+                android:textColor="@color/black"/>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                    <RelativeLayout
+                        android:padding="10dp"
+                        android:layout_width="130dp"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/call"
+                        android:background="@drawable/button_contact"
+                        android:layout_marginLeft="5dp"
+                        >
+                        <ImageView
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:src="@drawable/icon_call"
+                            android:id="@+id/iconCall"
+                            android:layout_marginRight="10dp"
+                            android:layout_marginLeft="10dp"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Call"
+                            android:textStyle="bold"
+                            android:textSize="18sp"
+                            android:layout_marginTop="5dp"
+                            android:layout_toRightOf="@+id/iconCall"
+                            android:textColor="@color/white"
+                            />
+
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:padding="10dp"
+                    android:layout_width="130dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/sendSMS"
+                    android:background="@drawable/button_contact"
+                    android:layout_marginLeft="5dp"
+                    >
+                    <ImageView
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:src="@drawable/icon_sms"
+                        android:id="@+id/iconsms"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginLeft="10dp"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="SMS"
+                        android:textStyle="bold"
+                        android:textSize="18sp"
+                        android:layout_marginTop="5dp"
+                        android:layout_toRightOf="@+id/iconsms"
+                        android:textColor="@color/white"
+                        />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:padding="10dp"
+                    android:layout_width="130dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/chat"
+                    android:background="@drawable/button_contact"
+                    android:layout_marginLeft="5dp"
+                    >
+                    <ImageView
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:src="@drawable/chat_icon"
+                        android:id="@+id/iconChat"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginLeft="10dp"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Chat"
+                        android:textStyle="bold"
+                        android:textSize="18sp"
+                        android:layout_marginTop="5dp"
+                        android:layout_toRightOf="@+id/iconChat"
+                        android:textColor="@color/white"
+                        />
+
+
+                </RelativeLayout>
+
+
+            </LinearLayout>
+
 
         </LinearLayout>
     </ScrollView>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</RelativeLayout>
