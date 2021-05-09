@@ -6,6 +6,8 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -15,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.oldstocktrade.Adapter.AnnouncementPostAdapter;
 import com.example.oldstocktrade.Adapter.ImageAdapter;
 import com.example.oldstocktrade.Model.Product;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -101,7 +104,9 @@ public class EditActivity extends AppCompatActivity {
         post.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                uploadMultipleImage();
+                int[] count={0,1,2};
+                post.setEnabled(false);
+                uploadMultipleImage(count);
             }
         });
 
@@ -137,66 +142,86 @@ public class EditActivity extends AppCompatActivity {
 
             }
         }
-        if(requestCode == PICK_IMAGE){
-            if(resultCode==RESULT_OK){
-                if(data.getClipData()!=null){
-                    int countImage= data.getClipData().getItemCount();
-                    for(int i=0;i<countImage;i++){
-                        uriImage= data.getClipData().getItemAt(i).getUri();
+        if (requestCode == PICK_IMAGE) {
+            if (resultCode == RESULT_OK) {
+                if (data.getData() != null) {
+                    uriImage = data.getData();
+                    a.add(uriImage);
+                    chosenImages.setAdapter(new ImageAdapter(this, a));
+                }
+                if (data.getClipData() != null) {
+                    int countImage = data.getClipData().getItemCount();
+                    for (int i = 0; i < countImage; i++) {
+                        uriImage = data.getClipData().getItemAt(i).getUri();
                         a.add(uriImage);
                     }
-                    chosenImages.setAdapter(new ImageAdapter(this,a));
-                }
-                else{
-                    Toast.makeText(this, "Please select multiple image", Toast.LENGTH_SHORT).show();
+                    chosenImages.setAdapter(new ImageAdapter(this, a));
                 }
             }
         }
     }
 
 
-    private void uploadMultipleImage(){
-        DatabaseReference df= FirebaseDatabase.getInstance().getReference("Products");
-        progressDialog= new ProgressDialog(this);
+    private void uploadMultipleImage(int count[]) {
+        DatabaseReference df = FirebaseDatabase.getInstance().getReference("Products");
+        StorageReference imageFolder = FirebaseStorage.getInstance().getReference("Post").child("Image Folder");
+        progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Image Uploading please wait............");
         progressDialog.show();
         Product oldInfo = product;
         ArrayList<String> lstImage = product.getImageURL();
-        String id= product.getProID();
-        if(a.size()>0)
-        {
-            if (rePickImage){
-                lstImage.clear();
-                StorageReference imageFolder= FirebaseStorage.getInstance().getReference("Post").child("Image Folder");
-                ArrayList<String> aImage= new ArrayList<String>();
+        String id = product.getProID();
+        String des, addr, seller, pri, ph, na;
+        des = description.getText().toString();
+        addr = address.getText().toString();
+        seller = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        pri = price.getText().toString();
+        na = name.getText().toString();
+        long ts = System.currentTimeMillis();
+        if (addr.matches("") || des.matches("") || pri.matches("") || na.matches("") || a.size() == 0) {
+            AnnouncementPostAdapter postAdapter = new AnnouncementPostAdapter();
+            postAdapter.show(getSupportFragmentManager(), "dialog");
+        }
+        else{
+            if (a.size() > 0) {
+                if (rePickImage) {
+                    ArrayList<String> aImage = new ArrayList<String>();
+                    progressDialog = new ProgressDialog(this);
+                    progressDialog.setMessage("Uploading please wait............");
+                    progressDialog.show();
 
-                for(int i=0;i<a.size();i++){
-                    Uri image= a.get(i);
-                    StorageReference individualImage= imageFolder.child("Image"+ image.getLastPathSegment());
-                    individualImage.putFile(image)
-                            .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                                @Override
-                                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                    individualImage.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                        @Override
-                                        public void onSuccess(Uri uri) {
-                                            String url = String.valueOf(uri);
-                                            lstImage.add(url);
-                                        }
-                                    });
-                                }
-                            });
+                    int limitImage = a.size();
+                    if (a.size() > 3) {
+                        limitImage = 3;
+                    }
+                    for (int i = 0; i < limitImage; i++) {
+                        Uri image = a.get(i);
+                        StorageReference individualImage = imageFolder.child("Image" + image.getLastPathSegment());
+                        int finalI = i;
+                        individualImage.putFile(image)
+                                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                    @Override
+                                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                        individualImage.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                            @Override
+                                            public void onSuccess(Uri uri) {
+                                                String url = String.valueOf(uri);
+                                                final Handler handler = new Handler(Looper.getMainLooper());
+                                                handler.postDelayed(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        df.child(id).child("ImageURL").child(String.valueOf(count[finalI])).setValue(url);
+                                                    }
+                                                }, 1500);
+                                            }
+                                        });
+                                    }
+                                });
+                    }
                 }
             }
-            String des, addr, seller, pri, ph, na;
-            des= description.getText().toString();
-            addr= address.getText().toString();
-            seller= FirebaseAuth.getInstance().getCurrentUser().getUid();
-            pri= price.getText().toString();
-            na= name.getText().toString();
-            long ts= System.currentTimeMillis();
-            Product product= new Product(addr, oldInfo.getBuyer(), des, lstImage, lat, lon, na, Double.parseDouble(pri), id, oldInfo.getReport(), oldInfo.getSeller(), oldInfo.getStatus(), oldInfo.getTimestamp(), oldInfo.getRate());
-            HashMap<String, Object> map= new HashMap<>();
+            Product product = new Product(addr, oldInfo.getBuyer(), des, lstImage, lat, lon, na, Double.parseDouble(pri), id, oldInfo.getReport(), oldInfo.getSeller(), oldInfo.getStatus(), oldInfo.getTimestamp(), oldInfo.getRate());
+            HashMap<String, Object> map = new HashMap<>();
             map.put("ProID", product.getProID());
             map.put("Address", product.getAddress());
             map.put("Buyer", product.getBuyer());
@@ -212,14 +237,10 @@ public class EditActivity extends AppCompatActivity {
             map.put("VisibleToBuyer", product.isVisibleToBuyer());
             map.put("VisibleToSeller", product.isVisibleToSeller());
             map.put("Rate", product.getRate());
-            map.put("ImageURL",product.getImageURL());
+            map.put("ImageURL", product.getImageURL());
             df.child(id).setValue(map);
             progressDialog.dismiss();
             finish();
         }
-        else{
-            Toast.makeText(this, "No image was selected", Toast.LENGTH_SHORT).show();
-        }
     }
-
 }

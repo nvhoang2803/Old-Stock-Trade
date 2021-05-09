@@ -491,7 +491,9 @@ public class MessageActivity extends AppCompatActivity {
 
                         reference.child("Conversations").child(conversation_reference.getKey()).child("recent_msg").setValue(hashMap);
                         ref.child(conversation_reference.getKey()).child("recent_msg").setValue(hashMap);
-                        createNotification("Sent you an image.", userid);
+                        if (!user.getStatus().equals("online")) {
+                            createNotification("Sent you an image.", userid);
+                        }
                         dialog.dismiss();
                     }
                     else dialog.dismiss();
@@ -548,7 +550,9 @@ public class MessageActivity extends AppCompatActivity {
 
         reference.child("Conversations").child(conversation_reference.getKey()).child("recent_msg").setValue(hashMap);
         ref.child(conversation_reference.getKey()).child("recent_msg").setValue(hashMap);
-        createNotification("Sent you a location.", receiver);
+        if (!user.getStatus().equals("online")) {
+            createNotification("Sent you a location.", receiver);
+        }
     }
 
     void sendMessage(String sender,String receiver, String msg){
@@ -565,9 +569,9 @@ public class MessageActivity extends AppCompatActivity {
         hashMap.put("time", System.currentTimeMillis());
         ref_chats.setValue(hashMap);
 
-        reference.child("Conversations").child(conversation_reference.getKey()).child("recent_msg").setValue(hashMap);
-        ref.child(conversation_reference.getKey()).child("recent_msg").setValue(hashMap);
-        createNotification(msg, receiver);
+        if (!user.getStatus().equals("online")){
+            createNotification(msg, receiver);
+        }
     }
     private void createNotification(String message, String receiver){
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Users").child(fuser.getUid());
