@@ -218,7 +218,11 @@ public class MessageActivity extends AppCompatActivity {
                 notify = true;
                 String msg = txt_msg.getText().toString();
                 if (!msg.equals("")) {
-                    sendMessage(fuser.getUid(), userid, msg);
+                    if (conversation_reference == null) {
+                        createConversation(fuser.getUid(),userid);
+                    }
+                    DatabaseReference ref_chats = conversation_reference.child("Chats").push();
+                    sendMessage(fuser.getUid(), userid, msg,"text",ref_chats);
                     txt_msg.setText("");
                     View view = getCurrentFocus();
                     if (view != null) {
@@ -452,53 +456,57 @@ public class MessageActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 438 && resultCode ==RESULT_OK && data != null && data.getData() != null){
-            dialog = new ProgressDialog(this);
-            dialog.setMessage("Sending image...");
-            dialog.show();
-            fileUri = data.getData();
-            StorageReference reference_storage = FirebaseStorage.getInstance().getReference().child("Images");
-            if (conversation_reference == null) {
-                createConversation(fuser.getUid(),userid);
-            }
-            DatabaseReference messagePushRef = conversation_reference.child("Chats").push();
-            String messagePushID = messagePushRef.getKey();
-
-            final StorageReference filePath = reference_storage.child(messagePushID+".jpg");
-            uploadTask = filePath.putFile(fileUri);
-            uploadTask.continueWithTask(new Continuation() {
-                @Override
-                public Object then(@NonNull Task task) throws Exception {
-                    if (!task.isSuccessful()){
-                        dialog.dismiss();
-                        throw task.getException();
-                    }
-                    return filePath.getDownloadUrl();
-                }
-            }).addOnCompleteListener(new OnCompleteListener<Uri>() {
-                @Override
-                public void onComplete(@NonNull Task<Uri> task) {
-                    if (task.isSuccessful()){
-                        Uri downloadUrl = task.getResult();
-
-                        HashMap<String, Object> hashMap = new HashMap<>();
-                        hashMap.put("id", messagePushID);
-                        hashMap.put("sender",fuser.getUid());
-                        hashMap.put("receiver",userid);
-                        hashMap.put("message",downloadUrl.toString());
-                        hashMap.put("type","image");
-                        hashMap.put("time",System.currentTimeMillis());
-                        messagePushRef.setValue(hashMap);
-
-                        reference.child("Conversations").child(conversation_reference.getKey()).child("recent_msg").setValue(hashMap);
-                        ref.child(conversation_reference.getKey()).child("recent_msg").setValue(hashMap);
-                        createNotification("Sent you an image.", userid);
-                        dialog.dismiss();
-                    }
-                    else dialog.dismiss();
-                }
-            });
+            sendImage(data);
 
         }
+    }
+    void sendImage(Intent data){
+        dialog = new ProgressDialog(this);
+        dialog.setMessage("Sending image...");
+        dialog.show();
+        fileUri = data.getData();
+        StorageReference reference_storage = FirebaseStorage.getInstance().getReference().child("Images");
+        if (conversation_reference == null) {
+            createConversation(fuser.getUid(),userid);
+        }
+        DatabaseReference messagePushRef = conversation_reference.child("Chats").push();
+        String messagePushID = messagePushRef.getKey();
+
+        final StorageReference filePath = reference_storage.child(messagePushID+".jpg");
+        uploadTask = filePath.putFile(fileUri);
+        uploadTask.continueWithTask(new Continuation() {
+            @Override
+            public Object then(@NonNull Task task) throws Exception {
+                if (!task.isSuccessful()){
+                    dialog.dismiss();
+                    throw task.getException();
+                }
+                return filePath.getDownloadUrl();
+            }
+        }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+            @Override
+            public void onComplete(@NonNull Task<Uri> task) {
+                if (task.isSuccessful()){
+                    Uri downloadUrl = task.getResult();
+
+                    sendMessage(fuser.getUid(),userid,downloadUrl.toString(),"image",messagePushRef);
+//                    HashMap<String, Object> hashMap = new HashMap<>();
+//                    hashMap.put("id", messagePushID);
+//                    hashMap.put("sender",fuser.getUid());
+//                    hashMap.put("receiver",userid);
+//                    hashMap.put("message",downloadUrl.toString());
+//                    hashMap.put("type","image");
+//                    hashMap.put("time",System.currentTimeMillis());
+//                    messagePushRef.setValue(hashMap);
+//
+//                    reference.child("Conversations").child(conversation_reference.getKey()).child("recent_msg").setValue(hashMap);
+//                    ref.child(conversation_reference.getKey()).child("recent_msg").setValue(hashMap);
+
+                    dialog.dismiss();
+                }
+                else dialog.dismiss();
+            }
+        });
     }
     DatabaseReference ref;
     void findConversationId(String user1, String user2) {
@@ -537,36 +545,26 @@ public class MessageActivity extends AppCompatActivity {
         }
         DatabaseReference ref_chats = conversation_reference.child("Chats").push();
         String msg = Double.toString(latitude) +","+Double.toString(longitude);
-        HashMap<String, Object> hashMap = new HashMap<>();
-        hashMap.put("sender",sender);
-        hashMap.put("receiver",receiver);
-        hashMap.put("message",msg);
-        hashMap.put("type","location");
-        hashMap.put("id",ref_chats.getKey());
-        hashMap.put("time", System.currentTimeMillis());
-        ref_chats.setValue(hashMap);
-
-        reference.child("Conversations").child(conversation_reference.getKey()).child("recent_msg").setValue(hashMap);
-        ref.child(conversation_reference.getKey()).child("recent_msg").setValue(hashMap);
-        createNotification("Sent you a location.", receiver);
+        sendMessage(sender,receiver,msg,"location",ref_chats);
     }
 
-    void sendMessage(String sender,String receiver, String msg){
-        if (conversation_reference == null) {
-            createConversation(sender,receiver);
-        }
-        DatabaseReference ref_chats = conversation_reference.child("Chats").push();
-        HashMap<String, Object> hashMap = new HashMap<>();
-        hashMap.put("sender",sender);
-        hashMap.put("receiver",receiver);
-        hashMap.put("message",msg);
-        hashMap.put("type","text");
-        hashMap.put("id",ref_chats.getKey());
-        hashMap.put("time", System.currentTimeMillis());
-        ref_chats.setValue(hashMap);
+    void sendMessage(String sender,String receiver, String msg, String type, DatabaseReference ref_chats){
+        Chat chat = new Chat(sender,receiver,msg,type,ref_chats.getKey(),System.currentTimeMillis(),false);
+        ref_chats.setValue(chat);
 
-        reference.child("Conversations").child(conversation_reference.getKey()).child("recent_msg").setValue(hashMap);
-        ref.child(conversation_reference.getKey()).child("recent_msg").setValue(hashMap);
+        reference.child("Conversations").child(conversation_reference.getKey()).child("recent_msg").setValue(chat);
+        ref.child(conversation_reference.getKey()).child("recent_msg").setValue(chat);
+        switch (type){
+            case "text":
+                break;
+            case "location":
+                msg = "Sent you a location.";
+                break;
+            case "image":
+                msg = "Sent you an image.";
+                break;
+
+        }
         createNotification(msg, receiver);
     }
     private void createNotification(String message, String receiver){
@@ -634,27 +632,35 @@ public class MessageActivity extends AppCompatActivity {
         ref.child(conversation_reference.getKey()).setValue(hashMap);
         loadMessage();
     }
+    ValueEventListener loadMessageListener = new ValueEventListener() {
+        @Override
+        public void onDataChange(@NonNull DataSnapshot snapshot) {
+            mChats.clear();
+            Chat chat = null;
+            for(DataSnapshot data : snapshot.getChildren()){
+                chat = data.getValue(Chat.class);
+                if (chat.getSender().equals(userid))
+                    data.getRef().child("seen").setValue(true);
+                mChats.add(chat);
+            }
+            if (chat != null && chat.getSender().equals(userid))
+                ref.child(conversation_reference.getKey()).child("recent_msg").setValue(chat);
+            messageAdapter = new MessageAdapter(MessageActivity.this, mChats, imageURL, conversation_reference);
+            recyclerView.setAdapter(messageAdapter);
+        }
+
+        @Override
+        public void onCancelled(@NonNull DatabaseError error) {
+
+        }
+    };
+    DatabaseReference loadMsg_ref = null;
     void loadMessage() {
         if (conversation_reference != null){
-            DatabaseReference reference = conversation_reference.child("Chats");
+            loadMsg_ref = conversation_reference.child("Chats");
             mChats = new ArrayList<>();
-            reference.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    mChats.clear();
-                    for(DataSnapshot data : snapshot.getChildren()){
-                        Chat chat = data.getValue(Chat.class);
-                        mChats.add(chat);
-                    }
-                    messageAdapter = new MessageAdapter(MessageActivity.this, mChats, imageURL, conversation_reference);
-                    recyclerView.setAdapter(messageAdapter);
-                }
 
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-
-                }
-            });
+            loadMsg_ref.addValueEventListener(loadMessageListener);
         }
 
     }
@@ -685,7 +691,8 @@ public class MessageActivity extends AppCompatActivity {
         reference.addValueEventListener(valueEventListener);
         if (mapView!=null)
             mapView.onResume();
-
+        if (loadMsg_ref != null)
+            loadMsg_ref.addValueEventListener(loadMessageListener);
     }
 
     @Override
@@ -694,7 +701,8 @@ public class MessageActivity extends AppCompatActivity {
             mapView.onPause();
         super.onPause();
         reference.removeEventListener(valueEventListener);
-
+        if (loadMsg_ref != null)
+            loadMsg_ref.removeEventListener(loadMessageListener);
     }
 
     @Override

@@ -35,6 +35,7 @@ public class ContactFragment extends Fragment {
     private List<User> mUsers;
     private List<Long> min_time;
     private List<String> last_message;
+    private List<Boolean> mIsSeen;
     DatabaseReference reference;
     FirebaseUser firebaseUser;
 
@@ -49,6 +50,7 @@ public class ContactFragment extends Fragment {
             mUsers = new ArrayList<>();
             min_time = new ArrayList<>();
             last_message = new ArrayList<>();
+            mIsSeen = new ArrayList<>();
 
             firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -61,6 +63,7 @@ public class ContactFragment extends Fragment {
                     mUsers.clear();
                     min_time.clear();
                     last_message.clear();
+                    mIsSeen.clear();
                     for(DataSnapshot data: snapshot.getChildren()){
                         Conversation conversation = data.getValue(Conversation.class);
                         String userid = "";
@@ -77,7 +80,8 @@ public class ContactFragment extends Fragment {
                                     mUsers.clear();
                                     min_time.clear();
                                     last_message.clear();
-                                }else insert(chat.getTime(),chat,user);
+                                    mIsSeen.clear();
+                                }else insert(chat,user);
 
                                 contactAdapter.notifyDataSetChanged();
                             }
@@ -89,7 +93,7 @@ public class ContactFragment extends Fragment {
                         });
 
                     }
-                    contactAdapter = new ContactAdapter(getContext(), mUsers, min_time, last_message);
+                    contactAdapter = new ContactAdapter(getContext(), mUsers, min_time, last_message, mIsSeen);
                     recyclerView.setAdapter(contactAdapter);
 
                 }
@@ -106,8 +110,15 @@ public class ContactFragment extends Fragment {
     public void onPause() {
         super.onPause();
     }
-    void insert(long time, Chat chat, User user){
+    void insert( Chat chat, User user){
         String message= "";
+        long time = chat.getTime();
+        Boolean isSeen = chat.getSeen();
+        if (chat.getSender().equals(firebaseUser.getUid()))
+            isSeen = true;
+        else if (isSeen == null)
+            isSeen = false;
+
         if (chat.getType().equals("text")){
             message = chat.getMessage().split("\n")[0];
             if (message.length() > 20)
@@ -126,6 +137,7 @@ public class ContactFragment extends Fragment {
             mUsers.add(user);
             min_time.add(time);
             last_message.add(message);
+            mIsSeen.add(isSeen);
             return;
         }
         for(int i=0;i<mUsers.size();i++){
@@ -133,6 +145,7 @@ public class ContactFragment extends Fragment {
                 mUsers.remove(i);
                 min_time.remove(i);
                 last_message.remove(i);
+                mIsSeen.remove(isSeen);
                 break;
             }
         }
@@ -141,12 +154,14 @@ public class ContactFragment extends Fragment {
                 mUsers.add(i,user);
                 min_time.add(i,time);
                 last_message.add(i,message);
+                mIsSeen.add(i,isSeen);
                 return;
             }
         }
         mUsers.add(user);
         min_time.add(time);
         last_message.add(message);
+        mIsSeen.add(isSeen);
 
     }
     @Override

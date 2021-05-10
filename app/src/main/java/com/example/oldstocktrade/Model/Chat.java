@@ -7,6 +7,24 @@ public class Chat {
     private String type;
     private String id;
     private long time;
+    private Boolean seen;
+
+    public Boolean getSeen() {
+        return seen;
+    }
+
+    public Chat(String sender, String receiver, String message, String type, String id, long time, Boolean seen) {
+        this.sender = sender;
+        this.receiver = receiver;
+        this.message = message;
+        this.type = type;
+        this.id = id;
+        this.time = time;
+        this.seen = seen;
+    }
+
+    public Chat() {
+    }
 
     public String getSender() {
         return sender;

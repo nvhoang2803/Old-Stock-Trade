@@ -1,7 +1,9 @@
 package com.example.oldstocktrade.Adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,17 +20,21 @@ import com.example.oldstocktrade.R;
 
 import java.util.List;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHolder> {
     Context context;
     List<User> mUsers;
     List<Long> min_time;
     List<String> last_message;
+    private List<Boolean> mIsSeen;
     //List<RecentMessage> mMessages;
-    public ContactAdapter(@NonNull Context context, List<User> mUsers, List<Long> min_time, List<String> last_message) {
+    public ContactAdapter(@NonNull Context context, List<User> mUsers, List<Long> min_time, List<String> last_message, List<Boolean> mIsSeen) {
         this.context = context;
         this.mUsers = mUsers;
         this.min_time = min_time;
         this.last_message = last_message;
+        this.mIsSeen = mIsSeen;
     }
     @NonNull
     @Override
@@ -37,6 +43,7 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
         return new ContactAdapter.ViewHolder(view);
     }
 
+    @SuppressLint("ResourceAsColor")
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         User user = mUsers.get(position);
@@ -66,6 +73,14 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
             }
             else time_duration += "Just now";
             holder.sent_time.setText(time_duration);
+            if (!mIsSeen.get(position)){
+                holder.last_msg.setTextColor(Color.WHITE);
+                holder.img_new.setVisibility(View.VISIBLE);
+            }
+            else {
+                holder.last_msg.setTextColor(R.color.recent_message_color);
+                holder.img_new.setVisibility(View.GONE);
+            }
         }
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -90,6 +105,7 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
         public ImageView img_off;
         public TextView last_msg;
         public TextView sent_time;
+        public CircleImageView img_new;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -100,6 +116,7 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
             img_off = itemView.findViewById(R.id.img_off);
             last_msg = itemView.findViewById(R.id.last_msg);
             sent_time = itemView.findViewById(R.id.sent_time);
+            img_new = itemView.findViewById(R.id.img_new);
         }
     }
 }
