@@ -457,7 +457,6 @@ public class MessageActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 438 && resultCode ==RESULT_OK && data != null && data.getData() != null){
             sendImage(data);
-
         }
     }
     void sendImage(Intent data){
@@ -546,6 +545,7 @@ public class MessageActivity extends AppCompatActivity {
         DatabaseReference ref_chats = conversation_reference.child("Chats").push();
         String msg = Double.toString(latitude) +","+Double.toString(longitude);
         sendMessage(sender,receiver,msg,"location",ref_chats);
+
     }
 
     void sendMessage(String sender,String receiver, String msg, String type, DatabaseReference ref_chats){
@@ -565,7 +565,10 @@ public class MessageActivity extends AppCompatActivity {
                 break;
 
         }
-        createNotification(msg, receiver);
+        if (!user.getStatus().equals("online")){
+            createNotification(msg, receiver);
+        }
+
     }
     private void createNotification(String message, String receiver){
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Users").child(fuser.getUid());
