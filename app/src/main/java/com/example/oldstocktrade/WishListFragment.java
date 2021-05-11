@@ -59,10 +59,10 @@ public class  WishListFragment extends Fragment {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot ds: snapshot.getChildren()) {
                     WishListItem wl = ds.getValue(WishListItem.class);
+                    SoldFragment.removeNoStockLayout(oopslayout);
                     mReference.child("Products/" + wl.getProID()).addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot childsnapshot) {
-                            SoldFragment.removeNoStockLayout(oopslayout);
                             Product product = childsnapshot.getValue(Product.class);
                             lstProduct.add(product);
                             myrecycleview = (RecyclerView) v.findViewById(R.id.storage_recyclerview);
@@ -70,7 +70,6 @@ public class  WishListFragment extends Fragment {
                             myrecycleview.setLayoutManager(new GridLayoutManager(getActivity(),2));
                             myrecycleview.setAdapter(recyclerAdapter);
                         }
-
                         @Override
                         public void onCancelled(@NonNull DatabaseError error) {
 
