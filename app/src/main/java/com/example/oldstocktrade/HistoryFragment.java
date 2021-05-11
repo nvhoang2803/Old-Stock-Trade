@@ -1,5 +1,6 @@
 package com.example.oldstocktrade;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,14 +18,16 @@ public class HistoryFragment extends Fragment {
     private TabLayout tabLayout;
     private ViewPager viewPager;
     private ViewPageAdapter adapter;
+    private MainActivity curActivity;
     //-------------phan de setting chon toi
     private int typetab = -1;
 
-    public HistoryFragment(int typetab) {
+    public HistoryFragment(MainActivity activity, int typetab) {
+        curActivity = activity;
         this.typetab = typetab;
     }
-    public HistoryFragment() {
-
+    public HistoryFragment(MainActivity activity) {
+        curActivity = activity;
     }
     //------------------
     @Nullable
@@ -41,8 +44,8 @@ public class HistoryFragment extends Fragment {
         viewPager = (ViewPager) view.findViewById(R.id.viewpager_id);
         adapter = new ViewPageAdapter(getChildFragmentManager());
 
-        adapter.addFragment(new SoldFragment(), getString(R.string.title_history_sold));
-        adapter.addFragment(new BoughtFragment(), getString(R.string.title_history_bought));
+        adapter.addFragment(new SoldFragment(curActivity), getString(R.string.title_history_sold));
+        adapter.addFragment(new BoughtFragment(curActivity), getString(R.string.title_history_bought));
         viewPager.setAdapter(adapter);
         tabLayout.setupWithViewPager(viewPager);
         //--------phan de chon item setting dan toi tab tuong thich
@@ -51,5 +54,12 @@ public class HistoryFragment extends Fragment {
             tab.select();
         }
         //----------------------
+        view.findViewById(R.id.btn_contact).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(getActivity(), ContactActivity.class);
+                startActivity(i);
+            }
+        });
     }
 }

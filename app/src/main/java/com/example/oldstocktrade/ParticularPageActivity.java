@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,14 +48,15 @@ import java.util.Comparator;
 
 
 public class ParticularPageActivity extends AppCompatActivity {
-    private TextView descriptionPart, pricePart, dayPostPart, addressPart;
+    private TextView descriptionPart, pricePart, dayPostPart, namePart;
     private TextView nameUser, phoneUser;
     private DatabaseReference df;
     private ViewPager productImagePart;
-    private Button btnReport, call, sendSMS, deletePart,btnDirection, chat;
-    private ImageView arrow;
+    private Button btnReport;
+    private ImageView arrow, btnDirection;
     private Double longitudeS = 0.0,latitudeS = 0.0,longitudeD = 0.0,latitudeD = 0.0;
     String addressS,addressD;
+    private RelativeLayout call, sendSMS, chat;
 
 
         @Override
@@ -68,10 +70,10 @@ public class ParticularPageActivity extends AppCompatActivity {
             latitudeS = (Double) (getIntent().getExtras().get("latitude"));
             addressS = (String)getIntent().getExtras().get("address");
 
+            namePart= findViewById(R.id.name);
             descriptionPart= findViewById(R.id.descriptionPart);
             pricePart= findViewById(R.id.pricePart);
             dayPostPart= findViewById(R.id.dayPostPart);
-            addressPart= findViewById(R.id.addressPart);
             nameUser= findViewById(R.id.nameUser);
             phoneUser= findViewById(R.id.phoneUser);
             productImagePart= findViewById(R.id.productImagePart);
@@ -79,7 +81,7 @@ public class ParticularPageActivity extends AppCompatActivity {
             arrow= findViewById(R.id.btnBack);
             call= findViewById(R.id.call);
             sendSMS= findViewById(R.id.sendSMS);
-            deletePart= findViewById(R.id.deletePart);
+//            deletePart= findViewById(R.id.deletePart);
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
             String myID= user.getUid();
             btnDirection = findViewById(R.id.btnDirection);
@@ -103,7 +105,6 @@ public class ParticularPageActivity extends AppCompatActivity {
             arrow.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    startActivity(new Intent(ParticularPageActivity.this,MainActivity.class));
                     finish();
                 }
             });
@@ -112,18 +113,7 @@ public class ParticularPageActivity extends AppCompatActivity {
                 @SuppressLint("ClickableViewAccessibility")
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    if((snapshot.child("Seller").getValue().toString()).equals(myID)){
-                        deletePart.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                df.child("Products").child(receiveID).removeValue();
-                                startActivity(new Intent(ParticularPageActivity.this,MainActivity.class));
-                                finish();
-                            }
-                        });
-                    }else{
-                        deletePart.setVisibility(View.GONE);
-                    }
+                    String name= snapshot.child("Name").getValue().toString();
                     String des= snapshot.child("Description").getValue().toString();
                     String price= snapshot.child("Price").getValue().toString();
                     longitudeD = Double.parseDouble(snapshot.child("Longitude").getValue().toString());
@@ -140,10 +130,11 @@ public class ParticularPageActivity extends AppCompatActivity {
                     String[] arrImage = a.toArray(new String[0]);
                     ImageSlider imgSliderAdapter = new ImageSlider(ParticularPageActivity.this,arrImage);
                     productImagePart.setAdapter(imgSliderAdapter);
-                    descriptionPart.setText("Description: "+ des);
-                    pricePart.setText("Price: "+price);
-                    dayPostPart.setText("Day Post: "+dayPost);
-                    addressPart.setText("Address: "+ add);
+
+                    namePart.setText(name);
+                    descriptionPart.setText(des);
+                    pricePart.setText(price);
+                    dayPostPart.setText(dayPost);
                     df.child("Report").child(receiveID).addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot2) {
@@ -188,25 +179,31 @@ public class ParticularPageActivity extends AppCompatActivity {
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     String nu= snapshot.child("username").getValue().toString();
                     String pu= snapshot.child("phone").getValue().toString();
-                    nameUser.setText("Username: "+ nu);
-                    phoneUser.setText("Phone user: "+ pu);
+                    nameUser.setText(nu);
+                    phoneUser.setText(pu);
+                    if(pu.matches("")|| receiveUserID.equals(myID))
+                    {
+                        call.setEnabled(false);
+                        sendSMS.setEnabled(false);
+                    }
+                    else{
+                        call.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Intent intent= new Intent(Intent.ACTION_DIAL);
+                                intent.setData(Uri.parse("tel:"+pu));
+                                startActivity(intent);
+                            }
+                        });
 
-                    call.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Intent intent= new Intent(Intent.ACTION_DIAL);
-                            intent.setData(Uri.parse("tel:"+pu));
-                            startActivity(intent);
-                        }
-                    });
-
-                    sendSMS.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Intent intent= new Intent(Intent.ACTION_VIEW, Uri.parse("sms:"+pu));
-                            startActivity(intent);
-                        }
-                    });
+                        sendSMS.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Intent intent= new Intent(Intent.ACTION_VIEW, Uri.parse("sms:"+pu));
+                                startActivity(intent);
+                            }
+                        });
+                    }
                 }
 
                 @Override
@@ -215,13 +212,18 @@ public class ParticularPageActivity extends AppCompatActivity {
                 }
             });
 
-            chat.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent= new Intent(ParticularPageActivity.this, MessageActivity.class).addFlags(Intent.FLAG_ACTIVITY_FORWARD_RESULT);
-                    intent.putExtra("userid", receiveUserID);
-                    startActivity(intent);
-                }
-            });
+            if(receiveUserID.equals(myID)){
+                chat.setEnabled(false);
+            }else{
+                chat.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent= new Intent(ParticularPageActivity.this, MessageActivity.class).addFlags(Intent.FLAG_ACTIVITY_FORWARD_RESULT);
+                        intent.putExtra("userid", receiveUserID);
+                        startActivity(intent);
+                    }
+                });
+            }
+
         }
 }

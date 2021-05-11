@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -15,6 +16,7 @@ import com.bumptech.glide.Glide;
 import com.example.oldstocktrade.Adapter.ProductAdapter;
 import com.example.oldstocktrade.Adapter.StorageAdapter;
 import com.example.oldstocktrade.Model.Product;
+import com.example.oldstocktrade.Model.Rating;
 import com.example.oldstocktrade.Model.User;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -22,6 +24,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,6 +40,7 @@ public class SellerFeedActivity extends AppCompatActivity {
     private String userid;
     private List<Product> mProducts;
     private ImageButton btn_back;
+    private TextView txt_ratings;
     ProductAdapter productAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +53,7 @@ public class SellerFeedActivity extends AppCompatActivity {
         product_amount = findViewById(R.id.product_amount);
         btn_back = findViewById(R.id.btn_back);
         recyclerView = findViewById(R.id.recycler);
+        txt_ratings = findViewById(R.id.ratings);
 
         Intent intent = getIntent();
         userid = intent.getStringExtra("userid");
@@ -85,6 +91,27 @@ public class SellerFeedActivity extends AppCompatActivity {
                 productAdapter = new ProductAdapter(SellerFeedActivity.this,mProducts, true, null);
                 recyclerView.setLayoutManager(new GridLayoutManager(SellerFeedActivity.this,2));
                 recyclerView.setAdapter(productAdapter);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+        DatabaseReference ref_ratings = FirebaseDatabase.getInstance().getReference("Users").child(userid).child("Ratings");
+        ref_ratings.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                int ratings = 0;
+                for (DataSnapshot data : snapshot.getChildren()){
+                    Rating rating = data.getValue(Rating.class);
+                    ratings += rating.getRating();
+                }
+                if (snapshot.getChildrenCount() !=0 ){
+                    DecimalFormat df2 = new DecimalFormat("#.#");
+                    df2.setRoundingMode(RoundingMode.UP);
+                    txt_ratings.setText(df2.format(1.0*ratings/snapshot.getChildrenCount())+"");
+                }
             }
 
             @Override

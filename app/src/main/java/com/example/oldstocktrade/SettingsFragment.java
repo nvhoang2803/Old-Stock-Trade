@@ -100,7 +100,8 @@ public class SettingsFragment extends Fragment {
             btnContact.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    main.handleClickFragment(R.id.nav_delivery,0);
+                    Intent i = new Intent(getActivity(), ContactActivity.class);
+                    startActivity(i);
                 }
             });
             btnSelling.setOnClickListener(new View.OnClickListener() {

@@ -14,27 +14,22 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.inputmethodservice.Keyboard;
-import android.inputmethodservice.KeyboardView;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.KeyboardShortcutGroup;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -44,13 +39,18 @@ import com.example.oldstocktrade.Adapter.MessageAdapter;
 import com.example.oldstocktrade.Model.Chat;
 import com.example.oldstocktrade.Model.Conversation;
 import com.example.oldstocktrade.Model.User;
+import com.example.oldstocktrade.Notification.APIService;
+import com.example.oldstocktrade.Notification.Client;
+import com.example.oldstocktrade.Notification.Data;
+import com.example.oldstocktrade.Notification.Response;
+import com.example.oldstocktrade.Notification.Sender;
+import com.example.oldstocktrade.Notification.Token;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
@@ -67,20 +67,21 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
-
-import org.w3c.dom.Text;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import retrofit2.Call;
+import retrofit2.Callback;
 
 public class MessageActivity extends AppCompatActivity {
     private static final String MAPVIEW_BUNDLE_KEY = "BUNDLE_KEY";
@@ -91,7 +92,7 @@ public class MessageActivity extends AppCompatActivity {
     private FirebaseUser fuser;
     private DatabaseReference reference;
     private ImageButton btn_send;
-    private ImageButton btn_img, btn_location, btn_recv_location;
+    private ImageButton btn_img, btn_location;
     private ImageButton btn_call;
     private EditText txt_msg;
     private String conversation_id = null;
@@ -105,22 +106,27 @@ public class MessageActivity extends AppCompatActivity {
     private Uri fileUri;
     private String userid = "";
     private ProgressDialog dialog;
-    private User user;
+    private User user, me;
     private GoogleMap mMap;
     private FusedLocationProviderClient client;
     private Geocoder geocoder;
     private  ImageButton btn_sell;
     ValueEventListener valueEventListener;
     MapView mapView = null;
-    Boolean isSend;
+    Boolean isSend,isReceiver;
     View bottomSheetView;
     Double lati,longi;
+    Bundle savedInstanceState2;
+    private String myavatarURL;
 
+    APIService apiService;
+    boolean notify = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_message);
+        savedInstanceState2 = savedInstanceState;
         // Set up
         img_on = findViewById(R.id.img_on);
         img_off = findViewById(R.id.img_off);
@@ -129,7 +135,7 @@ public class MessageActivity extends AppCompatActivity {
         btn_send = findViewById(R.id.btn_send);
         btn_img = findViewById(R.id.btn_img);
         btn_location = findViewById(R.id.btn_location);
-        btn_recv_location = findViewById(R.id.btn_location1);
+        //btn_recv_location = findViewById(R.id.btn_location1);
         btn_call = findViewById(R.id.btn_call);
         btn_sell = findViewById(R.id.btn_sell);
         txt_msg = findViewById(R.id.txt_msg);
@@ -138,6 +144,8 @@ public class MessageActivity extends AppCompatActivity {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getApplicationContext());
         linearLayoutManager.setStackFromEnd(true);
         recyclerView.setLayoutManager(linearLayoutManager);
+
+        apiService = Client.getClient("https://fcm.googleapis.com/").create(APIService.class);
 
         // Create toolbar
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -159,8 +167,20 @@ public class MessageActivity extends AppCompatActivity {
         Intent intent = getIntent();
         userid = intent.getStringExtra("userid");
 
-
         fuser = FirebaseAuth.getInstance().getCurrentUser();
+        updateToken(FirebaseInstanceId.getInstance().getToken());
+        FirebaseDatabase.getInstance().getReference().child("Users").child(fuser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                User user = snapshot.getValue(User.class);
+                myavatarURL = user.getImageURL();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
         reference = FirebaseDatabase.getInstance().getReference("Users").child(userid);
         valueEventListener = new ValueEventListener() {
             @Override
@@ -195,9 +215,14 @@ public class MessageActivity extends AppCompatActivity {
         btn_send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                notify = true;
                 String msg = txt_msg.getText().toString();
                 if (!msg.equals("")) {
-                    sendMessage(fuser.getUid(), userid, msg);
+                    if (conversation_reference == null) {
+                        createConversation(fuser.getUid(),userid);
+                    }
+                    DatabaseReference ref_chats = conversation_reference.child("Chats").push();
+                    sendMessage(fuser.getUid(), userid, msg,"text",ref_chats);
                     txt_msg.setText("");
                     View view = getCurrentFocus();
                     if (view != null) {
@@ -211,20 +236,20 @@ public class MessageActivity extends AppCompatActivity {
         btn_location.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setBottomSheetDialog(savedInstanceState, true,0.0,0.0);
+                setBottomSheetDialog(savedInstanceState, true,0.0,0.0,false);
 
 
             }
         });
-        btn_recv_location.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Lat of long of sender
-                setBottomSheetDialog(savedInstanceState, false, 10.766724451581517, 106.69376915409575);
-
-
-            }
-        });
+//        btn_recv_location.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                // Lat of long of sender
+//                setBottomSheetDialog(savedInstanceState, false, 10.766724451581517, 106.69376915409575);
+//
+//
+//            }
+//        });
         btn_img.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -261,9 +286,9 @@ public class MessageActivity extends AppCompatActivity {
             }
         });
     }
-
-    private void setBottomSheetDialog(Bundle savedInstanceState, boolean isSend, Double lati, Double longi) {
-        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(MessageActivity.this, R.style.BottomSheetDialogdTheme);
+    BottomSheetDialog bottomSheetDialog;
+    private void setBottomSheetDialog(Bundle savedInstanceState, boolean isSend, Double lati, Double longi,boolean isReceiver) {
+        bottomSheetDialog = new BottomSheetDialog(MessageActivity.this, R.style.BottomSheetDialogdTheme);
 
         View bottomSheetView;
         if(isSend){
@@ -289,12 +314,12 @@ public class MessageActivity extends AppCompatActivity {
         geocoder = new Geocoder(getApplicationContext());
         client = LocationServices.getFusedLocationProviderClient(MessageActivity.this);
         if (ActivityCompat.checkSelfPermission(MessageActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            getCurrentLocation(isSend, bottomSheetView,lati,longi);
+            getCurrentLocation(isSend, bottomSheetView,lati,longi,isReceiver);
 
 
 
         } else {
-            this.isSend =isSend;this.bottomSheetView = bottomSheetView; this.lati = lati; this.longi = longi;//save data to serve in onRequestPermissionResult
+            this.isSend =isSend;this.bottomSheetView = bottomSheetView; this.lati = lati; this.longi = longi; this.isReceiver = isReceiver;//save data to serve in onRequestPermissionResult
             ActivityCompat.requestPermissions(MessageActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 44);
 
         }
@@ -303,7 +328,7 @@ public class MessageActivity extends AppCompatActivity {
 
     }
 
-    private void getCurrentLocation(boolean isSend, View bottomSheetView, Double lati, Double longi) {
+    private void getCurrentLocation(boolean isSend, View bottomSheetView, Double lati, Double longi, boolean isReceiver) {
         mapView.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(GoogleMap googleMap) {
@@ -329,7 +354,7 @@ public class MessageActivity extends AppCompatActivity {
                                     e.printStackTrace();
                                 }
                                 LatLng now = new LatLng(location.getLatitude(),location.getLongitude());
-                                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(now,20));
+                                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(now,15));
                                 //mMap.addMarker(new MarkerOptions().position(now).title("You're here"));
 
                                 if (addresses != null && addresses.size() != 0) {
@@ -341,7 +366,9 @@ public class MessageActivity extends AppCompatActivity {
                                 bottomSheetView.findViewById(R.id.btnShareLocation).setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
-                                        //gui longitude, latitude, address
+                                        //Send to receiver
+                                        sendLocation(fuser.getUid(),userid, now.latitude, now.longitude);
+                                        bottomSheetDialog.dismiss();
                                     }
                                 });
 
@@ -355,11 +382,13 @@ public class MessageActivity extends AppCompatActivity {
 //                                    longi = 106.61737850991582;
                                 String username = txt_username.getText().toString();
                                 LatLng sender = new LatLng(lati, longi);
-                                String imageSource = imageURL;
+
                                 //edit marker: avatar
+
+                                String avatarMarker = isReceiver?imageURL:myavatarURL;
                                 Glide.with(MessageActivity.this)
                                         .asBitmap()
-                                        .load(imageURL.equals("" + "default")?R.mipmap.ic_launcher_round:imageURL)
+                                        .load(avatarMarker.equals("" + "default")?R.mipmap.ic_launcher_round:avatarMarker)
                                         .apply(new RequestOptions().override(150, 150))
                                         .circleCrop()
                                         .into(new CustomTarget<Bitmap>() {
@@ -418,7 +447,7 @@ public class MessageActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == 44) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                getCurrentLocation(isSend, bottomSheetView,lati,longi);
+                getCurrentLocation(isSend, bottomSheetView,lati,longi,isReceiver);
             }
         }
 
@@ -427,51 +456,56 @@ public class MessageActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 438 && resultCode ==RESULT_OK && data != null && data.getData() != null){
-            dialog = new ProgressDialog(this);
-            dialog.setMessage("Sending image...");
-            dialog.show();
-            fileUri = data.getData();
-            StorageReference reference_storage = FirebaseStorage.getInstance().getReference().child("Images");
-            if (conversation_reference == null) {
-                createConversation(fuser.getUid(),userid);
-            }
-            DatabaseReference messagePushRef = conversation_reference.child("Chats").push();
-            String messagePushID = messagePushRef.getKey();
-
-            final StorageReference filePath = reference_storage.child(messagePushID+".jpg");
-            uploadTask = filePath.putFile(fileUri);
-            uploadTask.continueWithTask(new Continuation() {
-                @Override
-                public Object then(@NonNull Task task) throws Exception {
-                    if (!task.isSuccessful()){
-                        dialog.dismiss();
-                        throw task.getException();
-                    }
-                    return filePath.getDownloadUrl();
-                }
-            }).addOnCompleteListener(new OnCompleteListener<Uri>() {
-                @Override
-                public void onComplete(@NonNull Task<Uri> task) {
-                    if (task.isSuccessful()){
-                        Uri downloadUrl = task.getResult();
-
-                        HashMap<String, Object> hashMap = new HashMap<>();
-                        hashMap.put("sender",fuser.getUid());
-                        hashMap.put("receiver",userid);
-                        hashMap.put("message",downloadUrl.toString());
-                        hashMap.put("type","image");
-                        hashMap.put("time",System.currentTimeMillis());
-                        messagePushRef.setValue(hashMap);
-
-                        reference.child("Conversations").child(conversation_reference.getKey()).child("recent_msg").setValue(hashMap);
-                        ref.child(conversation_reference.getKey()).child("recent_msg").setValue(hashMap);
-                        dialog.dismiss();
-                    }
-                    else dialog.dismiss();
-                }
-            });
-
+            sendImage(data);
         }
+    }
+    void sendImage(Intent data){
+        dialog = new ProgressDialog(this);
+        dialog.setMessage("Sending image...");
+        dialog.show();
+        fileUri = data.getData();
+        StorageReference reference_storage = FirebaseStorage.getInstance().getReference().child("Images");
+        if (conversation_reference == null) {
+            createConversation(fuser.getUid(),userid);
+        }
+        DatabaseReference messagePushRef = conversation_reference.child("Chats").push();
+        String messagePushID = messagePushRef.getKey();
+
+        final StorageReference filePath = reference_storage.child(messagePushID+".jpg");
+        uploadTask = filePath.putFile(fileUri);
+        uploadTask.continueWithTask(new Continuation() {
+            @Override
+            public Object then(@NonNull Task task) throws Exception {
+                if (!task.isSuccessful()){
+                    dialog.dismiss();
+                    throw task.getException();
+                }
+                return filePath.getDownloadUrl();
+            }
+        }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+            @Override
+            public void onComplete(@NonNull Task<Uri> task) {
+                if (task.isSuccessful()){
+                    Uri downloadUrl = task.getResult();
+
+                    sendMessage(fuser.getUid(),userid,downloadUrl.toString(),"image",messagePushRef);
+//                    HashMap<String, Object> hashMap = new HashMap<>();
+//                    hashMap.put("id", messagePushID);
+//                    hashMap.put("sender",fuser.getUid());
+//                    hashMap.put("receiver",userid);
+//                    hashMap.put("message",downloadUrl.toString());
+//                    hashMap.put("type","image");
+//                    hashMap.put("time",System.currentTimeMillis());
+//                    messagePushRef.setValue(hashMap);
+//
+//                    reference.child("Conversations").child(conversation_reference.getKey()).child("recent_msg").setValue(hashMap);
+//                    ref.child(conversation_reference.getKey()).child("recent_msg").setValue(hashMap);
+
+                    dialog.dismiss();
+                }
+                else dialog.dismiss();
+            }
+        });
     }
     DatabaseReference ref;
     void findConversationId(String user1, String user2) {
@@ -501,23 +535,94 @@ public class MessageActivity extends AppCompatActivity {
         });
 
     }
-    void sendMessage(String sender,String receiver, String msg){
+    public void showLocation(Double latitude, Double longitude, boolean isReceiver){
+        setBottomSheetDialog(savedInstanceState2, false, latitude, longitude,isReceiver);
+    }
+    void sendLocation(String sender, String receiver, Double latitude, Double longitude) {
         if (conversation_reference == null) {
             createConversation(sender,receiver);
         }
         DatabaseReference ref_chats = conversation_reference.child("Chats").push();
-        HashMap<String, Object> hashMap = new HashMap<>();
-        hashMap.put("sender",sender);
-        hashMap.put("receiver",receiver);
-        hashMap.put("message",msg);
-        hashMap.put("type","text");
-        hashMap.put("id",ref_chats.getKey());
-        hashMap.put("time", System.currentTimeMillis());
-        ref_chats.setValue(hashMap);
+        String msg = Double.toString(latitude) +","+Double.toString(longitude);
+        sendMessage(sender,receiver,msg,"location",ref_chats);
 
-        reference.child("Conversations").child(conversation_reference.getKey()).child("recent_msg").setValue(hashMap);
-        ref.child(conversation_reference.getKey()).child("recent_msg").setValue(hashMap);
     }
+
+    void sendMessage(String sender,String receiver, String msg, String type, DatabaseReference ref_chats){
+        Chat chat = new Chat(sender,receiver,msg,type,ref_chats.getKey(),System.currentTimeMillis(),false);
+        ref_chats.setValue(chat);
+
+        reference.child("Conversations").child(conversation_reference.getKey()).child("recent_msg").setValue(chat);
+        ref.child(conversation_reference.getKey()).child("recent_msg").setValue(chat);
+        switch (type){
+            case "text":
+                break;
+            case "location":
+                msg = "Sent you a location.";
+                break;
+            case "image":
+                msg = "Sent you an image.";
+                break;
+
+        }
+        if (!user.getStatus().equals("online")){
+            createNotification(msg, receiver);
+        }
+
+    }
+    private void createNotification(String message, String receiver){
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Users").child(fuser.getUid());
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                User user = snapshot.getValue(User.class);
+                    sendNotification(receiver, user.getUsername(), message);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    private void sendNotification(String receiver, String username, String message) {
+        DatabaseReference allTokens = FirebaseDatabase.getInstance().getReference("Tokens");
+        Query query = allTokens.orderByKey().equalTo(receiver);
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot ds: snapshot.getChildren()){
+                    Token token = ds.getValue(Token.class);
+                    Data data = new Data(fuser.getUid(), username + ": " + message, "New Message", userid, R.drawable.ic_conversation);
+                    Sender sender = new Sender(data, token.getToken());
+                    apiService.sendNotification(sender)
+                            .enqueue(new Callback<Response>() {
+                                @Override
+                                public void onResponse(Call<Response> call, retrofit2.Response<Response> response) {
+                                    if (response.code() == 200){
+                                        if (response.body().success != 1){
+                                            Toast.makeText(MessageActivity.this, "Failed!", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+
+                                }
+
+                                @Override
+                                public void onFailure(Call<Response> call, Throwable t) {
+
+                                }
+                            });
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
     void createConversation(String sender, String receiver){
         DatabaseReference ref_con = FirebaseDatabase.getInstance().getReference("Conversations");
         HashMap<String, Object> hashMap = new HashMap<>();
@@ -530,29 +635,42 @@ public class MessageActivity extends AppCompatActivity {
         ref.child(conversation_reference.getKey()).setValue(hashMap);
         loadMessage();
     }
-    void loadMessage() {
-        if (conversation_reference != null){
-            DatabaseReference reference = conversation_reference.child("Chats");
-            mChats = new ArrayList<>();
-            reference.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    mChats.clear();
-                    for(DataSnapshot data : snapshot.getChildren()){
-                        Chat chat = data.getValue(Chat.class);
-                        mChats.add(chat);
-                    }
-                    messageAdapter = new MessageAdapter(MessageActivity.this, mChats, imageURL, conversation_reference);
-                    recyclerView.setAdapter(messageAdapter);
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-
-                }
-            });
+    ValueEventListener loadMessageListener = new ValueEventListener() {
+        @Override
+        public void onDataChange(@NonNull DataSnapshot snapshot) {
+            mChats.clear();
+            Chat chat = null;
+            for(DataSnapshot data : snapshot.getChildren()){
+                chat = data.getValue(Chat.class);
+                if (chat.getSender().equals(userid))
+                    data.getRef().child("seen").setValue(true);
+                mChats.add(chat);
+            }
+            if (chat != null && chat.getSender().equals(userid))
+                ref.child(conversation_reference.getKey()).child("recent_msg").setValue(chat);
+            messageAdapter = new MessageAdapter(MessageActivity.this, mChats, imageURL, conversation_reference);
+            recyclerView.setAdapter(messageAdapter);
         }
 
+        @Override
+        public void onCancelled(@NonNull DatabaseError error) {
+
+        }
+    };
+    DatabaseReference loadMsg_ref = null;
+    void loadMessage() {
+        if (conversation_reference != null){
+            loadMsg_ref = conversation_reference.child("Chats");
+            mChats = new ArrayList<>();
+
+            loadMsg_ref.addValueEventListener(loadMessageListener);
+        }
+
+    }
+    public void updateToken(String token){
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Tokens");
+        Token mToken = new Token(token);
+        ref.child(fuser.getUid()).setValue(mToken);
     }
 
     @Override
@@ -576,7 +694,8 @@ public class MessageActivity extends AppCompatActivity {
         reference.addValueEventListener(valueEventListener);
         if (mapView!=null)
             mapView.onResume();
-
+        if (loadMsg_ref != null)
+            loadMsg_ref.addValueEventListener(loadMessageListener);
     }
 
     @Override
@@ -585,7 +704,8 @@ public class MessageActivity extends AppCompatActivity {
             mapView.onPause();
         super.onPause();
         reference.removeEventListener(valueEventListener);
-
+        if (loadMsg_ref != null)
+            loadMsg_ref.removeEventListener(loadMessageListener);
     }
 
     @Override

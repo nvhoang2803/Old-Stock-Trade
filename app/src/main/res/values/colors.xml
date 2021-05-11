@@ -23,4 +23,5 @@
     <color name="back_btn">#FFBF40</color>
     <color name="color1">#FFAA00</color>
     <color name="background_lightyellow">#F5F5F4</color>
+    <color name="recent_message_color">#808769</color>
 </resources>

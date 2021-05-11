@@ -1,13 +1,19 @@
 package com.example.oldstocktrade.Adapter;
 
+import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
@@ -22,6 +28,7 @@ import com.example.oldstocktrade.MainActivity;
 import com.example.oldstocktrade.MessageActivity;
 import com.example.oldstocktrade.Model.Product;
 import com.example.oldstocktrade.Model.WishListItem;
+import com.example.oldstocktrade.ParticularPageActivity;
 import com.example.oldstocktrade.PostActivity;
 import com.example.oldstocktrade.R;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -45,12 +52,13 @@ public class StorageAdapter extends RecyclerView.Adapter<StorageAdapter.MyViewHo
     List<Product> mData;
     String tabName;
     RecyclerView mRecyclerView;
-
-
-    public StorageAdapter(Context mContext, List<Product> mData, String tabName) {
+    private ProgressDialog progressDialog;
+    private Activity curActivity;
+    public StorageAdapter(Context mContext,Activity curActivity, List<Product> mData, String tabName) {
         this.mContext = mContext;
         this.mData = mData;
         this.tabName = tabName;
+        this.curActivity = curActivity;
     }
 
     @Override
@@ -135,10 +143,27 @@ public class StorageAdapter extends RecyclerView.Adapter<StorageAdapter.MyViewHo
             }
         }
         );
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String id= mData.get(position).getProID();
+                String userID= mData.get(position).getSeller();
+                Intent partIntent= new Intent(v.getContext(), ParticularPageActivity.class);
+                partIntent.putExtra("id", id);
+                partIntent.putExtra("userID", userID);
+                partIntent.putExtra("sizeImageURL", mData.get(position).getImageURL().size());
+                partIntent.putExtra("longitude", ((MainActivity) curActivity).longitude);
+                partIntent.putExtra("latitude",((MainActivity) curActivity).latitude);
+                partIntent.putExtra("address",((MainActivity) curActivity).address);
+                Log.d("PackInHomeView", "onClick: ");
+                v.getContext().startActivity(partIntent);
+            }
+        });
     }
     public void removeFromSelling(int position){
-        DatabaseReference mProduct = FirebaseDatabase.getInstance().getReference("Products").child(mData.get(position).getProID());
-        mProduct.removeValue();
+        progressDialog= new ProgressDialog(mContext);
+        progressDialog.setMessage("Removing...");
+        progressDialog.show();
         FirebaseUser fuser = FirebaseAuth.getInstance().getCurrentUser();
         Query mWishList = FirebaseDatabase.getInstance().getReference("Wishlist").orderByChild("proID").equalTo(mData.get(position).getProID());
         mWishList.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -150,16 +175,18 @@ public class StorageAdapter extends RecyclerView.Adapter<StorageAdapter.MyViewHo
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
                                 if (task.isSuccessful()) {
-                                    mData.remove(position);
-                                    mRecyclerView.removeViewAt(position);
-                                    notifyItemRemoved(position);
-                                    notifyItemRangeRemoved(position, mData.size());
                                 } else {
                                 }
                             }
                         });;
                     };
                 }
+                DatabaseReference mProduct = FirebaseDatabase.getInstance().getReference("Products").child(mData.get(position).getProID());
+                mProduct.removeValue();
+                notifyItemRemoved(position);
+                notifyItemRangeRemoved(position, mData.size());
+                mData.remove(position);
+                progressDialog.dismiss();
             }
 
             @Override
@@ -167,6 +194,9 @@ public class StorageAdapter extends RecyclerView.Adapter<StorageAdapter.MyViewHo
 
             }
         });
+        if(mRecyclerView != null){
+            mRecyclerView.removeViewAt(position);
+        }
     }
     public void removeFromWishList(int position){
         FirebaseUser fuser = FirebaseAuth.getInstance().getCurrentUser();
@@ -218,4 +248,32 @@ public class StorageAdapter extends RecyclerView.Adapter<StorageAdapter.MyViewHo
         intent.putExtras(myBundle);
         mContext.startActivity(intent);
     }
+//    private class MyTask extends AsyncTask<Void, Void, Void> {
+//
+//        @Override
+//        protected void onPreExecute() {
+//            super.onPreExecute();
+////            AlphaAnimation inAnimation = new AlphaAnimation(0f, 1f);
+////            inAnimation.setDuration(200);
+////            progressDialog= new ProgressDialog(mContext);
+////            progressDialog.setMessage("Image Uploading please wait............");
+////            progressDialog.show();
+//        }
+//
+//        @Override
+//        protected void onPostExecute(Void aVoid) {
+//            super.onPostExecute(aVoid);
+////            AlphaAnimation outAnimation;
+////            outAnimation = new AlphaAnimation(1f, 0f);
+////            outAnimation.setDuration(200);
+//            progressDialog.dismiss();
+//        }
+//
+//        @Override
+//        protected Void doInBackground(Void... params) {
+//            removeFromSelling(position);
+//            return null;
+//        }
+//    }
+
 }

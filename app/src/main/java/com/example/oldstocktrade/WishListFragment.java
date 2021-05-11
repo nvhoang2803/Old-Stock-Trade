@@ -1,5 +1,6 @@
 package com.example.oldstocktrade;
 
+import android.app.Activity;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -42,8 +43,9 @@ public class  WishListFragment extends Fragment {
     private String userID;
     private ArrayList<String> wishlist;
     private LinearLayout oopslayout;
-    public WishListFragment(){
-
+    private Activity curActivity;
+    public WishListFragment(Activity curActivity){
+        this.curActivity = curActivity;
     }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle saveInstanceState){
@@ -64,9 +66,12 @@ public class  WishListFragment extends Fragment {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot childsnapshot) {
                             Product product = childsnapshot.getValue(Product.class);
-                            lstProduct.add(product);
+                            if(product != null && !(product.getSeller().equals(userID))){
+                                lstProduct.add(product);
+                                SoldFragment.removeNoStockLayout(oopslayout);
+                            }
                             myrecycleview = (RecyclerView) v.findViewById(R.id.storage_recyclerview);
-                            StorageAdapter recyclerAdapter = new StorageAdapter(getContext(),lstProduct,"wishlist");
+                            StorageAdapter recyclerAdapter = new StorageAdapter(getContext(), curActivity, lstProduct,"wishlist");
                             myrecycleview.setLayoutManager(new GridLayoutManager(getActivity(),2));
                             myrecycleview.setAdapter(recyclerAdapter);
                         }
@@ -75,6 +80,7 @@ public class  WishListFragment extends Fragment {
 
                         }
                     });
+
                 }
             }
 

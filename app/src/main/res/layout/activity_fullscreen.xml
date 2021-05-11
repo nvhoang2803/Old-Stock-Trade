@@ -38,11 +38,18 @@
                 android:layout_height="40dp"
                 android:background="@drawable/ic_left_arrow"/>
             <ImageButton
-                android:id="@+id/btn_delete"
+                android:id="@+id/btn_download"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:background="@drawable/ic_delete"
-                android:layout_alignParentEnd="true"/>
+                android:background="@drawable/ic_download"
+                android:layout_alignParentEnd="true"
+                android:layout_marginRight="10dp"/>
+            <!--            <ImageButton-->
+<!--                android:id="@+id/btn_delete"-->
+<!--                android:layout_width="40dp"-->
+<!--                android:layout_height="40dp"-->
+<!--                android:background="@drawable/ic_delete"-->
+<!--                android:layout_alignParentEnd="true"/>-->
 
         </RelativeLayout>
     </FrameLayout>

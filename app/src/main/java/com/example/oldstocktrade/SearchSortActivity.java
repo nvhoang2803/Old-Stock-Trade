@@ -276,13 +276,14 @@ public class SearchSortActivity extends AppCompatActivity {
     }
     //Fill sort and updated data follow Sort field
     public void fillSort(ArrayList<String> arrSort,String type){
-        mReference.child("Products").limitToLast(10).
+        mReference.child("Products").
                 addListenerForSingleValueEvent(new ValueEventListener() {
                     @RequiresApi(api = Build.VERSION_CODES.N)
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         Product tmp;
                         arr.clear();
+
                         String query = searchView.getQuery().toString();
                         if (type == "Filter"){
                             List<Float> priceSort = priceSlider.getValues();
@@ -306,6 +307,7 @@ public class SearchSortActivity extends AppCompatActivity {
                                                 || VnCharacteristic.removeAccent(tmp.getDescription()).toLowerCase().contains(query.toLowerCase())) )){
                                     arr.add(tmp);
                                 }
+                                System.out.println(tmp.getName());
                             }
                         }
                         if (arrSort.get(0).toString().contains("From Low to High")){
@@ -496,24 +498,26 @@ public class SearchSortActivity extends AppCompatActivity {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                mReference.child("Products").limitToLast(10).
+                mReference.child("Products").
                         addListenerForSingleValueEvent(new ValueEventListener() {
                             @RequiresApi(api = Build.VERSION_CODES.N)
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
                                 arr.clear();
                                 Product tmp;
+                                int i=0;
                                 for (DataSnapshot ds: snapshot.getChildren()){
                                     tmp = ds.getValue(Product.class);
-                                    if (tmp.getName() != null && tmp.getStatus() == 1 && (( tmp.getName().toLowerCase().contains(query.toLowerCase())
+                                    if (tmp.getName() != null && tmp.getStatus() == 1 && ((( tmp.getName().toLowerCase().contains(query.toLowerCase())
                                             || VnCharacteristic.removeAccent(tmp.getName()).toLowerCase().contains(query.toLowerCase()) )
                                                 || ( tmp.getDescription().toLowerCase().contains(query.toLowerCase())
-                                            || VnCharacteristic.removeAccent(tmp.getDescription()).toLowerCase().contains(query.toLowerCase()) ))){
+                                            || VnCharacteristic.removeAccent(tmp.getDescription()).toLowerCase().contains(query.toLowerCase()) )))){
                                         arr.add(tmp);
+                                        i+=1;
                                     }
+                                    if (i == 8) break;
                                 }
                                 arr.sort(Comparator.comparing(Product::getStatus).reversed());
-
                                 mReference.child("Wishlist").orderByChild("userID").
                                         equalTo(curUser.getId()).addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override

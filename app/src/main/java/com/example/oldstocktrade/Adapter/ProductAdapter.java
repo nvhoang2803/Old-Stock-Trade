@@ -1,5 +1,6 @@
 package com.example.oldstocktrade.Adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -118,7 +119,14 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.MyViewHo
                                     hashMap.put("Status", 0);
                                     hashMap.put("Timestamp", System.currentTimeMillis());
                                     ref.updateChildren(hashMap);
-                                    Toast.makeText(mContext,"Sold successfully",Toast.LENGTH_SHORT);
+                                    DatabaseReference ref_feedback = FirebaseDatabase.getInstance().getReference("Feedback").child(userID).push();
+                                    HashMap<String,Object> hashMap1 = new HashMap<>();
+                                    hashMap1.put("id",ref_feedback.getKey());
+                                    hashMap1.put("userID",FirebaseAuth.getInstance().getCurrentUser().getUid());
+                                    hashMap1.put("proID",mData.get(position).getProID());
+                                    ref_feedback.updateChildren(hashMap1);
+                                    Toast.makeText(mContext,"Sold successfully",Toast.LENGTH_SHORT).show();
+                                    ((Activity) mContext).finish();
                                 }
                             })
                             .setNegativeButton("No",null)

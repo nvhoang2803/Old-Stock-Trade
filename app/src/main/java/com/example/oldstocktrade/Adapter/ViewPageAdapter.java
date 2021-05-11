@@ -47,6 +47,11 @@ public class ViewPageAdapter extends FragmentPagerAdapter {
         return lstTitles.get(position);
     }
 
+    @Override
+    public void notifyDataSetChanged() {
+        super.notifyDataSetChanged();
+    }
+
     public void addFragment (Fragment fragment, String title){
         lstFragment.add(fragment);
         lstTitles.add(title);

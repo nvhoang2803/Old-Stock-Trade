@@ -1,5 +1,6 @@
 package com.example.oldstocktrade;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,11 +20,14 @@ public class StorageFragment extends Fragment {
     private ViewPageAdapter adapter;
     //-------------phan de setting chon toi
     private int typetab = -1;
-    public StorageFragment(int type) {
-        typetab = type;
-    }
-    public StorageFragment() {
+    private MainActivity curActivity;
 
+    public StorageFragment(MainActivity activity, int typetab) {
+        curActivity = activity;
+        this.typetab = typetab;
+    }
+    public StorageFragment(MainActivity activity) {
+        curActivity = activity;
     }
     //-----------------
     @Nullable
@@ -40,8 +44,8 @@ public class StorageFragment extends Fragment {
         viewPager = (ViewPager) view.findViewById(R.id.viewpager_id);
         adapter = new ViewPageAdapter(getChildFragmentManager());
 
-        adapter.addFragment(new SellingFragment(), getString(R.string.title_storage_selling));
-        adapter.addFragment(new WishListFragment(), getString(R.string.title_storage_wishlist));
+        adapter.addFragment(new SellingFragment(curActivity), getString(R.string.title_storage_selling));
+        adapter.addFragment(new WishListFragment(curActivity), getString(R.string.title_storage_wishlist));
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
@@ -60,11 +64,36 @@ public class StorageFragment extends Fragment {
         });
         viewPager.setAdapter(adapter);
         tabLayout.setupWithViewPager(viewPager);
+        viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+
+            @Override
+            public void onPageSelected(int position) {
+                // on changing the page
+                // make respected tab selected
+                adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onPageScrolled(int arg0, float arg1, int arg2) {
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int arg0) {
+            }
+        });
         //--------phan de chon item setting dan toi tab tuong thich
         if(typetab!=-1){
+            adapter.notifyDataSetChanged();
             TabLayout.Tab tab = tabLayout.getTabAt(typetab);
             tab.select();
         }
         //----------------------
+        view.findViewById(R.id.btn_contact).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(getActivity(), ContactActivity.class);
+                startActivity(i);
+            }
+        });
     }
 }

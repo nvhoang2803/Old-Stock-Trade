@@ -48,9 +48,7 @@ public class PostActivity extends AppCompatActivity {
     private ArrayList<Uri> a = new ArrayList<Uri>();
     private Uri uriImage;
     private ProgressDialog progressDialog;
-    private static int count = 0;
     private Double lon = null, lat = null;
-    int countElement = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,7 +98,9 @@ public class PostActivity extends AppCompatActivity {
         post.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                uploadMultipleImage();
+                int[] count={0,1,2};
+                post.setEnabled(false);
+                uploadMultipleImage(count);
             }
         });
 
@@ -130,9 +130,9 @@ public class PostActivity extends AppCompatActivity {
                     Log.d("Location", "onActivityResult: " + location);
                     ;//split location bang - se ra longitude va latitude roi luu vao db
                     address.setText(straddress);
-                    String a[]= location.split("#");
-                    lat= Double.parseDouble(a[0]);
-                    lon= Double.parseDouble(a[1]);
+                    String a[] = location.split("#");
+                    lat = Double.parseDouble(a[0]);
+                    lon = Double.parseDouble(a[1]);
 
                 }
             }
@@ -151,15 +151,12 @@ public class PostActivity extends AppCompatActivity {
                         a.add(uriImage);
                     }
                     chosenImages.setAdapter(new ImageAdapter(this, a));
-                } else {
-                    Toast.makeText(this, "Please select multiple image", Toast.LENGTH_SHORT).show();
                 }
             }
         }
     }
 
-
-    private void uploadMultipleImage() {
+    private void uploadMultipleImage(int count[]) {
         String des, addr, seller, pri, na;
         des = description.getText().toString();
         addr = address.getText().toString();
@@ -174,16 +171,20 @@ public class PostActivity extends AppCompatActivity {
 
         if (addr.matches("") || des.matches("") || pri.matches("") || na.matches("") || a.size() == 0) {
             AnnouncementPostAdapter postAdapter = new AnnouncementPostAdapter();
-            postAdapter.show(getSupportFragmentManager(), "example dialog");
+            postAdapter.show(getSupportFragmentManager(), "dialog");
         } else {
             progressDialog = new ProgressDialog(this);
-            progressDialog.setMessage("Image Uploading please wait............");
+            progressDialog.setMessage("Uploading please wait............");
             progressDialog.show();
 
-            for (int i = 0; i < a.size(); i++) {
+            int limitImage= a.size();
+            if(a.size()>3){
+                limitImage=3;
+            }
+            for (int i = 0; i < limitImage; i++) {
                 Uri image = a.get(i);
                 StorageReference individualImage = imageFolder.child("Image" + image.getLastPathSegment());
-
+                int finalI = i;
                 individualImage.putFile(image)
                         .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                             @Override
@@ -192,9 +193,13 @@ public class PostActivity extends AppCompatActivity {
                                     @Override
                                     public void onSuccess(Uri uri) {
                                         String url = String.valueOf(uri);
-//                                        aImage.add(url);
-                                        df.child(id).child("ImageURL").child(String.valueOf(count)).setValue(url);
-                                        count++;
+                                        final Handler handler = new Handler(Looper.getMainLooper());
+                                        handler.postDelayed(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                df.child(id).child("ImageURL").child(String.valueOf(count[finalI])).setValue(url);
+                                            }
+                                        }, 1500);
                                     }
                                 });
                             }
@@ -219,28 +224,18 @@ public class PostActivity extends AppCompatActivity {
         map.put("Timestamp", product.getTimestamp());
         map.put("VisibleToBuyer", product.isVisibleToBuyer());
         map.put("VisibleToSeller", product.isVisibleToSeller());
-        df.child(id).setValue(map);
-        progressDialog.dismiss();
-        final Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-//                for(int j=0;j<aImage.size();j++){
-//                    df.child(id).child("ImageURL").child(String.valueOf(j)).setValue(aImage.get(j));
-//                }
-//                df.child(id).setValue(map);
-//                final Handler handel2= new Handler();
-//                handel2.postDelayed(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        startActivity(new Intent(PostActivity.this, MainActivity.class));
-//                        finish();
-//                    }
-//                },1000);
+
+//        int time= 1500*a.size();
+//        final Handler handler = new Handler(Looper.getMainLooper());
+//        handler.postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+                df.child(id).setValue(map);
+                progressDialog.dismiss();
                 startActivity(new Intent(PostActivity.this, MainActivity.class));
                 finish();
-            }
-        }, a.size()*1000);
+//            }
+//        }, time);
 
     }
 }

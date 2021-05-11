@@ -67,9 +67,11 @@ public class ContactActivity extends AppCompatActivity {
             }
         });
         adapter.addFragment(new ContactFragment(),"Chats");
+        adapter.addFragment(new FeedbackFragment(),"Rating");
         viewPager.setAdapter(adapter);
         tabLayout.setupWithViewPager(viewPager);
         tabLayout.getTabAt(0).setIcon(R.drawable.ic_conversation);
+        tabLayout.getTabAt(1).setIcon(R.drawable.ic_star);
         ViewGroup tabs = (ViewGroup) tabLayout.getChildAt(0);
 
         for (int i = 0; i < tabs.getChildCount() - 1; i++) {

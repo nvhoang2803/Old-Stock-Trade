@@ -20,8 +20,11 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,8 +38,11 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -68,7 +74,9 @@ public class ProfileActivity extends AppCompatActivity {
     private String imageUrl;
     private Uri imageUri = null;
     private User user;
-
+    private CheckBox cbChangePw;
+    LinearLayout llConfirm,llCurrentPw,llNewPw;
+    EditText txtCurrentPw,txtNewPw,txtConfirm;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,6 +88,32 @@ public class ProfileActivity extends AppCompatActivity {
         btnClose = findViewById(R.id.btnClose);
         btnSave = findViewById(R.id.btnSave);
         change_photo = findViewById(R.id.change_photo);
+        llConfirm = findViewById(R.id.llConfirm);
+        llCurrentPw = findViewById(R.id.llCurrentPw);
+        llNewPw = findViewById(R.id.llNewPw);
+        cbChangePw = findViewById(R.id.cbChangePw);
+        cbChangePw.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked){
+                    llCurrentPw.setVisibility(View.VISIBLE);
+                    llNewPw.setVisibility(View.VISIBLE);
+                    llConfirm.setVisibility(View.VISIBLE);
+                    txtCurrentPw = findViewById(R.id.txtCurrentPw);
+                    txtNewPw  = findViewById(R.id.txtNewPw);
+                    txtConfirm = findViewById(R.id.txtConfirm);
+                }
+                else{
+                    llCurrentPw.setVisibility(View.INVISIBLE);
+                    llNewPw.setVisibility(View.INVISIBLE);
+                    llConfirm.setVisibility(View.INVISIBLE);
+                    txtCurrentPw = null;
+                    txtNewPw  = null;
+                    txtConfirm = null;
+
+                }
+            }
+        });
         fuser = FirebaseAuth.getInstance().getCurrentUser();
         ref = FirebaseDatabase.getInstance().getReference("Users").child(fuser.getUid());
         ref.addValueEventListener( new ValueEventListener() {
@@ -204,6 +238,10 @@ public class ProfileActivity extends AppCompatActivity {
         pd.setMessage("Uploading...");
         pd.show();
         String phone = txt_phone.getText().toString();
+        if(!changePassword(cbChangePw.isChecked())){
+            pd.dismiss();
+            return;
+        }
         if (TextUtils.isEmpty(phone)){
             Toast.makeText(ProfileActivity.this, "Your phone number cannot be empty!",Toast.LENGTH_SHORT).show();
         }
@@ -295,7 +333,62 @@ public class ProfileActivity extends AppCompatActivity {
 //        }
 
     }
+    private boolean changePassword(boolean isChecked){
+        if(!isChecked)
+            return true;
+        String current = txtCurrentPw.getText().toString();
+        String newPw = txtNewPw.getText().toString();
+        String confirm = txtConfirm.getText().toString();
+        if(TextUtils.isEmpty(current)||TextUtils.isEmpty(newPw)||TextUtils.isEmpty(confirm)){
+            Toast.makeText(ProfileActivity.this, "Please fill in all Password' fields",Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        else if(!newPw.equals(confirm)){
+            Toast.makeText(ProfileActivity.this, "New Password and Confirm Password are not the same",Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        else if(newPw.length()<6){
+            Toast.makeText(ProfileActivity.this, "New Password is equal or greater than 6 characters ",Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        else{
 
+            AuthCredential credential = EmailAuthProvider.getCredential(fuser.getEmail(), current);
+            fuser.reauthenticate(credential)
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                fuser.updatePassword(newPw)
+                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                                if (task.isSuccessful()) {
+                                                    Log.d("Change Password", "User password updated.");
+                                                    Toast.makeText(ProfileActivity.this, "Change Password successfully!",Toast.LENGTH_SHORT).show();
+                                                }else{
+                                                    Toast.makeText(ProfileActivity.this, "Current Password is not right!",Toast.LENGTH_SHORT).show();
+                                                    Log.d("Change Password", "Error User password updated.");
+
+                                                }
+                                            }
+                                        });
+                            } else {
+
+                                Log.d("Change pw", "Error auth failed");
+                                Toast.makeText(ProfileActivity.this, "Current Password is not right!",Toast.LENGTH_SHORT).show();
+
+
+                            }
+                        }
+                    });
+
+            return true;
+
+        }
+
+
+    }
     private String getFileExtension(Uri uri) {
         return MimeTypeMap.getSingleton().getExtensionFromMimeType(this.getContentResolver().getType(uri));
     }

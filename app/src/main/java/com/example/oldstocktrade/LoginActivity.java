@@ -44,6 +44,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import org.w3c.dom.Text;
+
 import java.util.HashMap;
 
 public class LoginActivity extends AppCompatActivity {
@@ -54,6 +56,7 @@ public class LoginActivity extends AppCompatActivity {
     ProgressDialog pd;
     private static final int SIGN_IN=1;
     private GoogleSignInClient mGoogleSignInClient;
+    private TextView txtForgotPw;
 
 
     @Override
@@ -62,7 +65,7 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         pd = new ProgressDialog(this);
         Button btn_login = (Button) findViewById(R.id.btn_login2);
-
+        txtForgotPw = findViewById(R.id.txt_forgotpw);
         EditText email = findViewById(R.id.email_login);
         EditText password = findViewById(R.id.password_login);
         auth = FirebaseAuth.getInstance();
@@ -74,18 +77,7 @@ public class LoginActivity extends AppCompatActivity {
 
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
         btnGoogleLog = findViewById(R.id.btnGoogleLog);
-//        btnGoogleLog.setColorScheme(SignInButton.COLOR_AUTO);
-//        btnGoogleLog.setSize(SignInButton.SIZE_WIDE);
-//        for (int i = 0; i < btnGoogleLog.getChildCount(); i++) {
-//            View v = btnGoogleLog.getChildAt(i);
-//
-//            if (v instanceof TextView) {
-//                TextView tv = (TextView) v;
-//                tv.setText("Log in with Google");
-//
-//                return;
-//            }
-//        }
+
         btnGoogleLog.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -94,7 +86,33 @@ public class LoginActivity extends AppCompatActivity {
                 signIn();
             }
         });
+        txtForgotPw.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String txt_email = email.getText().toString();
+                if(TextUtils.isEmpty(txt_email)){
+                    Toast.makeText(LoginActivity.this,"You must fill in your email",Toast.LENGTH_SHORT).show();
 
+                }
+                else{
+                    auth.sendPasswordResetEmail(txt_email)
+                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()) {
+                                        Toast.makeText(LoginActivity.this,"Please check your email to reset password",Toast.LENGTH_SHORT).show();
+                                        Log.d("Reset Password", "Email sent.");
+                                    }
+                                    else{
+                                        Toast.makeText(LoginActivity.this,"Something was wrong",Toast.LENGTH_SHORT).show();
+                                        Log.d("Reset Password", "Error Email sent.");
+                                    }
+                                }
+
+                            });
+                }
+            }
+        });
         btn_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
