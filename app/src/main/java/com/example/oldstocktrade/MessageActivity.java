@@ -12,6 +12,7 @@ import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
@@ -565,9 +566,9 @@ public class MessageActivity extends AppCompatActivity {
                 break;
 
         }
-        if (!user.getStatus().equals("online")){
-            createNotification(msg, receiver);
-        }
+//        reference.child("Conversations").child(conversation_reference.getKey()).child("recent_msg").setValue(hashMap);
+//        ref.child(conversation_reference.getKey()).child("recent_msg").setValue(hashMap);
+        createNotification(msg, receiver);
 
     }
     private void createNotification(String message, String receiver){
@@ -576,7 +577,7 @@ public class MessageActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 User user = snapshot.getValue(User.class);
-                    sendNotification(receiver, user.getUsername(), message);
+                sendNotification(receiver, user.getUsername(), message);
             }
 
             @Override
@@ -603,6 +604,9 @@ public class MessageActivity extends AppCompatActivity {
                                     if (response.code() == 200){
                                         if (response.body().success != 1){
                                             Toast.makeText(MessageActivity.this, "Failed!", Toast.LENGTH_SHORT).show();
+                                        }
+                                        else {
+                                            Log.d("MESSAGE_BODY", "message_sent" + message);
                                         }
                                     }
 
@@ -673,6 +677,12 @@ public class MessageActivity extends AppCompatActivity {
         ref.child(fuser.getUid()).setValue(mToken);
     }
 
+    private void currentUser(String userid){
+        SharedPreferences.Editor editor = getSharedPreferences("PREFS", MODE_PRIVATE).edit();
+        editor.putString("currentuser", userid);
+        editor.apply();
+    }
+
     @Override
     protected void onStart() {
         super.onStart();
@@ -696,6 +706,7 @@ public class MessageActivity extends AppCompatActivity {
             mapView.onResume();
         if (loadMsg_ref != null)
             loadMsg_ref.addValueEventListener(loadMessageListener);
+        currentUser(userid);
     }
 
     @Override
@@ -706,6 +717,7 @@ public class MessageActivity extends AppCompatActivity {
         reference.removeEventListener(valueEventListener);
         if (loadMsg_ref != null)
             loadMsg_ref.removeEventListener(loadMessageListener);
+        currentUser("none");
     }
 
     @Override
