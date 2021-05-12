@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
@@ -41,6 +42,7 @@ import com.example.oldstocktrade.R;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
@@ -58,7 +60,13 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -124,10 +132,16 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
                 }
             });
         }else if (chat.getType().equals("location")){
-            holder.message.setVisibility(View.VISIBLE);
-            holder.message.setText("Current location");
-            holder.image.setVisibility(View.GONE);
-            holder.message.setOnClickListener(new View.OnClickListener() {
+            String data[] = chat.getMessage().split(",",2);
+            Double lati = Double.parseDouble(data[0]);
+            Double longi = Double.parseDouble(data[1]);
+
+            String url = "https://maps.google.com/maps/api/staticmap?center=" +lati + "," + longi + "&zoom=15&size=200x150&sensor=false"+"&markers=size:big%7Ccolor:0xFFAA00%7C"+lati + "," + longi +"&key=AIzaSyB38nTEkdQh5tvBx5XOccSMoEI02eLnWkM";
+            Log.d("http request", "onBindViewHolder: "+url);
+            Glide.with(context).load(Uri.parse(Uri.decode(url))).into(holder.image);
+            holder.message.setVisibility(View.GONE);
+            holder.image.setVisibility(View.VISIBLE);
+            holder.image.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if (context instanceof MessageActivity) {
@@ -222,6 +236,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
             profile_image = itemView.findViewById(R.id.profile_image);
             image = itemView.findViewById(R.id.imageMsg);
             btn_delete = itemView.findViewById(R.id.btn_delete);
+
         }
     }
 
