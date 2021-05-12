@@ -656,6 +656,7 @@ public class MessageActivity extends AppCompatActivity {
                 ref.child(conversation_reference.getKey()).child("recent_msg").setValue(chat);
             messageAdapter = new MessageAdapter(MessageActivity.this, mChats, imageURL, conversation_reference);
             recyclerView.setAdapter(messageAdapter);
+
         }
 
         @Override
