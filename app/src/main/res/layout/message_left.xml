@@ -31,6 +31,33 @@
             android:layout_centerVertical="true"
             android:layout_marginLeft="5dp"
             android:id="@+id/imageMsg"/>
+        <LinearLayout
+            android:orientation="vertical"
+            android:visibility="gone"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/profile_image"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="5dp"
+            android:id="@+id/locationView"
+            >
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="170dp"
+                android:id="@+id/imageLocation"
+                android:background="@drawable/bg_roundinfo"
+                />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:id="@+id/txtLocation"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:background="@drawable/bg_location"
+                android:paddingTop="10dp"
+                android:paddingLeft="5dp"
+                />
+        </LinearLayout>
 
     </RelativeLayout>
     <ImageButton
