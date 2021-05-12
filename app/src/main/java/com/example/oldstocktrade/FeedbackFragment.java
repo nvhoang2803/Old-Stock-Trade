@@ -30,6 +30,7 @@ public class FeedbackFragment extends Fragment {
     private ArrayList<Feedback> mItems;
     private FeedbackAdapter feedbackAdapter;
     private RelativeLayout no_feedback;
+    private DatabaseReference ref_feedback;
 
     public FeedbackFragment() {
         // Required empty public constructor
@@ -52,32 +53,47 @@ public class FeedbackFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-        DatabaseReference ref_feedback = FirebaseDatabase.getInstance().getReference("Feedback").child(firebaseUser.getUid());
-        ref_feedback.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                mItems.clear();
-                for(DataSnapshot data : snapshot.getChildren()){
-                    Feedback item = data.getValue(Feedback.class);
-                    mItems.add(item);
-                }
-                if (mItems.size() == 0){
-                    no_feedback.setVisibility(View.VISIBLE);
-                    recyclerView.setVisibility(View.GONE);
-                }else {
-                    no_feedback.setVisibility(View.GONE);
-                    recyclerView.setVisibility(View.VISIBLE);
-                    feedbackAdapter = new FeedbackAdapter(getContext(), mItems);
-                    recyclerView.setAdapter(feedbackAdapter);
-                }
+        ref_feedback = FirebaseDatabase.getInstance().getReference("Feedback").child(firebaseUser.getUid());
 
-            }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
         return view;
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        ref_feedback.addValueEventListener(valueEventListener);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        ref_feedback.removeEventListener(valueEventListener);
+    }
+
+    ValueEventListener valueEventListener = new ValueEventListener() {
+        @Override
+        public void onDataChange(@NonNull DataSnapshot snapshot) {
+            mItems.clear();
+            for(DataSnapshot data : snapshot.getChildren()){
+                Feedback item = data.getValue(Feedback.class);
+                mItems.add(item);
+            }
+            if (mItems.size() == 0){
+                no_feedback.setVisibility(View.VISIBLE);
+                recyclerView.setVisibility(View.GONE);
+            }else {
+                no_feedback.setVisibility(View.GONE);
+                recyclerView.setVisibility(View.VISIBLE);
+                feedbackAdapter = new FeedbackAdapter(getContext(), mItems);
+                recyclerView.setAdapter(feedbackAdapter);
+            }
+
+        }
+
+        @Override
+        public void onCancelled(@NonNull DatabaseError error) {
+
+        }
+    };
 }

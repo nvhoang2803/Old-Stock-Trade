@@ -112,6 +112,7 @@ public class SellerFeedActivity extends AppCompatActivity {
                     df2.setRoundingMode(RoundingMode.UP);
                     txt_ratings.setText(df2.format(1.0*ratings/snapshot.getChildrenCount())+"");
                 }
+                else txt_ratings.setText("None");
             }
 
             @Override
