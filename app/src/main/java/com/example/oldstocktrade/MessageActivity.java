@@ -646,8 +646,10 @@ public class MessageActivity extends AppCompatActivity {
             Chat chat = null;
             for(DataSnapshot data : snapshot.getChildren()){
                 chat = data.getValue(Chat.class);
-                if (chat.getSender().equals(userid))
+                if (chat.getSender().equals(userid)) {
                     data.getRef().child("seen").setValue(true);
+                    chat.setSeen(true);
+                }
                 mChats.add(chat);
             }
             if (chat != null && chat.getSender().equals(userid))
@@ -707,6 +709,14 @@ public class MessageActivity extends AppCompatActivity {
         if (loadMsg_ref != null)
             loadMsg_ref.addValueEventListener(loadMessageListener);
         currentUser(userid);
+        status("online");
+    }
+    void status(String s) {
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Users").child(fuser.getUid());
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put("status", s);
+
+        reference.updateChildren(hashMap);
     }
 
     @Override
@@ -718,6 +728,7 @@ public class MessageActivity extends AppCompatActivity {
         if (loadMsg_ref != null)
             loadMsg_ref.removeEventListener(loadMessageListener);
         currentUser("none");
+        status("offline");
     }
 
     @Override

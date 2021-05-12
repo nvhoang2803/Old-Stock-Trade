@@ -145,7 +145,7 @@ public class ContactFragment extends Fragment {
                 mUsers.remove(i);
                 min_time.remove(i);
                 last_message.remove(i);
-                mIsSeen.remove(isSeen);
+                mIsSeen.remove(i);
                 break;
             }
         }

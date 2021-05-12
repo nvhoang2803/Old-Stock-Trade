@@ -7,14 +7,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.oldstocktrade.Adapter.ProductAdapter;
-import com.example.oldstocktrade.Adapter.StorageAdapter;
 import com.example.oldstocktrade.Model.Product;
 import com.example.oldstocktrade.Model.Rating;
 import com.example.oldstocktrade.Model.User;
@@ -41,6 +40,7 @@ public class SellerFeedActivity extends AppCompatActivity {
     private List<Product> mProducts;
     private ImageButton btn_back;
     private TextView txt_ratings;
+    private LinearLayout ratings_container;
     ProductAdapter productAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +54,7 @@ public class SellerFeedActivity extends AppCompatActivity {
         btn_back = findViewById(R.id.btn_back);
         recyclerView = findViewById(R.id.recycler);
         txt_ratings = findViewById(R.id.ratings);
-
+        ratings_container = findViewById(R.id.ratings_container);
         Intent intent = getIntent();
         userid = intent.getStringExtra("userid");
         mProducts = new ArrayList<>();
@@ -123,6 +123,14 @@ public class SellerFeedActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 finish();
+            }
+        });
+        ratings_container.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(SellerFeedActivity.this, RatingActivity.class);
+                i.putExtra("userid",userid);
+                startActivity(i);
             }
         });
     }

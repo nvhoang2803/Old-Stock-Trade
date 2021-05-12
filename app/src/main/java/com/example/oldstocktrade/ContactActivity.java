@@ -23,6 +23,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.HashMap;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ContactActivity extends AppCompatActivity {
@@ -32,6 +34,7 @@ public class ContactActivity extends AppCompatActivity {
     private CircleImageView user_image;
     private TextView username;
     private ImageButton btn_back;
+    private FirebaseUser firebaseUser;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,7 +52,7 @@ public class ContactActivity extends AppCompatActivity {
                 finish();
             }
         });
-        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users").child(firebaseUser.getUid());
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -84,5 +87,24 @@ public class ContactActivity extends AppCompatActivity {
             tab.setLayoutParams(layoutParams);
             tabLayout.requestLayout();
         }
+    }
+    void status(String s) {
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Users").child(firebaseUser.getUid());
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put("status", s);
+
+        reference.updateChildren(hashMap);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        status("online");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        status("offline");
     }
 }

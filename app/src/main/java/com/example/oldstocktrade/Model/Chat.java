@@ -23,6 +23,10 @@ public class Chat {
         this.seen = seen;
     }
 
+    public void setSeen(Boolean seen) {
+        this.seen = seen;
+    }
+
     public Chat() {
     }
 

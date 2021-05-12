@@ -29,7 +29,9 @@ public class SellProductActivity extends AppCompatActivity {
     private List<Product> mProducts;
     private RelativeLayout no_product;
     ProductAdapter productAdapter;
-
+    private DatabaseReference ref_products;
+    private String userid;
+    private String buyerID;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,7 +41,7 @@ public class SellProductActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.recycler);
         no_product = findViewById(R.id.no_product);
         Intent intent = getIntent();
-        String buyerID = intent.getStringExtra("userid");
+        buyerID = intent.getStringExtra("userid");
 
         btn_back.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -49,36 +51,49 @@ public class SellProductActivity extends AppCompatActivity {
         });
 
         mProducts = new ArrayList<>();
-        String userid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        DatabaseReference ref_products = FirebaseDatabase.getInstance().getReference("Products");
-        ref_products.orderByChild("Seller").equalTo(userid).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                mProducts.clear();
-                for (DataSnapshot data : snapshot.getChildren()){
-                    Product product = data.getValue(Product.class);
-                    if (product.getStatus() == 1)
-                        mProducts.add(product);
-                }
-                if (mProducts.size() != 0){
-                    productAdapter = new ProductAdapter(SellProductActivity.this,mProducts, false, buyerID);
-                    recyclerView.setLayoutManager(new GridLayoutManager(SellProductActivity.this,2));
-                    recyclerView.setAdapter(productAdapter);
-                    no_product.setVisibility(View.GONE);
-                    recyclerView.setVisibility(View.VISIBLE);
-                }
-                else {
-                    no_product.setVisibility(View.VISIBLE);
-                    recyclerView.setVisibility(View.GONE);
-                }
+        userid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        ref_products = FirebaseDatabase.getInstance().getReference("Products");
 
+    }
+    ValueEventListener valueEventListener = new ValueEventListener() {
+        @Override
+        public void onDataChange(@NonNull DataSnapshot snapshot) {
+            mProducts.clear();
+            for (DataSnapshot data : snapshot.getChildren()){
+                Product product = data.getValue(Product.class);
+                if (product.getStatus() == 1)
+                    mProducts.add(product);
+            }
+            if (mProducts.size() != 0){
+                productAdapter = new ProductAdapter(SellProductActivity.this,mProducts, false, buyerID);
+                recyclerView.setLayoutManager(new GridLayoutManager(SellProductActivity.this,2));
+                recyclerView.setAdapter(productAdapter);
+                no_product.setVisibility(View.GONE);
+                recyclerView.setVisibility(View.VISIBLE);
+            }
+            else {
+                no_product.setVisibility(View.VISIBLE);
+                recyclerView.setVisibility(View.GONE);
             }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
+        }
 
-            }
-        });
+        @Override
+        public void onCancelled(@NonNull DatabaseError error) {
 
+        }
+    };
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (ref_products != null)
+            ref_products.orderByChild("Seller").equalTo(userid).addValueEventListener(valueEventListener);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        ref_products.removeEventListener(valueEventListener);
     }
 }
