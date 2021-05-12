@@ -60,8 +60,9 @@ public class SearchSortActivity extends AppCompatActivity {
     User curUser;
     ArrayList<String> searcharr;
     //
-    double finalLon;
-    double finalLat;
+    public double finalLon;
+    public double finalLat;
+    public String finalAddress;
     String curQuery;
     LinearLayout sortField;
     //
@@ -77,6 +78,7 @@ public class SearchSortActivity extends AppCompatActivity {
         String searchQuery;
         double lon = 0;
         double lat = 0;
+        String address;
         if (savedInstanceState == null) {
             Bundle extras = getIntent().getExtras();
             if(extras == null) {
@@ -85,11 +87,13 @@ public class SearchSortActivity extends AppCompatActivity {
                 searchQuery= extras.getString("searchQuery");
                 lon= extras.getDouble("lon");
                 lat= extras.getDouble("lat");
+                address=extras.getString("address");
             }
         } else {
             searchQuery= (String) savedInstanceState.getSerializable("searchQuery");
             lon= (Double) savedInstanceState.getSerializable("lon");
             lat= (Double) savedInstanceState.getSerializable("lat");
+            address=(String)savedInstanceState.getSerializable("address");
         }
         arr = new ArrayList<>();
         searcharr = new ArrayList<>();

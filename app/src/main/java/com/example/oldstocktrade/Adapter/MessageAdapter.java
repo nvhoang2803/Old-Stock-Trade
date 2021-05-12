@@ -108,6 +108,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
             holder.message.setText(chat.getMessage());
             holder.message.setVisibility(View.VISIBLE);
             holder.image.setVisibility(View.GONE);
+            holder.locationView.setVisibility(View.GONE);
             holder.message.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -121,6 +122,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         else if (chat.getType().equals("image")){
             Glide.with(context).load(chat.getMessage()).into(holder.image);
             holder.message.setVisibility(View.GONE);
+            holder.locationView.setVisibility(View.GONE);
             holder.image.setVisibility(View.VISIBLE);
             holder.image.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -136,12 +138,14 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
             Double lati = Double.parseDouble(data[0]);
             Double longi = Double.parseDouble(data[1]);
 
-            String url = "https://maps.google.com/maps/api/staticmap?center=" +lati + "," + longi + "&zoom=15&size=200x150&sensor=false"+"&markers=size:big%7Ccolor:0xFFAA00%7C"+lati + "," + longi +"&key=AIzaSyB38nTEkdQh5tvBx5XOccSMoEI02eLnWkM";
+            String url = "https://maps.google.com/maps/api/staticmap?center=" +lati + "," + longi + "&zoom=15&size=250x170&sensor=false"+"&markers=size:big%7Ccolor:0xFFAA00%7C"+lati + "," + longi +"&key=AIzaSyB38nTEkdQh5tvBx5XOccSMoEI02eLnWkM";
             Log.d("http request", "onBindViewHolder: "+url);
-            Glide.with(context).load(Uri.parse(Uri.decode(url))).into(holder.image);
+            Glide.with(context).load(Uri.parse(Uri.decode(url))).into(holder.imageLocation);
             holder.message.setVisibility(View.GONE);
-            holder.image.setVisibility(View.VISIBLE);
-            holder.image.setOnClickListener(new View.OnClickListener() {
+            holder.image.setVisibility(View.GONE);
+            holder.locationView.setVisibility(View.VISIBLE);
+            holder.txtLocation.setText("share Current Location");
+            holder.locationView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if (context instanceof MessageActivity) {
@@ -226,8 +230,10 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
     public class ViewHolder extends RecyclerView.ViewHolder {
         public TextView message;
         public CircleImageView profile_image;
-        public ImageView image;
+        public ImageView image,imageLocation;
         public ImageButton btn_delete;
+        public LinearLayout locationView;
+        public TextView txtLocation;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -236,6 +242,9 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
             profile_image = itemView.findViewById(R.id.profile_image);
             image = itemView.findViewById(R.id.imageMsg);
             btn_delete = itemView.findViewById(R.id.btn_delete);
+            imageLocation = itemView.findViewById(R.id.imageLocation);
+            txtLocation = itemView.findViewById(R.id.txtLocation);
+            locationView = itemView.findViewById(R.id.locationView);
 
         }
     }

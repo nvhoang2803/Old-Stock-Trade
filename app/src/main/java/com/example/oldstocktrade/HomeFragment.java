@@ -63,6 +63,7 @@ public class HomeFragment extends Fragment {
                 intent.putExtra("searchQuery", "Search");
                 intent.putExtra("lon", ((MainActivity) curActivity).longitude);
                 intent.putExtra("lat",  ((MainActivity) curActivity).latitude);
+                intent.putExtra("address",  ((MainActivity) curActivity).address);
                 startActivity(intent);
 
             }

@@ -32,6 +32,7 @@ import com.example.oldstocktrade.Model.User;
 import com.example.oldstocktrade.ParticularPageActivity;
 import com.example.oldstocktrade.PostActivity;
 import com.example.oldstocktrade.R;
+import com.example.oldstocktrade.SearchSortActivity;
 import com.example.oldstocktrade.utils.BasicFunctions;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.firebase.auth.FirebaseAuth;
@@ -280,9 +281,18 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ViewHo
                 partIntent.putExtra("id", id);
                 partIntent.putExtra("userID", userID);
                 partIntent.putExtra("sizeImageURL", arrImage.length);
-                partIntent.putExtra("longitude", ((MainActivity) curActivity).longitude);
-                partIntent.putExtra("latitude",((MainActivity) curActivity).latitude);
-                partIntent.putExtra("address",((MainActivity) curActivity).address);
+                Log.d("MainAc", "onClick: "+curActivity.getClass().getName());
+                if(curActivity.getClass().getName().equals("com.example.oldstocktrade.MainActivity")){
+                    partIntent.putExtra("longitude", ((MainActivity) curActivity).longitude);
+                    partIntent.putExtra("latitude",((MainActivity) curActivity).latitude);
+                    partIntent.putExtra("address",((MainActivity) curActivity).address);
+                }
+                else {
+                    partIntent.putExtra("longitude", ((SearchSortActivity) curActivity).finalLon);
+                    partIntent.putExtra("latitude",((SearchSortActivity) curActivity).finalLat);
+                    partIntent.putExtra("address",((SearchSortActivity) curActivity).finalAddress);
+                }
+
                 Log.d("PackInHomeView", "onClick: ");
                 v.getContext().startActivity(partIntent);
             }
