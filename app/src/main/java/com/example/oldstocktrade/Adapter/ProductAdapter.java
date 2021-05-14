@@ -83,7 +83,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.MyViewHo
     @Override
     public void onBindViewHolder(@NonNull ProductAdapter.MyViewHolder holder, int position) {
         holder.proName.setText(mData.get(position).getName());
-        holder.proPrice.setText(Long.toString(Math.round(mData.get(position).getPrice())));
+        holder.proPrice.setText(ChangeMoneyToString(Math.round(mData.get(position).getPrice())));
         Date date = new Date(mData.get(position).getTimestamp());
         holder.proDate.setText(DateFormat.getDateInstance().format(date));
         Glide.with(holder.proImage).load(mData.get(position).getImageURL().get(0))
@@ -125,5 +125,18 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.MyViewHo
 
 
     }
-
+    public String ChangeMoneyToString(long price){
+        int cur;
+        String priceD = "";
+        String result = "";
+        priceD = String.valueOf(price);
+        cur = priceD.length() - 3;
+        for (int i =0 ; i< ((int)((priceD.length() -1 ) / 3));i++ ){
+            result = "." + priceD.substring(cur,cur +3)+ result;
+            cur = cur -3;
+        }
+        cur = cur + 3;
+        result = priceD.substring(0, cur) + result;
+        return result;
+    }
 }
