@@ -155,12 +155,14 @@
                 android:layout_marginRight="10dp"
                 android:textColor="@color/logo_color"
                 android:text="Current Password:"
+
                 android:textSize="20sp"
                 />
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="20dp"
+                android:inputType="textPassword"
                 android:id="@+id/txtCurrentPw"
                 android:text=""/>
         </LinearLayout>
@@ -182,6 +184,7 @@
                 android:layout_height="wrap_content"
                 android:textSize="20dp"
                 android:id="@+id/txtNewPw"
+                android:inputType="textPassword"
                 android:text=""/>
         </LinearLayout>
         <LinearLayout
@@ -201,6 +204,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="20dp"
+                android:inputType="textPassword"
                 android:id="@+id/txtConfirm"
                 android:text=""/>
         </LinearLayout>

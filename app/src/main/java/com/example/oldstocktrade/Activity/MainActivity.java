@@ -81,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
 //        reference.addValueEventListener(new ValueEventListener() {
 //            @Override
 //            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                bottomNav.getMenu().clear();
+//
 //                User user = dataSnapshot.getValue(User.class);
 //                if (user.getType() == 1){
 //                    bottomNav.inflateMenu(R.menu.bottom_adminnav);
