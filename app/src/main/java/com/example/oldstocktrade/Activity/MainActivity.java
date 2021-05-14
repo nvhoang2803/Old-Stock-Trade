@@ -77,26 +77,28 @@ public class MainActivity extends AppCompatActivity {
         }
         //----------------------------End
         BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
+        bottomNav.inflateMenu(R.menu.bottom_navigation);
+        bottomNav.setOnNavigationItemSelectedListener(navListener);
 //        bottomNav.inflateMenu();
-        reference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                bottomNav.getMenu().clear();
-                User user = dataSnapshot.getValue(User.class);
-                if (user.getType() == 1){
-                    bottomNav.inflateMenu(R.menu.bottom_adminnav);
-                    bottomNav.setOnNavigationItemSelectedListener(navListenerAdmin);
-                }else{
-                    bottomNav.inflateMenu(R.menu.bottom_navigation);
-                    bottomNav.setOnNavigationItemSelectedListener(navListener);
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
+//        reference.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//
+//                User user = dataSnapshot.getValue(User.class);
+//                if (user.getType() == 1){
+//                    bottomNav.inflateMenu(R.menu.bottom_adminnav);
+//                    bottomNav.setOnNavigationItemSelectedListener(navListenerAdmin);
+//                }else{
+//                    bottomNav.inflateMenu(R.menu.bottom_navigation);
+//                    bottomNav.setOnNavigationItemSelectedListener(navListener);
+//                }
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//            }
+//        });
     }
 
     private BottomNavigationView.OnNavigationItemSelectedListener navListener = new BottomNavigationView.OnNavigationItemSelectedListener() {

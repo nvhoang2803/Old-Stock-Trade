@@ -183,6 +183,7 @@ public class Product {
         this.rate = rate;
         VisibleToSeller = true;
         VisibleToBuyer = true;
+        this.Enable = Enable;
     }
 
     float rate;

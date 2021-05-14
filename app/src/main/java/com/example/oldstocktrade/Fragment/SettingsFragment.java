@@ -52,7 +52,6 @@ public class SettingsFragment extends Fragment {
             main = (MainActivity) getActivity();
             btnSignout = view.findViewById(R.id.btnSignout);
             btnYourLocation = view.findViewById(R.id.btnLocation);
-            btnManage = view.findViewById(R.id.btnManageAdmin);
             btnWishlist = view.findViewById(R.id.btnWishlist);
             btnSelling = view.findViewById(R.id.btnSelling);
             btnSold = view.findViewById(R.id.btnSold);
@@ -77,15 +76,6 @@ public class SettingsFragment extends Fragment {
                     user = snapshot.getValue(User.class);
                     txtUsername.setText(user.getUsername());
                     Log.d("Userauth", "onDataChange: "+user.getImageURL());
-                    if (user.getType() == 1){
-                        btnManage.setVisibility(View.VISIBLE);
-                        btnManage.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-
-                            }
-                        });
-                    }
                     if (user.getImageURL().equals("default"))
                         avatar.setImageResource(R.mipmap.ic_launcher);
                     else
