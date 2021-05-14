@@ -6,8 +6,8 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
-import com.example.oldstocktrade.SellingFragment;
-import com.example.oldstocktrade.WishListFragment;
+import com.example.oldstocktrade.Fragment.SellingFragment;
+import com.example.oldstocktrade.Fragment.WishListFragment;
 
 import java.util.ArrayList;
 import java.util.List;

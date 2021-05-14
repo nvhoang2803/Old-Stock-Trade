@@ -1,4 +1,4 @@
-package com.example.oldstocktrade;
+package com.example.oldstocktrade.Fragment;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -20,12 +20,15 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.example.oldstocktrade.Activity.MainActivity;
 import com.example.oldstocktrade.Adapter.AdminProductApapter;
 import com.example.oldstocktrade.Adapter.ListViewAdapter;
 import com.example.oldstocktrade.Adapter.SearchFillAdapter;
 import com.example.oldstocktrade.Model.Wishlist;
 import com.example.oldstocktrade.Model.Product;
 import com.example.oldstocktrade.Model.User;
+import com.example.oldstocktrade.Activity.MainActivity;
+import com.example.oldstocktrade.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;

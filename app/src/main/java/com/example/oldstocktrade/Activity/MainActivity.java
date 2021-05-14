@@ -18,7 +18,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
-import com.example.oldstocktrade.Model.Contact;
+import com.example.oldstocktrade.Fragment.ManageProductFragment;
 import com.example.oldstocktrade.Model.User;
 import com.example.oldstocktrade.Fragment.HistoryFragment;
 import com.example.oldstocktrade.Fragment.HomeFragment;
