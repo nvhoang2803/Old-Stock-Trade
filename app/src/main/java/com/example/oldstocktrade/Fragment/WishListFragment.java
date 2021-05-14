@@ -61,7 +61,6 @@ public class  WishListFragment extends Fragment {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot ds: snapshot.getChildren()) {
                     WishListItem wl = ds.getValue(WishListItem.class);
-                    SoldFragment.removeNoStockLayout(oopslayout);
                     mReference.child("Products/" + wl.getProID()).addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot childsnapshot) {

@@ -49,22 +49,6 @@ public class StorageFragment extends Fragment {
 
         adapter.addFragment(new SellingFragment(curActivity), getString(R.string.title_storage_selling));
         adapter.addFragment(new WishListFragment(curActivity), getString(R.string.title_storage_wishlist));
-        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                viewPager.setCurrentItem(tab.getPosition());
-            }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-
-            }
-        });
         viewPager.setAdapter(adapter);
         tabLayout.setupWithViewPager(viewPager);
         viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
