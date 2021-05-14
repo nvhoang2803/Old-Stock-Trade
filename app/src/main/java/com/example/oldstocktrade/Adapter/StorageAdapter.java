@@ -152,6 +152,7 @@ public class StorageAdapter extends RecyclerView.Adapter<StorageAdapter.MyViewHo
                 partIntent.putExtra("id", id);
                 partIntent.putExtra("userID", userID);
                 partIntent.putExtra("sizeImageURL", mData.get(position).getImageURL().size());
+                partIntent.putExtra("sumReport", mData.get(position).getReport());
                 partIntent.putExtra("longitude", ((MainActivity) curActivity).longitude);
                 partIntent.putExtra("latitude",((MainActivity) curActivity).latitude);
                 partIntent.putExtra("address",((MainActivity) curActivity).address);

@@ -573,12 +573,11 @@ public class MessageActivity extends AppCompatActivity {
 
     }
     private void createNotification(String message, String receiver){
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Users").child(fuser.getUid());
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Users").child(fuser.getUid()).child("Conversations");
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                User user = snapshot.getValue(User.class);
-                sendNotification(receiver, user.getUsername(), message);
+                sendNotification(receiver, fuser.getDisplayName(), message);
             }
 
             @Override

@@ -124,6 +124,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.MyViewHo
                 partIntent.putExtra("longitude", ((MainActivity) curActivity).longitude);
                 partIntent.putExtra("latitude",((MainActivity) curActivity).latitude);
                 partIntent.putExtra("address",((MainActivity) curActivity).address);
+                partIntent.putExtra("sumReport", mData.get(position).getReport());
                 Log.d("PackInHomeView", "onClick: ");
                 v.getContext().startActivity(partIntent);
             }
