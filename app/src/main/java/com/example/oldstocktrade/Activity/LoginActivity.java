@@ -269,7 +269,7 @@ public class LoginActivity extends AppCompatActivity {
                 if (task.isSuccessful()){
                     if (auth.getCurrentUser().isEmailVerified()){
                         reference = FirebaseDatabase.getInstance().getReference("Users").child(auth.getUid());
-                        reference.addValueEventListener(new ValueEventListener() {
+                        reference.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
                                 User user = snapshot.getValue(User.class);
