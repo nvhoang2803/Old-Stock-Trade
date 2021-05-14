@@ -109,6 +109,8 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ViewHo
         //Set user add to favorite list
         if (userProductlike.contains(productArrayList.get(position).getProID())){
             holder.productLike.setImageResource(R.drawable.ic_like__1_);
+        }else {
+            holder.productLike.setImageResource(R.drawable.ic_heart);
         }
 
     //
