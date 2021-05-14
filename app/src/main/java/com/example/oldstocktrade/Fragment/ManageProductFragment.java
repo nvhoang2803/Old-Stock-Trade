@@ -2,14 +2,17 @@ package com.example.oldstocktrade.Fragment;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.media.Image;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,6 +23,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.example.oldstocktrade.Activity.LoginActivity;
 import com.example.oldstocktrade.Activity.MainActivity;
 import com.example.oldstocktrade.Adapter.AdminProductApapter;
 import com.example.oldstocktrade.Adapter.ListViewAdapter;
@@ -65,6 +69,15 @@ public class ManageProductFragment extends Fragment {
         View view = inflater.inflate(R.layout.activity_admin, container, false);
         arr = new ArrayList<>();
 
+        ((ImageView) view.findViewById(R.id.btnAdminClose)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FirebaseAuth.getInstance().signOut();
+                startActivity(new Intent(getActivity(), LoginActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK));
+                //getActivity().finish();
+                Log.d("signout", "onClick: Sign out");
+            }
+        });
         searcharr = new ArrayList<>();
         Log.d("Begin activity", "onCreateView: "+FirebaseAuth.getInstance().getCurrentUser().getUid());
         mReference.child("Users").orderByChild("id")
@@ -74,6 +87,7 @@ public class ManageProductFragment extends Fragment {
                 for (DataSnapshot ds: snapshot.getChildren()){
                     curUser = ds.getValue(User.class);
                 }
+                ((TextView) view.findViewById(R.id.adminName)).setText(curUser.getUsername());
                 mReference.child("Products").limitToLast(30).
                         addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
@@ -90,10 +104,10 @@ public class ManageProductFragment extends Fragment {
                                 adminViewProduct = view.findViewById(R.id.admin_productView);
                                 adminViewProduct.setAdapter(adminViewProductAdapter);
                                 adminViewProduct.setLayoutManager(new LinearLayoutManager(curActivity));
+
 //                                        listViewProduct.setAdapter(listViewProductAdapter);
 //                                        listViewProduct.setLayoutManager(new LinearLayoutManager(curActivity));
                             }
-
                             @Override
                             public void onCancelled(@NonNull DatabaseError error) {
 

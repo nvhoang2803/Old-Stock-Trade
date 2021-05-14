@@ -5,12 +5,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.oldstocktrade.Model.Product;
 import com.example.oldstocktrade.Model.User;
 import com.example.oldstocktrade.R;
@@ -22,6 +24,8 @@ import com.google.firebase.storage.StorageReference;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class AdminProductApapter extends RecyclerView.Adapter<AdminProductApapter.ViewHolder> {
 
@@ -68,6 +72,42 @@ public class AdminProductApapter extends RecyclerView.Adapter<AdminProductApapte
         holder.productManage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Glide.with(holder.productImage).load(productArrayList.get(position).getImageURL().get(0)).into(holder.productImage);
+                holder.product_spName.setText(productArrayList.get(position).getName());
+                holder.product_spDes.setText(productArrayList.get(position).getDescription());
+                if (productArrayList.get(position).isEnable()){
+                    holder.product_spStatus.setText("OnBoard");
+                }else {
+                    holder.product_spStatus.setText("Blocked");
+                }
+                if (productArrayList.get(position).isEnable()){
+                    holder.productBlock.setText("BLOCK");
+                }else{
+                    holder.productBlock.setText("UNBLOCK");
+                }
+                holder.productBlock.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Map<String, Object> childUpdates = new HashMap<>();
+                        if (holder.productBlock.getText() == "BLOCK"){
+                            childUpdates.put("Enable", false);
+                            mReference.child("Products").child(productArrayList.get(position).getProID()).updateChildren(childUpdates);
+                            holder.productBlock.setText("UNBLOCK");
+                        }else{
+                            childUpdates.put("Enable", true);
+                            mReference.child("Products").child(productArrayList.get(position).getProID()).updateChildren(childUpdates);
+                            holder.productBlock.setText("BLOCK");
+                        }
+                    }
+                });
+
+                holder.productRemove.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mReference.child("Products").child(productArrayList.get(position).getProID()).removeValue();
+                    }
+                });
+
 
                 holder.product_spContainer.setVisibility(View.VISIBLE);
                 holder.product_spContainer.bringToFront();
@@ -88,12 +128,26 @@ public class AdminProductApapter extends RecyclerView.Adapter<AdminProductApapte
         TextView productDes;
         Button productManage;
         ConstraintLayout product_spContainer;
+        ImageView productImage;
+        TextView product_spName;
+        TextView product_spDes;
+        TextView product_spStatus;
+        Button productBlock;
+        Button productRemove;
+
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             productName = itemView.findViewById(R.id.admin_productname);
             productDes = itemView.findViewById(R.id.admin_productdes);
             productManage = itemView.findViewById(R.id.admin_productbtnManage);
             product_spContainer = itemView.findViewById(R.id.admin_product_spContainer);
+            productImage = itemView.findViewById(R.id.admin_product_spImage);
+            product_spName = itemView.findViewById(R.id.admin_product_spName);
+            product_spDes = itemView.findViewById(R.id.admin_product_spDes);
+            product_spStatus = itemView.findViewById(R.id.admin_product_spStatus);
+            productBlock = itemView.findViewById(R.id.admin_product_spbtnBlock);
+            productRemove = itemView.findViewById(R.id.admin_product_spbtnRemove);
+
         }
     }
 
