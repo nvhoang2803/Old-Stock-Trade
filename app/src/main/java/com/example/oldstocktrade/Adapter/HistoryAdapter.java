@@ -8,19 +8,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.example.oldstocktrade.BoughtFragment;
-import com.example.oldstocktrade.MainActivity;
+import com.example.oldstocktrade.Activity.MainActivity;
 import com.example.oldstocktrade.Model.Product;
-import com.example.oldstocktrade.ParticularPageActivity;
+import com.example.oldstocktrade.Activity.ParticularPageActivity;
 import com.example.oldstocktrade.R;
-import com.example.oldstocktrade.SoldFragment;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 

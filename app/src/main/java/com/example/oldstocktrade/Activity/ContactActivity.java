@@ -1,4 +1,4 @@
-package com.example.oldstocktrade;
+package com.example.oldstocktrade.Activity;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -13,7 +13,10 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.oldstocktrade.Adapter.ViewPageAdapter;
+import com.example.oldstocktrade.Fragment.ContactFragment;
+import com.example.oldstocktrade.Fragment.FeedbackFragment;
 import com.example.oldstocktrade.Model.User;
+import com.example.oldstocktrade.R;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;

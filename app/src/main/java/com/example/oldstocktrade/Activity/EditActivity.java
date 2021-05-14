@@ -1,4 +1,4 @@
-package com.example.oldstocktrade;
+package com.example.oldstocktrade.Activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -10,16 +10,15 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.oldstocktrade.Adapter.AnnouncementPostAdapter;
 import com.example.oldstocktrade.Adapter.ImageAdapter;
 import com.example.oldstocktrade.Model.Product;
+import com.example.oldstocktrade.R;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
@@ -93,7 +92,7 @@ public class EditActivity extends AppCompatActivity {
         btnLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(EditActivity.this,MapsActivity.class);
+                Intent intent = new Intent(EditActivity.this, MapsActivity.class);
                 Bundle myBundle = new Bundle();
                 myBundle.putDouble ("lat",lat);
                 myBundle.putDouble ("long",lon);

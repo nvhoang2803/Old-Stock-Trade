@@ -14,7 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.example.oldstocktrade.MessageActivity;
+import com.example.oldstocktrade.Activity.MessageActivity;
 import com.example.oldstocktrade.Model.User;
 import com.example.oldstocktrade.R;
 

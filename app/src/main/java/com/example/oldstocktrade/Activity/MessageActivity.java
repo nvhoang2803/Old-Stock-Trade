@@ -1,4 +1,4 @@
-package com.example.oldstocktrade;
+package com.example.oldstocktrade.Activity;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -46,6 +46,7 @@ import com.example.oldstocktrade.Notification.Data;
 import com.example.oldstocktrade.Notification.Response;
 import com.example.oldstocktrade.Notification.Sender;
 import com.example.oldstocktrade.Notification.Token;
+import com.example.oldstocktrade.R;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;

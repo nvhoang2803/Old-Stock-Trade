@@ -15,7 +15,7 @@ import com.bumptech.glide.Glide;
 import com.example.oldstocktrade.Model.Feedback;
 import com.example.oldstocktrade.Model.Product;
 import com.example.oldstocktrade.R;
-import com.example.oldstocktrade.FeedbackActivity;
+import com.example.oldstocktrade.Activity.FeedbackActivity;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;

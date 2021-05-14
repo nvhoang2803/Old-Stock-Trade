@@ -1,5 +1,5 @@
 
-package com.example.oldstocktrade;
+package com.example.oldstocktrade.Activity;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -34,7 +34,8 @@ import com.example.oldstocktrade.Adapter.SearchFillAdapter;
 import com.example.oldstocktrade.Model.Product;
 import com.example.oldstocktrade.Model.User;
 import com.example.oldstocktrade.Model.Wishlist;
-import com.example.oldstocktrade.utils.VnCharacteristic;
+import com.example.oldstocktrade.R;
+import com.example.oldstocktrade.Utils.VnCharacteristic;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.slider.RangeSlider;

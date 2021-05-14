@@ -1,4 +1,4 @@
-package com.example.oldstocktrade;
+package com.example.oldstocktrade.Fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -6,8 +6,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -17,7 +15,14 @@ import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.example.oldstocktrade.Activity.ContactActivity;
+import com.example.oldstocktrade.Activity.LoginActivity;
+import com.example.oldstocktrade.Activity.MapsActivity;
+import com.example.oldstocktrade.Activity.PostActivity;
+import com.example.oldstocktrade.Activity.ProfileActivity;
+import com.example.oldstocktrade.Activity.MainActivity;
 import com.example.oldstocktrade.Model.User;
+import com.example.oldstocktrade.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -86,7 +91,7 @@ public class SettingsFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
                     FirebaseAuth.getInstance().signOut();
-                    startActivity(new Intent(getActivity(),LoginActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK));
+                    startActivity(new Intent(getActivity(), LoginActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK));
                     //getActivity().finish();
                     Log.d("signout", "onClick: Sign out");
                 }
@@ -125,7 +130,7 @@ public class SettingsFragment extends Fragment {
             btnYourLocation.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(getActivity(),MapsActivity.class);
+                    Intent intent = new Intent(getActivity(), MapsActivity.class);
                     Bundle myBundle = new Bundle();
                     myBundle.putDouble ("lat",main.latitude);
                     myBundle.putDouble ("long",main.longitude);
@@ -137,7 +142,7 @@ public class SettingsFragment extends Fragment {
             btnPost.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(getActivity(),PostActivity.class);
+                    Intent intent = new Intent(getActivity(), PostActivity.class);
                     Bundle myBundle = new Bundle();
                     myBundle.putDouble ("lat",main.latitude);
                     myBundle.putDouble ("long",main.longitude);
@@ -150,7 +155,7 @@ public class SettingsFragment extends Fragment {
             btn_profile.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    startActivity(new Intent(getActivity(),ProfileActivity.class).addFlags(Intent.FLAG_ACTIVITY_FORWARD_RESULT));
+                    startActivity(new Intent(getActivity(), ProfileActivity.class).addFlags(Intent.FLAG_ACTIVITY_FORWARD_RESULT));
                 }
             });
             return view;

@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,24 +11,20 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AlphaAnimation;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.example.oldstocktrade.EditActivity;
-import com.example.oldstocktrade.MainActivity;
-import com.example.oldstocktrade.MessageActivity;
+import com.example.oldstocktrade.Activity.EditActivity;
+import com.example.oldstocktrade.Activity.MainActivity;
+import com.example.oldstocktrade.Activity.MessageActivity;
 import com.example.oldstocktrade.Model.Product;
 import com.example.oldstocktrade.Model.WishListItem;
-import com.example.oldstocktrade.ParticularPageActivity;
-import com.example.oldstocktrade.PostActivity;
+import com.example.oldstocktrade.Activity.ParticularPageActivity;
 import com.example.oldstocktrade.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -45,7 +40,6 @@ import com.google.firebase.database.ValueEventListener;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.Queue;
 
 public class StorageAdapter extends RecyclerView.Adapter<StorageAdapter.MyViewHolder> {
     Context mContext;

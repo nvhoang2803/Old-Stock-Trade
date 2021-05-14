@@ -1,4 +1,4 @@
-package com.example.oldstocktrade;
+package com.example.oldstocktrade.Activity;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -17,6 +17,7 @@ import com.example.oldstocktrade.Adapter.ProductAdapter;
 import com.example.oldstocktrade.Model.Product;
 import com.example.oldstocktrade.Model.Rating;
 import com.example.oldstocktrade.Model.User;
+import com.example.oldstocktrade.R;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;

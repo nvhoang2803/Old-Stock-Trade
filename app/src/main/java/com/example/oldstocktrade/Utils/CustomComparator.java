@@ -1,4 +1,4 @@
-package com.example.oldstocktrade;
+package com.example.oldstocktrade.Utils;
 
 import com.example.oldstocktrade.Model.Comment;
 

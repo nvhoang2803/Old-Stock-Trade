@@ -1,4 +1,4 @@
-package com.example.oldstocktrade;
+package com.example.oldstocktrade.Activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
@@ -9,6 +9,8 @@ import android.view.View;
 import android.widget.ImageButton;
 
 import com.example.oldstocktrade.Adapter.ViewPageAdapter;
+import com.example.oldstocktrade.R;
+import com.example.oldstocktrade.Fragment.RatingFragment;
 import com.google.android.material.tabs.TabLayout;
 
 public class RatingActivity extends AppCompatActivity {

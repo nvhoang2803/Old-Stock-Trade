@@ -1,4 +1,4 @@
-package com.example.oldstocktrade;
+package com.example.oldstocktrade.Fragment;
 
 import android.os.Build;
 import android.os.Bundle;
@@ -18,6 +18,7 @@ import com.example.oldstocktrade.Model.Chat;
 import com.example.oldstocktrade.Model.Contact;
 import com.example.oldstocktrade.Model.Conversation;
 import com.example.oldstocktrade.Model.User;
+import com.example.oldstocktrade.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;

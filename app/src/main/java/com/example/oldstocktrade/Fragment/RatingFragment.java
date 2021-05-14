@@ -1,4 +1,4 @@
-package com.example.oldstocktrade;
+package com.example.oldstocktrade.Fragment;
 
 import android.os.Bundle;
 
@@ -14,6 +14,7 @@ import android.widget.RelativeLayout;
 
 import com.example.oldstocktrade.Adapter.RatingAdapter;
 import com.example.oldstocktrade.Model.Rating;
+import com.example.oldstocktrade.R;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;

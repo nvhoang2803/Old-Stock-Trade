@@ -1,4 +1,4 @@
-package com.example.oldstocktrade;
+package com.example.oldstocktrade.Activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentActivity;
@@ -23,6 +23,7 @@ import com.example.oldstocktrade.DirectionHelpers.DirectionFinderListener;
 
 import com.example.oldstocktrade.DirectionHelpers.Route;
 
+import com.example.oldstocktrade.R;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -48,7 +49,7 @@ public class DirectionMap extends FragmentActivity implements OnMapReadyCallback
     String strOrigin,strDest;
     TextView tvTo,tvFrom;
     ImageView btnGMap;
-    CircleImageView btnBack;
+    ImageButton btnBack;
     SupportMapFragment mapFragment;
     double lat1=10.762397,long1=106.682752,lat2=10.7704246,long2=106.6724038;
     @SuppressLint("WrongViewCast")
