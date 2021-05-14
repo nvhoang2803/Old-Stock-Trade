@@ -88,7 +88,7 @@ public class HomeFragment extends Fragment {
                 for (DataSnapshot ds: snapshot.getChildren()){
                     curUser = ds.getValue(User.class);
                 }
-                mReference.child("Products").limitToLast(30).
+                mReference.child("Products").orderByChild("Timestamp").
                         addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -100,7 +100,7 @@ public class HomeFragment extends Fragment {
                                 if (tmp.isEnable()) arr.add(tmp);
                                 i+=1;
                             }
-                            if (i==8) break;
+                            if (i==12) break;
                         }
                         arr.sort(Comparator.comparing(Product::getTimestamp).reversed());
                         mReference.child("Wishlist").orderByChild("userID").
@@ -144,7 +144,7 @@ public class HomeFragment extends Fragment {
             @Override
             public void onRefresh() {
                 arr.clear();
-                mReference.child("Products").
+                mReference.child("Products").orderByChild("Timestamp").
                         addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -153,10 +153,13 @@ public class HomeFragment extends Fragment {
                                 for (DataSnapshot ds: snapshot.getChildren()){
                                     tmp = ds.getValue(Product.class);
                                     if (tmp.getStatus() == 1){
-                                        if (tmp.isEnable()) arr.add(tmp);
-                                        i += 1;
+                                        if (tmp.isEnable()) {
+                                            arr.add(tmp);
+                                            i += 1;
+                                        }
+
                                     }
-                                    if (i == 8) break;
+                                    if (i == 12) break;
                                 }
                                 arr.sort(Comparator.comparing(Product::getTimestamp).reversed());
                                 mReference.child("Wishlist").orderByChild("userID").

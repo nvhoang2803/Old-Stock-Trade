@@ -58,8 +58,6 @@ public class MainActivity extends AppCompatActivity {
         reference = FirebaseDatabase.getInstance("https://old-stock-trade-default-rtdb.firebaseio.com/").
                 getReference("Users").child(firebaseUser.getUid());
 
-
-
 //        DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Users").child(firebaseUser.getUid());
 
 
@@ -124,26 +122,7 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
     };
-    private BottomNavigationView.OnNavigationItemSelectedListener navListenerAdmin = new BottomNavigationView.OnNavigationItemSelectedListener() {
-        @Override
-        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-            Fragment selectedFragment = null;
-            switch (item.getItemId()) {
-                case R.id.nav_product:
-                    selectedFragment = new ManageProductFragment(MainActivity.this);
-                    break;
-                case R.id.nav_user:
-                    selectedFragment = new HistoryFragment(MainActivity.this);
-                    break;
-                case R.id.nav_static:
-                    selectedFragment = new HistoryFragment(MainActivity.this);
-                    break;
-            }
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,selectedFragment).commit();
-            //getFragmentManager().beginTransaction().replace(R.id.fragment_container, selectedFragment).commit();
-            return true;
-        }
-    };
+
     public void handleClickFragment(int itemID, int type) {
         Fragment selectedFragment = null;
         switch (itemID) {

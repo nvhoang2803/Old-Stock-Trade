@@ -184,8 +184,9 @@ public class ParticularPageActivity extends AppCompatActivity implements ReportD
             df.child("Users").child(receiveUserID).addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    String nu= snapshot.child("username").getValue().toString();
-                    String pu= snapshot.child("phone").getValue().toString();
+                    User user = snapshot.getValue(User.class);
+                    String nu= user.getUsername();
+                    String pu= user.getPhone();
                     nameUser.setText(nu);
                     phoneUser.setText(pu);
                     if(pu.matches("")|| receiveUserID.equals(myID))
