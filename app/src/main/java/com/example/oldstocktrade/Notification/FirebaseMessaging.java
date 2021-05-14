@@ -9,13 +9,12 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 
-import com.example.oldstocktrade.MessageActivity;
+import com.example.oldstocktrade.Activity.MessageActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.messaging.FirebaseMessagingService;
@@ -25,8 +24,8 @@ public class FirebaseMessaging extends FirebaseMessagingService {
     @Override
     public void onMessageReceived(@NonNull RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
-        SharedPreferences sp = getSharedPreferences("SP_USER", MODE_PRIVATE);
-        String savedCurrentUser = sp.getString("Current_USERID","None");
+        SharedPreferences sp = getSharedPreferences("PREFS", MODE_PRIVATE);
+        String savedCurrentUser = sp.getString("currentuser","none");
         String sent = remoteMessage.getData().get("sent");
         Log.d("MESSAGE", "onMessageReceived: sent" + sent);
         String user = remoteMessage.getData().get("user");
@@ -77,7 +76,7 @@ public class FirebaseMessaging extends FirebaseMessagingService {
         String icon = remoteMessage.getData().get("icon");
         String title = remoteMessage.getData().get("title");
         String body = remoteMessage.getData().get("body");
-
+        Log.d("MESSAGE_BODY", "message_received" + body);
         RemoteMessage.Notification notification = remoteMessage.getNotification();
         int i = Integer.parseInt(user.replaceAll("[\\D]",""));
         Intent intent = new Intent(this, MessageActivity.class).addFlags(Intent.FLAG_ACTIVITY_FORWARD_RESULT);

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SellerFeedActivity">
+    tools:context=".Activity.SellerFeedActivity">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -82,7 +82,8 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="10dp">
+                    android:padding="10dp"
+                    android:id="@+id/ratings_container">
                     <ImageView
                         android:layout_width="35dp"
                         android:layout_height="35dp"
@@ -100,14 +101,14 @@
                         android:layout_height="wrap_content"
                         android:textSize="20sp"
                         android:textStyle="bold"
-                        android:text="0.0"
+                        android:text="0"
                         android:id="@+id/ratings"/>
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="20sp"
                         android:textStyle="bold"
-                        android:text="/5.0"/>
+                        android:text="/5"/>
                 </LinearLayout>
             </LinearLayout>
             <androidx.recyclerview.widget.RecyclerView

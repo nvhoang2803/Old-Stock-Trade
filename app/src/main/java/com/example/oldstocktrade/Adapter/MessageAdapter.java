@@ -1,21 +1,11 @@
 package com.example.oldstocktrade.Adapter;
 
-import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
-import android.location.Address;
-import android.location.Geocoder;
-import android.location.Location;
 import android.net.Uri;
-import android.os.Bundle;
-import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
@@ -24,32 +14,14 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
-import com.bumptech.glide.request.target.CustomTarget;
-import com.bumptech.glide.request.transition.Transition;
-import com.example.oldstocktrade.ContactFragment;
-import com.example.oldstocktrade.FullscreenActivity;
-import com.example.oldstocktrade.MessageActivity;
+import com.example.oldstocktrade.Activity.FullscreenActivity;
+import com.example.oldstocktrade.Activity.MessageActivity;
 import com.example.oldstocktrade.Model.Chat;
 import com.example.oldstocktrade.R;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.android.material.bottomsheet.BottomSheetBehavior;
-import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -58,8 +30,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -100,6 +70,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
             holder.message.setText(chat.getMessage());
             holder.message.setVisibility(View.VISIBLE);
             holder.image.setVisibility(View.GONE);
+            holder.locationView.setVisibility(View.GONE);
             holder.message.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -113,6 +84,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         else if (chat.getType().equals("image")){
             Glide.with(context).load(chat.getMessage()).into(holder.image);
             holder.message.setVisibility(View.GONE);
+            holder.locationView.setVisibility(View.GONE);
             holder.image.setVisibility(View.VISIBLE);
             holder.image.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -124,10 +96,18 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
                 }
             });
         }else if (chat.getType().equals("location")){
-            holder.message.setVisibility(View.VISIBLE);
-            holder.message.setText("Current location");
+            String data[] = chat.getMessage().split(",",2);
+            Double lati = Double.parseDouble(data[0]);
+            Double longi = Double.parseDouble(data[1]);
+
+            String url = "https://maps.google.com/maps/api/staticmap?center=" +lati + "," + longi + "&zoom=15&size=250x170&sensor=false"+"&markers=size:big%7Ccolor:0xFFAA00%7C"+lati + "," + longi +"&key=AIzaSyB38nTEkdQh5tvBx5XOccSMoEI02eLnWkM";
+            Log.d("http request", "onBindViewHolder: "+url);
+            Glide.with(context).load(Uri.parse(Uri.decode(url))).into(holder.imageLocation);
+            holder.message.setVisibility(View.GONE);
             holder.image.setVisibility(View.GONE);
-            holder.message.setOnClickListener(new View.OnClickListener() {
+            holder.locationView.setVisibility(View.VISIBLE);
+            holder.txtLocation.setText("share Current Location");
+            holder.locationView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if (context instanceof MessageActivity) {
@@ -212,8 +192,10 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
     public class ViewHolder extends RecyclerView.ViewHolder {
         public TextView message;
         public CircleImageView profile_image;
-        public ImageView image;
+        public ImageView image,imageLocation;
         public ImageButton btn_delete;
+        public LinearLayout locationView;
+        public TextView txtLocation;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -222,6 +204,10 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
             profile_image = itemView.findViewById(R.id.profile_image);
             image = itemView.findViewById(R.id.imageMsg);
             btn_delete = itemView.findViewById(R.id.btn_delete);
+            imageLocation = itemView.findViewById(R.id.imageLocation);
+            txtLocation = itemView.findViewById(R.id.txtLocation);
+            locationView = itemView.findViewById(R.id.locationView);
+
         }
     }
 

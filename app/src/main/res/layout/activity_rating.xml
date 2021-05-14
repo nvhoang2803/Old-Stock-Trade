@@ -4,111 +4,53 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".RatingActivity">
+    tools:context=".Activity.SellerFeedActivity">
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/title"
-        android:padding="10dp">
+        android:id="@+id/title">
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:background="@drawable/radius_blr"
+            android:id="@+id/background"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Rating"
-            android:textColor="@drawable/color_item"
-            android:textSize="30sp"
+            android:text="Ratings"
+            android:layout_marginTop="20dp"
+            android:textSize="25sp"
             android:textStyle="bold"
             android:layout_centerHorizontal="true"/>
-        <ImageButton
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:background="@drawable/ic_back"
-            android:id="@+id/btn_back"/>
+
 
     </RelativeLayout>
-    <RelativeLayout
+    <com.google.android.material.tabs.TabLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/product_detail"
+        app:tabBackground="@drawable/selector_tab"
+        app:tabMode="auto"
+        app:tabGravity="fill"
+        app:tabIndicatorColor="@color/white"
+        android:id="@+id/tab_rating"
+        android:layout_marginTop="10dp"
+        app:tabTextColor="#fff"
+        app:tabPaddingStart="15dp"
+        app:tabPaddingEnd="15dp"
+        app:tabTextAppearance="@style/CustomTabText"
         android:layout_below="@+id/title">
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:src="@mipmap/ic_launcher"
-            android:id="@+id/product_image"
-            android:layout_marginRight="10dp"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Product"
-            android:textStyle="bold"
-            android:textSize="24sp"
-            android:id="@id/product_name"
-            android:textColor="@color/color1"
-            android:layout_toRightOf="@id/product_image"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Price"
-            android:textSize="20sp"
-            android:textColor="@drawable/color_item"
-            android:id="@id/product_price"
-            android:layout_toRightOf="@id/product_image"
-            android:layout_below="@id/product_name"/>
-    </RelativeLayout>
 
-    <LinearLayout
+    </com.google.android.material.tabs.TabLayout>
+    <androidx.viewpager.widget.ViewPager
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:id="@+id/star_container"
-        android:layout_below="@id/product_detail">
-        <ImageButton
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:background="@drawable/ic_star"
-            android:layout_margin="5dp"
-            android:id="@+id/star1"/>
-        <ImageButton
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:background="@drawable/ic_star"
-            android:layout_margin="5dp"
-            android:id="@+id/star2"/>
-        <ImageButton
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:background="@drawable/ic_star"
-            android:layout_margin="5dp"
-            android:id="@+id/star3"/>
-        <ImageButton
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:background="@drawable/ic_star"
-            android:layout_margin="5dp"
-            android:id="@+id/star4"/>
-        <ImageButton
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:background="@drawable/ic_star"
-            android:layout_margin="5dp"
-            android:id="@+id/star5"/>
-    </LinearLayout>
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/feedback"
-        android:hint="Put your feedback here"
-        android:padding="50px"
-        android:id="@+id/txt_feedback"
-        android:layout_below="@+id/star_container"
-        android:layout_margin="10dp"/>
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Done"
-        android:id="@+id/btn_done"
-        android:layout_alignParentEnd="true"
-        android:background="@drawable/btn_login"
-        android:layout_below="@+id/txt_feedback"
-        android:layout_margin="10dp"/>
+        android:layout_height="match_parent"
+        android:id="@+id/viewpager_id"
+        android:layout_below="@id/tab_rating"></androidx.viewpager.widget.ViewPager>
+
+    <ImageButton
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="@drawable/ic_back"
+        android:layout_margin="10dp"
+        android:id="@+id/btn_back"/>
 </RelativeLayout>

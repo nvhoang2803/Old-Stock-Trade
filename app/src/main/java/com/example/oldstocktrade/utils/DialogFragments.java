@@ -1,4 +1,4 @@
-package com.example.oldstocktrade.utils;
+package com.example.oldstocktrade.Utils;
 
 import android.app.Activity;
 import android.graphics.Color;

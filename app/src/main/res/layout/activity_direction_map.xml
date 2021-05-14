@@ -4,14 +4,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".MainActivity">
+    tools:context=".Activity.MainActivity">
 
     <fragment
         android:id="@+id/directionMap"
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:context="com.example.oldstocktrade.DirectionMap"/>
+        tools:context="com.example.oldstocktrade.Activity.DirectionMap"/>
     <LinearLayout
         android:id="@+id/llDetail"
         android:layout_width="match_parent"
@@ -167,13 +167,14 @@
 
     </LinearLayout>
 
-    <de.hdodenhof.circleimageview.CircleImageView
+    <ImageButton
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:src="@drawable/ic_back"
         android:layout_above="@id/llDetail"
         android:id="@+id/btnBack2"
         android:layout_marginLeft="10dp"
+        android:background="@drawable/bg_round_btn"
         />
 
         

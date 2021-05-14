@@ -2,7 +2,6 @@ package com.example.oldstocktrade.Adapter;
 
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.util.Log;
@@ -13,7 +12,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -23,17 +21,15 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.example.oldstocktrade.HomeFragment;
-import com.example.oldstocktrade.MainActivity;
+import com.example.oldstocktrade.Activity.MainActivity;
 import com.example.oldstocktrade.Model.Comment;
 import com.example.oldstocktrade.Model.Wishlist;
 import com.example.oldstocktrade.Model.Product;
 import com.example.oldstocktrade.Model.User;
-import com.example.oldstocktrade.ParticularPageActivity;
-import com.example.oldstocktrade.PostActivity;
+import com.example.oldstocktrade.Activity.ParticularPageActivity;
 import com.example.oldstocktrade.R;
-import com.example.oldstocktrade.utils.BasicFunctions;
+import com.example.oldstocktrade.Activity.SearchSortActivity;
+import com.example.oldstocktrade.Utils.BasicFunctions;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -283,9 +279,18 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ViewHo
                 partIntent.putExtra("id", id);
                 partIntent.putExtra("userID", userID);
                 partIntent.putExtra("sizeImageURL", arrImage.length);
-                partIntent.putExtra("longitude", ((MainActivity) curActivity).longitude);
-                partIntent.putExtra("latitude",((MainActivity) curActivity).latitude);
-                partIntent.putExtra("address",((MainActivity) curActivity).address);
+                Log.d("MainAc", "onClick: "+curActivity.getClass().getName());
+                if(curActivity.getClass().getName().equals("com.example.oldstocktrade.Activity.MainActivity")){
+                    partIntent.putExtra("longitude", ((MainActivity) curActivity).longitude);
+                    partIntent.putExtra("latitude",((MainActivity) curActivity).latitude);
+                    partIntent.putExtra("address",((MainActivity) curActivity).address);
+                }
+                else {
+                    partIntent.putExtra("longitude", ((SearchSortActivity) curActivity).finalLon);
+                    partIntent.putExtra("latitude",((SearchSortActivity) curActivity).finalLat);
+                    partIntent.putExtra("address",((SearchSortActivity) curActivity).finalAddress);
+                }
+
                 Log.d("PackInHomeView", "onClick: ");
                 v.getContext().startActivity(partIntent);
             }

@@ -78,17 +78,15 @@
 
         </androidx.appcompat.widget.Toolbar>
     </com.google.android.material.appbar.AppBarLayout>
-    <ScrollView
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/messageBox"
-        android:layout_below="@+id/barlayout">
-        <androidx.recyclerview.widget.RecyclerView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/recycler"/>
-
-    </ScrollView>
+        android:layout_below="@+id/barlayout"
+        android:layout_marginTop="-1dp"
+        android:layout_marginBottom="1dp" />
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
