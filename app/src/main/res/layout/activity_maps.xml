@@ -59,8 +59,9 @@
             android:textSize="18sp"
             android:textAlignment="center"
             android:text=""
-            android:id="@+id/tude"/>
-<!--            android:visibility="invisible"/>-->
+            android:id="@+id/tude"
+            android:visibility="invisible"/>
+
         <Button
             android:layout_width="match_parent"
             android:layout_height="1dp"

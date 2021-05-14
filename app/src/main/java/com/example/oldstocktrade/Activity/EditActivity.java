@@ -135,7 +135,7 @@ public class EditActivity extends AppCompatActivity {
                 // Set text view with string
                 Log.d("Location", "onActivityResult: "+location);;//split location bang - se ra longitude va latitude roi luu vao db
                 address.setText(straddress);
-                String a[]= location.split("-");
+                String a[]= location.split("#");
                 lat= Double.parseDouble(a[0]);
                 lon= Double.parseDouble(a[1]);
 

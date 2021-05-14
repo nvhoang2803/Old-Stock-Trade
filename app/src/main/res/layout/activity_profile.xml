@@ -7,7 +7,7 @@
     tools:context=".Activity.ProfileActivity"
     android:orientation="vertical"
     android:gravity="center|top"
-    android:padding="20dp"
+
     android:background="@color/background">
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
@@ -15,11 +15,13 @@
         android:id="@+id/bar"
         android:background="?android:attr/windowBackground">
         <androidx.appcompat.widget.Toolbar
+
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/toolbar"
             android:background="@color/back_btn">
             <RelativeLayout
+
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
                 <ImageView
@@ -56,10 +58,11 @@
         </androidx.appcompat.widget.Toolbar>
     </com.google.android.material.appbar.AppBarLayout>
     <LinearLayout
+
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="10dp">
+        android:padding="20dp">
         <ImageView
             android:layout_width="80dp"
             android:layout_height="80dp"
