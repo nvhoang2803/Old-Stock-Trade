@@ -23,6 +23,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.bumptech.glide.Glide;
 import com.example.oldstocktrade.Activity.LoginActivity;
 import com.example.oldstocktrade.Activity.MainActivity;
 import com.example.oldstocktrade.Adapter.AdminProductApapter;
@@ -43,6 +44,8 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.Comparator;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class ManageProductFragment extends Fragment {
 
     ArrayList<Product> arr;
@@ -53,12 +56,12 @@ public class ManageProductFragment extends Fragment {
     //
     SearchFillAdapter searchfillAdapter;
 
-    MainActivity curActivity;
+    Activity curActivity;
 
     DatabaseReference mReference = FirebaseDatabase.getInstance().getReference();
     User curUser;
 
-    public ManageProductFragment(MainActivity act){
+    public ManageProductFragment(Activity act){
         curActivity = act;
     }
 
@@ -68,6 +71,7 @@ public class ManageProductFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.activity_admin, container, false);
         arr = new ArrayList<>();
+        ImageView cr = view.findViewById(R.id.circleImageView);
 
         ((ImageView) view.findViewById(R.id.btnAdminClose)).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -87,8 +91,9 @@ public class ManageProductFragment extends Fragment {
                 for (DataSnapshot ds: snapshot.getChildren()){
                     curUser = ds.getValue(User.class);
                 }
+                Glide.with(cr).load(curUser.getImageURL()).into(cr);
                 ((TextView) view.findViewById(R.id.adminName)).setText(curUser.getUsername());
-                mReference.child("Products").limitToLast(30).
+                mReference.child("Products").
                         addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -97,9 +102,9 @@ public class ManageProductFragment extends Fragment {
                                 for (DataSnapshot ds: snapshot.getChildren()){
                                     tmp = ds.getValue(Product.class);
                                     arr.add(tmp);
-                                    if (i==25) break;
+                                    if (i==50) break;
                                 }
-                                arr.sort(Comparator.comparing(Product::getTimestamp).reversed());
+                                arr.sort(Comparator.comparing(Product::getReport).reversed());
                                 AdminProductApapter adminViewProductAdapter = new AdminProductApapter(getActivity(),arr);
                                 adminViewProduct = view.findViewById(R.id.admin_productView);
                                 adminViewProduct.setAdapter(adminViewProductAdapter);

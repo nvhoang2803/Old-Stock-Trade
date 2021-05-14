@@ -2,48 +2,52 @@ package com.example.oldstocktrade.Activity;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.fragment.app.Fragment;
 
 import android.os.Bundle;
-import android.view.View;
-import android.widget.TextView;
+import android.view.MenuItem;
 
-import com.example.oldstocktrade.Model.User;
+import com.example.oldstocktrade.Fragment.HistoryFragment;
+import com.example.oldstocktrade.Fragment.ManageProductFragment;
 import com.example.oldstocktrade.R;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 public class AdminActivity extends AppCompatActivity {
-    RecyclerView productView;
-    private DatabaseReference ref;
-    private User user;
-    private FirebaseUser fuser;
-
+    FirebaseUser firebaseUser;
+    DatabaseReference reference;
+    FusedLocationProviderClient client;
+    public double longitude, latitude;
+    public String address;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_admin);
-        fuser = FirebaseAuth.getInstance().getCurrentUser();
-        ref = FirebaseDatabase.getInstance().getReference("Users").child(fuser.getUid());
-        ref.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                User tmp = null;
-                for (DataSnapshot ds: snapshot.getChildren()){
-                    tmp = ds.getValue(User.class);
-                    ((TextView) findViewById(R.id.adminName)).setText(tmp.getUsername());
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
+        setContentView(R.layout.activity_admin2);
+        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        reference = FirebaseDatabase.getInstance("https://old-stock-trade-default-rtdb.firebaseio.com/").
+                getReference("Users").child(firebaseUser.getUid());
+        BottomNavigationView bottomNav = findViewById(R.id.bottom_adminnavi);
+        bottomNav.inflateMenu(R.menu.bottom_adminnav);
+        bottomNav.setOnNavigationItemSelectedListener(navListenerAdmin);
     }
+
+    private BottomNavigationView.OnNavigationItemSelectedListener navListenerAdmin = new BottomNavigationView.OnNavigationItemSelectedListener() {
+        @Override
+        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+            Fragment selectedFragment = null;
+            switch (item.getItemId()) {
+                case R.id.nav_product:
+                    selectedFragment = new ManageProductFragment(AdminActivity.this);
+                    break;
+            }
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,selectedFragment).commit();
+            //getFragmentManager().beginTransaction().replace(R.id.fragment_container, selectedFragment).commit();
+            return true;
+        }
+    };
 }
+

@@ -118,17 +118,22 @@ public class SearchSortActivity extends AppCompatActivity {
             @Override
             public void onRefresh() {
                 arr.clear();
-                mReference.child("Products").limitToLast(10).
+                mReference.child("Products").
                         addListenerForSingleValueEvent(new ValueEventListener() {
                             @RequiresApi(api = Build.VERSION_CODES.N)
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
                                 Product tmp;
+                                int i=0;
                                 for (DataSnapshot ds: snapshot.getChildren()){
                                     tmp = ds.getValue(Product.class);
                                     if (tmp.getStatus() == 1){
-                                        if (tmp.isEnable()) arr.add(tmp);
+                                        if (tmp.isEnable()) {
+                                            i = i+1;
+                                            arr.add(tmp);
+                                        }
                                     }
+                                    if (i == 12) break;
                                 }
                                 arr.sort(Comparator.comparing(Product::getTimestamp));
                                 mReference.child("Wishlist").orderByChild("userID").
@@ -578,7 +583,9 @@ public class SearchSortActivity extends AppCompatActivity {
                                             || VnCharacteristic.removeAccent(tmp.getName()).toLowerCase().contains(newText.toLowerCase()) )) ||
                                             ( tmp.getDescription().toLowerCase().contains(newText.toLowerCase())
                                                     || VnCharacteristic.removeAccent(tmp.getDescription()).toLowerCase().contains(newText.toLowerCase()) ))   ){
-                                        searcharr.add(tmp.getName());
+                                        if (tmp.isEnable()){
+                                            searcharr.add(tmp.getName());
+                                        }
                                     }
                                 }
                                 searchfillAdapter = new SearchFillAdapter(searcharr);
@@ -618,18 +625,21 @@ public class SearchSortActivity extends AppCompatActivity {
                 resetSortSpecificField();
                 searchView.setQuery("",false);
                 searchView.clearFocus();
-                mReference.child("Products").limitToLast(10).
+                mReference.child("Products").
                         addListenerForSingleValueEvent(new ValueEventListener() {
                             @RequiresApi(api = Build.VERSION_CODES.N)
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
                                 Product tmp;
                                 arr.clear();
+                                int i = 0;
                                 for (DataSnapshot ds: snapshot.getChildren()){
                                     tmp = ds.getValue(Product.class);
                                     if (tmp.getStatus() == 1){
                                         arr.add(tmp);
+                                        i = i +1;
                                     }
+                                    if (i == 8) break;
                                 }
                                 arr.sort(Comparator.comparing(Product::getTimestamp));
                                 mReference.child("Wishlist").orderByChild("userID").

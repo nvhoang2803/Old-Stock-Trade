@@ -20,7 +20,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.OldStockTrade">
-        <activity android:name=".Activity.AdminActivity"></activity>
+        <activity android:name=".Activity.admin"></activity>
+        <activity android:name=".Activity.AdminActivity" />
         <activity android:name=".RatingActivity" />
         <activity android:name=".SellProductActivity" />
         <activity android:name=".EditActivity" />

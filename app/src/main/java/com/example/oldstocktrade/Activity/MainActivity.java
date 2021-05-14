@@ -58,8 +58,6 @@ public class MainActivity extends AppCompatActivity {
         reference = FirebaseDatabase.getInstance("https://old-stock-trade-default-rtdb.firebaseio.com/").
                 getReference("Users").child(firebaseUser.getUid());
 
-
-
 //        DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Users").child(firebaseUser.getUid());
 
 
@@ -77,26 +75,28 @@ public class MainActivity extends AppCompatActivity {
         }
         //----------------------------End
         BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
+        bottomNav.inflateMenu(R.menu.bottom_navigation);
+        bottomNav.setOnNavigationItemSelectedListener(navListener);
 //        bottomNav.inflateMenu();
-        reference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                bottomNav.getMenu().clear();
-                User user = dataSnapshot.getValue(User.class);
-                if (user.getType() == 1){
-                    bottomNav.inflateMenu(R.menu.bottom_adminnav);
-                    bottomNav.setOnNavigationItemSelectedListener(navListenerAdmin);
-                }else{
-                    bottomNav.inflateMenu(R.menu.bottom_navigation);
-                    bottomNav.setOnNavigationItemSelectedListener(navListener);
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
+//        reference.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                bottomNav.getMenu().clear();
+//                User user = dataSnapshot.getValue(User.class);
+//                if (user.getType() == 1){
+//                    bottomNav.inflateMenu(R.menu.bottom_adminnav);
+//                    bottomNav.setOnNavigationItemSelectedListener(navListenerAdmin);
+//                }else{
+//                    bottomNav.inflateMenu(R.menu.bottom_navigation);
+//                    bottomNav.setOnNavigationItemSelectedListener(navListener);
+//                }
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//            }
+//        });
     }
 
     private BottomNavigationView.OnNavigationItemSelectedListener navListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -122,26 +122,7 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
     };
-    private BottomNavigationView.OnNavigationItemSelectedListener navListenerAdmin = new BottomNavigationView.OnNavigationItemSelectedListener() {
-        @Override
-        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-            Fragment selectedFragment = null;
-            switch (item.getItemId()) {
-                case R.id.nav_product:
-                    selectedFragment = new ManageProductFragment(MainActivity.this);
-                    break;
-                case R.id.nav_user:
-                    selectedFragment = new HistoryFragment(MainActivity.this);
-                    break;
-                case R.id.nav_static:
-                    selectedFragment = new HistoryFragment(MainActivity.this);
-                    break;
-            }
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,selectedFragment).commit();
-            //getFragmentManager().beginTransaction().replace(R.id.fragment_container, selectedFragment).commit();
-            return true;
-        }
-    };
+
     public void handleClickFragment(int itemID, int type) {
         Fragment selectedFragment = null;
         switch (itemID) {

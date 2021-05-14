@@ -1,6 +1,7 @@
 package com.example.oldstocktrade.Adapter;
 
 import android.app.Activity;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -72,49 +73,58 @@ public class AdminProductApapter extends RecyclerView.Adapter<AdminProductApapte
         holder.productManage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Glide.with(holder.productImage).load(productArrayList.get(position).getImageURL().get(0)).into(holder.productImage);
-                holder.product_spName.setText(productArrayList.get(position).getName());
-                holder.product_spDes.setText(productArrayList.get(position).getDescription());
-                if (productArrayList.get(position).isEnable()){
-                    holder.product_spStatus.setText("OnBoard");
-                }else {
-                    holder.product_spStatus.setText("Blocked");
-                }
-                if (productArrayList.get(position).isEnable()){
-                    holder.productBlock.setText("BLOCK");
-                }else{
-                    holder.productBlock.setText("UNBLOCK");
-                }
-                holder.productBlock.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Map<String, Object> childUpdates = new HashMap<>();
-                        if (holder.productBlock.getText() == "BLOCK"){
-                            childUpdates.put("Enable", false);
-                            mReference.child("Products").child(productArrayList.get(position).getProID()).updateChildren(childUpdates);
-                            holder.productBlock.setText("UNBLOCK");
-                        }else{
-                            childUpdates.put("Enable", true);
-                            mReference.child("Products").child(productArrayList.get(position).getProID()).updateChildren(childUpdates);
-                            holder.productBlock.setText("BLOCK");
+                if (holder.product_spContainer.getVisibility() == View.GONE){
+                    Glide.with(holder.productImage).load(productArrayList.get(position).getImageURL().get(0)).into(holder.productImage);
+                    holder.product_spName.setText(productArrayList.get(position).getName());
+                    holder.product_spDes.setText(productArrayList.get(position).getDescription());
+                    if (productArrayList.get(position).isEnable()){
+                        holder.product_spStatus.setText("OnBoard");
+                    }else {
+                        holder.product_spStatus.setText("Blocked");
+                    }
+                    if (productArrayList.get(position).isEnable()){
+                        holder.productBlock.setText("BLOCK");
+                    }else{
+                        holder.productBlock.setText("UNBLOCK");
+                    }
+                    holder.productBlock.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Map<String, Object> childUpdates = new HashMap<>();
+                            if (holder.productBlock.getText() == "BLOCK"){
+                                childUpdates.put("Enable", false);
+                                mReference.child("Products").child(productArrayList.get(position).getProID()).updateChildren(childUpdates);
+                                holder.productBlock.setText("UNBLOCK");
+                            }else{
+                                childUpdates.put("Enable", true);
+                                mReference.child("Products").child(productArrayList.get(position).getProID()).updateChildren(childUpdates);
+                                holder.productBlock.setText("BLOCK");
+                            }
                         }
-                    }
-                });
+                    });
 
-                holder.productRemove.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        mReference.child("Products").child(productArrayList.get(position).getProID()).removeValue();
-                    }
-                });
+                    holder.productRemove.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            mReference.child("Products").child(productArrayList.get(position).getProID()).removeValue();
+                        }
+                    });
 
+                    holder.product_spContainer.setVisibility(View.VISIBLE);
+                    holder.product_spContainer.bringToFront();
 
-                holder.product_spContainer.setVisibility(View.VISIBLE);
-                holder.product_spContainer.bringToFront();
+                }
+                else{
+                    holder.product_spContainer.setVisibility(View.GONE);
+                }
             }
         });
 
-
+        if (productArrayList.get(position).getReport() > 10){
+            holder.itemView.setBackgroundColor(Color.rgb(226, 11, 11));
+        }else{
+            holder.itemView.setBackgroundColor(Color.rgb(255, 255, 255));
+        }
 
     }
 
@@ -134,7 +144,7 @@ public class AdminProductApapter extends RecyclerView.Adapter<AdminProductApapte
         TextView product_spStatus;
         Button productBlock;
         Button productRemove;
-
+        ConstraintLayout admin_producContainer;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             productName = itemView.findViewById(R.id.admin_productname);
@@ -147,7 +157,7 @@ public class AdminProductApapter extends RecyclerView.Adapter<AdminProductApapte
             product_spStatus = itemView.findViewById(R.id.admin_product_spStatus);
             productBlock = itemView.findViewById(R.id.admin_product_spbtnBlock);
             productRemove = itemView.findViewById(R.id.admin_product_spbtnRemove);
-
+            admin_producContainer= itemView.findViewById(R.id.admin_producContainer);
         }
     }
 
