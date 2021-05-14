@@ -83,10 +83,12 @@ public class StorageAdapter extends RecyclerView.Adapter<StorageAdapter.MyViewHo
         private TextView proDate;
         private TextView proPrice;
         private ImageView btnSetting;
+        private TextView proBlock;
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
             proImage = (ImageView) itemView.findViewById(R.id.proImage);
             proName = (TextView) itemView.findViewById(R.id.proName);
+            proBlock = (TextView) itemView.findViewById(R.id.blocked);
             proDate = (TextView) itemView.findViewById(R.id.proTransactedDate);
             proPrice = (TextView) itemView.findViewById(R.id.proPrice);
             btnSetting = (ImageView) itemView.findViewById(R.id.btn_setting);
@@ -97,6 +99,10 @@ public class StorageAdapter extends RecyclerView.Adapter<StorageAdapter.MyViewHo
     public void onBindViewHolder(@NonNull StorageAdapter.MyViewHolder holder, int position) {
         if (mData.get(position) == null){
             return;
+        }
+        if (!mData.get(position).isEnable()){
+            holder.proBlock.setText("BLOCKED");
+
         }
         holder.proName.setText(mData.get(position).getName());
         holder.proPrice.setText(Long.toString(Math.round(mData.get(position).getPrice())));
