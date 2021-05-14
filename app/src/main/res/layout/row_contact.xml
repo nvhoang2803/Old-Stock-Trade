@@ -20,7 +20,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/username"
             android:text="ABC"
-            android:textSize="25sp"
+            android:textSize="20sp"
             android:layout_toRightOf="@+id/ImgID"
             android:layout_centerVertical="true"
             android:layout_marginLeft="10dp"
