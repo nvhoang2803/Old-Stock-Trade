@@ -29,6 +29,17 @@ public class HistoryFragment extends Fragment {
         curActivity = activity;
         this.typetab = typetab;
     }
+    public HistoryFragment() {
+
+    }
+    public static final HistoryFragment newInstance( int typetab)
+    {
+        HistoryFragment fragment = new HistoryFragment();
+        Bundle bundle = new Bundle();
+        bundle.putInt("typetab", typetab);
+        fragment.setArguments(bundle);
+        return fragment ;
+    }
     public HistoryFragment(MainActivity activity) {
         curActivity = activity;
     }
@@ -43,6 +54,9 @@ public class HistoryFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        curActivity = (MainActivity) getActivity();
+        typetab = getArguments().getInt("typetab");
+
         tabLayout = (TabLayout) view.findViewById(R.id.tab_history);
         viewPager = (ViewPager) view.findViewById(R.id.viewpager_id);
         adapter = new ViewPageAdapter(getChildFragmentManager());

@@ -144,7 +144,7 @@ public class MessageActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.recycler);
         recyclerView.setHasFixedSize(true);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getApplicationContext());
-        linearLayoutManager.setStackFromEnd(true);
+        //linearLayoutManager.setStackFromEnd(true);
         recyclerView.setLayoutManager(linearLayoutManager);
 
         apiService = Client.getClient("https://fcm.googleapis.com/").create(APIService.class);
@@ -656,6 +656,7 @@ public class MessageActivity extends AppCompatActivity {
                 ref.child(conversation_reference.getKey()).child("recent_msg").setValue(chat);
             messageAdapter = new MessageAdapter(MessageActivity.this, mChats, imageURL, conversation_reference);
             recyclerView.setAdapter(messageAdapter);
+            recyclerView.scrollToPosition(mChats.size()-1);
 
         }
 

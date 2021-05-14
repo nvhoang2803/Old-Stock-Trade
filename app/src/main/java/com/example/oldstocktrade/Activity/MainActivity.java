@@ -118,7 +118,8 @@ public class MainActivity extends AppCompatActivity {
                     selectedFragment = new HomeFragment(MainActivity.this);
                     break;
                 case R.id.nav_history:
-                    selectedFragment = new HistoryFragment(MainActivity.this);
+                    //selectedFragment = new HistoryFragment(MainActivity.this);
+                    selectedFragment = HistoryFragment.newInstance(-1);
                     break;
                 case R.id.nav_storage:
                     selectedFragment = new StorageFragment(MainActivity.this);

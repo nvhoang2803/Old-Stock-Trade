@@ -67,6 +67,7 @@
             android:parentActivityName=".Activity.LoginActivity" />
         <activity android:name=".Activity.MainActivity" />
         <activity android:name=".Activity.ParticularPageActivity" />
+        <activity android:name=".Activity.FeedbackActivity" />
 
         <service
             android:name=".Notification.FirebaseService"
