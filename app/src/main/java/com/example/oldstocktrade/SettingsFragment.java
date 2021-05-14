@@ -6,8 +6,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -34,7 +32,7 @@ public class SettingsFragment extends Fragment {
     private final int REQUEST_CODE_LOCATION = 100;
     TextView txtUsername,txtLocation;
     private FirebaseUser fuser;
-    RelativeLayout btnSignout,btnPost,btn_profile,btnYourLocation,btnWishlist,btnSelling,btnSold,btnBought,btnContact;
+    RelativeLayout btnSignout,btnPost,btn_profile,btnYourLocation,btnWishlist,btnSelling,btnSold,btnBought,btnContact,btnManage;
     private DatabaseReference ref;
     CircleImageView avatar;
     private User user;
@@ -46,7 +44,8 @@ public class SettingsFragment extends Fragment {
             View view =  inflater.inflate(R.layout.fragment_settings, container, false);
             main = (MainActivity) getActivity();
             btnSignout = view.findViewById(R.id.btnSignout);
-            btnYourLocation = view.findViewById(R.id.btnYourLocation);
+            btnYourLocation = view.findViewById(R.id.btnLocation);
+            btnManage = view.findViewById(R.id.btnManageAdmin);
             btnWishlist = view.findViewById(R.id.btnWishlist);
             btnSelling = view.findViewById(R.id.btnSelling);
             btnSold = view.findViewById(R.id.btnSold);
@@ -61,6 +60,8 @@ public class SettingsFragment extends Fragment {
             btn_profile = view.findViewById(R.id.btn_profile);
             fuser = FirebaseAuth.getInstance().getCurrentUser();
             ref = FirebaseDatabase.getInstance().getReference("Users").child(fuser.getUid());
+
+
             txtLocation.setText(main.address);
 
             valueEventListener = new ValueEventListener() {
@@ -69,6 +70,15 @@ public class SettingsFragment extends Fragment {
                     user = snapshot.getValue(User.class);
                     txtUsername.setText(user.getUsername());
                     Log.d("Userauth", "onDataChange: "+user.getImageURL());
+                    if (user.getType() == 1){
+                        btnManage.setVisibility(View.VISIBLE);
+                        btnManage.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+
+                            }
+                        });
+                    }
                     if (user.getImageURL().equals("default"))
                         avatar.setImageResource(R.mipmap.ic_launcher);
                     else
@@ -82,6 +92,7 @@ public class SettingsFragment extends Fragment {
                 }
             };
             ref.addValueEventListener(valueEventListener);
+
             btnSignout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

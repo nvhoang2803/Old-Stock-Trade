@@ -9,6 +9,7 @@ public class Product {
     ArrayList<String> ImageURL;
     double Latitude;
     double Longitude;
+    boolean Enable;
     String Name;
     double Price;
     String ProID;
@@ -18,6 +19,7 @@ public class Product {
     long Timestamp;
     boolean VisibleToSeller;
     boolean VisibleToBuyer;
+
 
     public String getAddress() {
         return Address;
@@ -103,9 +105,18 @@ public class Product {
         return Seller;
     }
 
+    public boolean isEnable() {
+        return Enable;
+    }
+
+    public void setEnable(boolean enable) {
+        Enable = enable;
+    }
+
     public void setSeller(String seller) {
         Seller = seller;
     }
+
 
     public int getStatus() {
         return Status;

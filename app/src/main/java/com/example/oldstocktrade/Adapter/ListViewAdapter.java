@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
@@ -49,7 +50,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
-
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ViewHolder> {
@@ -62,14 +64,15 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ViewHo
     StorageReference sr= FirebaseStorage.getInstance().getReference();
     ArrayList<Double> lonlat;
     String[] arrImage;
+    int type;
 
-    public ListViewAdapter(ArrayList<Product> productArrayList, Activity curAcc, User a, ArrayList<String> a1,ArrayList<Double> lonlat) {
+    public ListViewAdapter(ArrayList<Product> productArrayList, Activity curAcc, User a, ArrayList<String> a1,ArrayList<Double> lonlat,int type) {
         this.userProductlike = a1;
         this.curActivity = curAcc;
         this.productArrayList = productArrayList;
         this.tmp = a;
         this.lonlat = lonlat;
-
+        this.type = type;
     }
 
     @NonNull
@@ -105,7 +108,7 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ViewHo
                     public void onCancelled(@NonNull DatabaseError error) {
                     }
                 });
-
+        //holder.btnBlock
 
         //Set user add to favorite list
         if (userProductlike.contains(productArrayList.get(position).getProID())){
@@ -377,7 +380,7 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ViewHo
     }
 
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public static class ViewHolder extends RecyclerView.ViewHolder {
         ImageView imageView;
         TextView userName;
         ImageView userImage;
@@ -393,8 +396,11 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ViewHo
         ImageView productStatus;
         LinearLayout productRating;
         ImageView imgProduct;
-
-
+        Button btnBlock;
+        Button btnRemove;
+        Button btnMessage;
+        ImageView imgEdit;
+        ConstraintLayout handleLayout;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             userName = itemView.findViewById(R.id.userName);
@@ -412,7 +418,11 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ViewHo
             productRating = itemView.findViewById(R.id.productRating);
             imageView= itemView.findViewById(R.id.imageView);
             imgProduct= itemView.findViewById(R.id.imageViewMain);
-
+            imgEdit = itemView.findViewById(R.id.product_edit);
+            btnBlock = itemView.findViewById(R.id.product_btnBlock);
+            btnMessage = itemView.findViewById(R.id.product_btnMessage);
+            btnRemove = itemView.findViewById(R.id.product_btnRemove);
+            handleLayout = itemView.findViewById(R.id.product_handle);
         }
 
 

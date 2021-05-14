@@ -20,6 +20,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
 import com.example.oldstocktrade.Model.Contact;
+import com.example.oldstocktrade.Model.User;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -54,9 +55,10 @@ public class MainActivity extends AppCompatActivity {
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         reference = FirebaseDatabase.getInstance("https://old-stock-trade-default-rtdb.firebaseio.com/").
                 getReference("Users").child(firebaseUser.getUid());
-        BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
-        bottomNav.setOnNavigationItemSelectedListener(navListener);
 
+
+
+//        DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Users").child(firebaseUser.getUid());
 
 
         //----------------------------Get current Location
@@ -72,10 +74,18 @@ public class MainActivity extends AppCompatActivity {
             getLocation();
         }
         //----------------------------End
+        BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                //User user = dataSnapshot.getValue(User.class);
+                User user = dataSnapshot.getValue(User.class);
+                if (user.getType() == 1){
+                    bottomNav.inflateMenu(R.menu.bottom_adminnav);
+                    bottomNav.setOnNavigationItemSelectedListener(navListenerAdmin);
+                }else{
+                    bottomNav.inflateMenu(R.menu.bottom_navigation);
+                    bottomNav.setOnNavigationItemSelectedListener(navListener);
+                }
             }
 
             @Override
@@ -108,6 +118,26 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
     };
+    private BottomNavigationView.OnNavigationItemSelectedListener navListenerAdmin = new BottomNavigationView.OnNavigationItemSelectedListener() {
+        @Override
+        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+            Fragment selectedFragment = null;
+            switch (item.getItemId()) {
+                case R.id.nav_product:
+                    selectedFragment = new ManageProductFragment(MainActivity.this);
+                    break;
+                case R.id.nav_user:
+                    selectedFragment = new HistoryFragment(MainActivity.this);
+                    break;
+                case R.id.nav_static:
+                    selectedFragment = new HistoryFragment(MainActivity.this);
+                    break;
+            }
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,selectedFragment).commit();
+            //getFragmentManager().beginTransaction().replace(R.id.fragment_container, selectedFragment).commit();
+            return true;
+        }
+    };
     public void handleClickFragment(int itemID, int type) {
         Fragment selectedFragment = null;
         switch (itemID) {
@@ -119,7 +149,6 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.nav_storage:
                 selectedFragment = new StorageFragment(MainActivity.this, type);
-
                 break;
             case R.id.nav_settings:
                 selectedFragment = new SettingsFragment();

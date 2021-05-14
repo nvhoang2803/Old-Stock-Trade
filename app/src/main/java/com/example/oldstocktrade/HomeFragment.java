@@ -84,7 +84,7 @@ public class HomeFragment extends Fragment {
                 for (DataSnapshot ds: snapshot.getChildren()){
                     curUser = ds.getValue(User.class);
                 }
-                mReference.child("Products").limitToLast(12).
+                mReference.child("Products").limitToLast(30).
                         addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -93,11 +93,10 @@ public class HomeFragment extends Fragment {
                         for (DataSnapshot ds: snapshot.getChildren()){
                             tmp = ds.getValue(Product.class);
                             if (tmp.getStatus() == 1){
-                                arr.add(tmp);
+                                if (tmp.isEnable()) arr.add(tmp);
                                 i+=1;
                             }
                             if (i==8) break;
-
                         }
                         arr.sort(Comparator.comparing(Product::getTimestamp).reversed());
                         mReference.child("Wishlist").orderByChild("userID").
@@ -112,7 +111,7 @@ public class HomeFragment extends Fragment {
                                 listViewProduct = view.findViewById(R.id.listViewProduct);
                                 //Display adapter product
                                 //Let Lon and lat attr of map in arraylist and add to last position ,otherwise let null if Mainactivty are on line
-                                ListViewAdapter listViewProductAdapter = new ListViewAdapter(arr,curActivity,curUser,userLike,null);
+                                ListViewAdapter listViewProductAdapter = new ListViewAdapter(arr,curActivity,curUser,userLike,null,curUser.getType());
                                 listViewProduct.setAdapter(listViewProductAdapter);
                                 listViewProduct.setLayoutManager(new LinearLayoutManager(curActivity));
                                 handleSearch(view);
@@ -150,7 +149,7 @@ public class HomeFragment extends Fragment {
                                 for (DataSnapshot ds: snapshot.getChildren()){
                                     tmp = ds.getValue(Product.class);
                                     if (tmp.getStatus() == 1){
-                                        arr.add(tmp);
+                                        if (tmp.isEnable()) arr.add(tmp);
                                         i += 1;
                                     }
                                     if (i == 8) break;
@@ -177,7 +176,7 @@ public class HomeFragment extends Fragment {
                                             lonlat.add(107.077694);
                                         }
 
-                                        ListViewAdapter listViewProductAdapter = new ListViewAdapter(arr,getActivity(),curUser,userLike,lonlat);
+                                        ListViewAdapter listViewProductAdapter = new ListViewAdapter(arr,getActivity(),curUser,userLike,lonlat,curUser.getType());
                                         listViewProduct.setAdapter(listViewProductAdapter);
                                         listViewProduct.setLayoutManager(new LinearLayoutManager(curActivity));
                                         pullToRefresh.setRefreshing(false);

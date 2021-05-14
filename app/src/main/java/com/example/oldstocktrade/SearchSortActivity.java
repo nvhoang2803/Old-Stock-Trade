@@ -122,7 +122,7 @@ public class SearchSortActivity extends AppCompatActivity {
                                 for (DataSnapshot ds: snapshot.getChildren()){
                                     tmp = ds.getValue(Product.class);
                                     if (tmp.getStatus() == 1){
-                                        arr.add(tmp);
+                                        if (tmp.isEnable()) arr.add(tmp);
                                     }
                                 }
                                 arr.sort(Comparator.comparing(Product::getTimestamp));
@@ -141,7 +141,7 @@ public class SearchSortActivity extends AppCompatActivity {
                                         ArrayList<Double> lonlat = new ArrayList<>();
                                         lonlat.add(finalLon);
                                         lonlat.add(finalLat);
-                                        ListViewAdapter listViewProductAdapter = new ListViewAdapter(arr,SearchSortActivity.this,curUser,userLike,lonlat);
+                                        ListViewAdapter listViewProductAdapter = new ListViewAdapter(arr,SearchSortActivity.this,curUser,userLike,lonlat,curUser.getType());
                                         listViewProduct.setAdapter(listViewProductAdapter);
                                         listViewProduct.setLayoutManager(new LinearLayoutManager(SearchSortActivity.this));
                                         resetSortSpecificField();
@@ -295,7 +295,7 @@ public class SearchSortActivity extends AppCompatActivity {
                                         || VnCharacteristic.removeAccent(tmp.getName()).toLowerCase().contains(query.toLowerCase()) )) ||
                                                 ( tmp.getDescription().toLowerCase().contains(query.toLowerCase())
                                                         || VnCharacteristic.removeAccent(tmp.getDescription()).toLowerCase().contains(query.toLowerCase()) ))){
-                                    arr.add(tmp);
+                                    if (tmp.isEnable()) arr.add(tmp);
                                 }
                             }
                         }else {
@@ -305,7 +305,7 @@ public class SearchSortActivity extends AppCompatActivity {
                                         || VnCharacteristic.removeAccent(tmp.getName()).toLowerCase().contains(query.toLowerCase()) )) ||
                                         ( tmp.getDescription().toLowerCase().contains(query.toLowerCase())
                                                 || VnCharacteristic.removeAccent(tmp.getDescription()).toLowerCase().contains(query.toLowerCase())) )){
-                                    arr.add(tmp);
+                                    if (tmp.isEnable()) arr.add(tmp);
                                 }
                                 System.out.println(tmp.getName());
                             }
@@ -375,7 +375,7 @@ public class SearchSortActivity extends AppCompatActivity {
                                 ArrayList<Double> lonlat = new ArrayList<>();
                                 lonlat.add(finalLon);
                                 lonlat.add(finalLat);
-                                ListViewAdapter listViewProductAdapter = new ListViewAdapter(arr,SearchSortActivity.this,curUser,userLike,lonlat);
+                                ListViewAdapter listViewProductAdapter = new ListViewAdapter(arr,SearchSortActivity.this,curUser,userLike,lonlat,curUser.getType());
                                 listViewProduct.setAdapter(listViewProductAdapter);
 
                                 listViewProduct.setLayoutManager(new LinearLayoutManager(SearchSortActivity.this));
@@ -512,8 +512,11 @@ public class SearchSortActivity extends AppCompatActivity {
                                             || VnCharacteristic.removeAccent(tmp.getName()).toLowerCase().contains(query.toLowerCase()) )
                                                 || ( tmp.getDescription().toLowerCase().contains(query.toLowerCase())
                                             || VnCharacteristic.removeAccent(tmp.getDescription()).toLowerCase().contains(query.toLowerCase()) )))){
-                                        arr.add(tmp);
-                                        i+=1;
+                                        if (tmp.isEnable()) {
+                                            arr.add(tmp);
+                                            i+=1;
+                                        };
+
                                     }
                                     if (i == 8) break;
                                 }
@@ -533,7 +536,7 @@ public class SearchSortActivity extends AppCompatActivity {
                                         ArrayList<Double> lonlat = new ArrayList<>();
                                         lonlat.add(finalLon);
                                         lonlat.add(finalLat);
-                                        ListViewAdapter listViewProductAdapter = new ListViewAdapter(arr,SearchSortActivity.this,curUser,userLike,lonlat);
+                                        ListViewAdapter listViewProductAdapter = new ListViewAdapter(arr,SearchSortActivity.this,curUser,userLike,lonlat,curUser.getType());
                                         listViewProduct.setAdapter(listViewProductAdapter);
                                         listViewProduct.setLayoutManager(new LinearLayoutManager(SearchSortActivity.this));
                                     }
@@ -639,7 +642,7 @@ public class SearchSortActivity extends AppCompatActivity {
                                         ArrayList<Double> lonlat = new ArrayList<>();
                                         lonlat.add(finalLon);
                                         lonlat.add(finalLat);
-                                        ListViewAdapter listViewProductAdapter = new ListViewAdapter(arr,SearchSortActivity.this,curUser,userLike,lonlat);
+                                        ListViewAdapter listViewProductAdapter = new ListViewAdapter(arr,SearchSortActivity.this,curUser,userLike,lonlat,curUser.getType());
                                         listViewProduct.setAdapter(listViewProductAdapter);
                                         listViewProduct.setLayoutManager(new LinearLayoutManager(SearchSortActivity.this));
                                     }
