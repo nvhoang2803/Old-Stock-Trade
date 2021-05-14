@@ -164,7 +164,7 @@
 
                     <RelativeLayout
                         android:padding="10dp"
-                        android:layout_width="130dp"
+                        android:layout_width="125dp"
                         android:layout_height="wrap_content"
                         android:id="@+id/call"
                         android:background="@drawable/button_contact"
@@ -193,11 +193,11 @@
 
                 <RelativeLayout
                     android:padding="10dp"
-                    android:layout_width="130dp"
+                    android:layout_width="125dp"
                     android:layout_height="wrap_content"
                     android:id="@+id/sendSMS"
                     android:background="@drawable/button_contact"
-                    android:layout_marginLeft="5dp"
+                    android:layout_marginLeft="15dp"
                     >
                     <ImageView
                         android:layout_width="30dp"
@@ -220,11 +220,11 @@
 
                 <RelativeLayout
                     android:padding="10dp"
-                    android:layout_width="130dp"
+                    android:layout_width="125dp"
                     android:layout_height="wrap_content"
                     android:id="@+id/chat"
                     android:background="@drawable/button_contact"
-                    android:layout_marginLeft="5dp"
+                    android:layout_marginLeft="15dp"
                     >
                     <ImageView
                         android:layout_width="30dp"

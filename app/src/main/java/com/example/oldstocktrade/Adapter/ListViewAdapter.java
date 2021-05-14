@@ -275,10 +275,12 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ViewHo
             public void onClick(View v) {
                 String id= productArrayList.get(position).getProID();
                 String userID= productArrayList.get(position).getSeller();
+                int countReport= productArrayList.get(position).getReport();
                 Intent partIntent= new Intent(v.getContext(), ParticularPageActivity.class);
                 partIntent.putExtra("id", id);
                 partIntent.putExtra("userID", userID);
                 partIntent.putExtra("sizeImageURL", arrImage.length);
+                partIntent.putExtra("sumReport", countReport);
                 Log.d("MainAc", "onClick: "+curActivity.getClass().getName());
                 if(curActivity.getClass().getName().equals("com.example.oldstocktrade.Activity.MainActivity")){
                     partIntent.putExtra("longitude", ((MainActivity) curActivity).longitude);
