@@ -7,7 +7,7 @@
     android:background="@drawable/border1">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraintLayout13"
+        android:id="@+id/admin_producContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/border1"
@@ -75,12 +75,13 @@
         android:id="@+id/admin_product_spContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="#ffffff"
         android:paddingTop="6dp"
         android:paddingBottom="6dp"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/constraintLayout13">
+        app:layout_constraintTop_toBottomOf="@+id/admin_producContainer">
 
         <ImageView
             android:id="@+id/admin_product_spImage"
@@ -147,6 +148,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:text="Remove"
+            android:visibility="gone"
             app:layout_constraintStart_toEndOf="@+id/admin_product_spbtnBlock"
             app:layout_constraintTop_toBottomOf="@+id/admin_product_spImage" />
     </androidx.constraintlayout.widget.ConstraintLayout>

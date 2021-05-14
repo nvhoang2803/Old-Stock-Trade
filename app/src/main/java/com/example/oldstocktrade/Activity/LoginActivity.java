@@ -15,6 +15,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.oldstocktrade.Model.User;
 import com.example.oldstocktrade.R;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -172,11 +173,18 @@ public class LoginActivity extends AppCompatActivity {
                                 @Override
                                 public void onDataChange(DataSnapshot snapshot) {
                                     if (snapshot.hasChild("id")) {
-                                        Intent i = new Intent(LoginActivity.this, MainActivity.class);
-                                        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                                        startActivity(i);
-                                        finish();
-
+                                        User user = snapshot.getValue(User.class);
+                                        if (user.getType() == 1){
+                                            Intent i = new Intent(LoginActivity.this, AdminActivity.class);
+                                            i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                            startActivity(i);
+                                            finish();
+                                        }else{
+                                            Intent i = new Intent(LoginActivity.this, MainActivity.class);
+                                            i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                            startActivity(i);
+                                            finish();
+                                        }
                                     }else{
                                         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(getApplicationContext());
                                         if(account != null){
@@ -230,8 +238,25 @@ public class LoginActivity extends AppCompatActivity {
         super.onStart();
         FirebaseUser user = auth.getCurrentUser();
         if(user!=null&&user.isEmailVerified()){
-            startActivity(new Intent(LoginActivity.this,MainActivity.class));
-            finish();
+            reference = FirebaseDatabase.getInstance().getReference("Users").child(user.getUid());
+            reference.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    User user = snapshot.getValue(User.class);
+                    if (user.getType() != 1){
+                        startActivity(new Intent(LoginActivity.this,MainActivity.class));
+                        finish();
+                    }else{
+                        startActivity(new Intent(LoginActivity.this,AdminActivity.class));
+                        finish();
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
 
         }
     }
@@ -243,18 +268,41 @@ public class LoginActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()){
                     if (auth.getCurrentUser().isEmailVerified()){
-                        Intent i = new Intent(LoginActivity.this, MainActivity.class);
-                        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(i);
-                        finish();
+                        reference = FirebaseDatabase.getInstance().getReference("Users").child(auth.getUid());
+                        reference.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                User user = snapshot.getValue(User.class);
+                                if (user.getType() == 1){
+                                    Intent i = new Intent(LoginActivity.this, AdminActivity.class);
+                                    i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    startActivity(i);
+                                    finish();
+                                }else{
+                                    Intent i = new Intent(LoginActivity.this, MainActivity.class);
+                                    i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    startActivity(i);
+                                    finish();
+                                }
+
+                            }
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        });
+
                     }
                     else{
-
                         auth.getCurrentUser().sendEmailVerification()
                                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
                                         if (task.isSuccessful()) {
+                                            Intent i = new Intent(LoginActivity.this, MainActivity.class);
+                                            i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                            startActivity(i);
+                                            finish();
                                             Log.d("SignUpEmail", "Email sent.");
                                             Toast.makeText(LoginActivity.this, "Please check your email to verification", Toast.LENGTH_SHORT).show();
                                         }else{

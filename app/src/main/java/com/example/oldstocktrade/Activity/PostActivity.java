@@ -219,7 +219,6 @@ public class PostActivity extends AppCompatActivity {
         map.put("VisibleToBuyer", product.isVisibleToBuyer());
         map.put("VisibleToSeller", product.isVisibleToSeller());
         map.put("Enable", true);
-
 //        int time= 1500*a.size();
 //        final Handler handler = new Handler(Looper.getMainLooper());
 //        handler.postDelayed(new Runnable() {
