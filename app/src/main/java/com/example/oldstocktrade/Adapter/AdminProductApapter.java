@@ -82,10 +82,12 @@ public class AdminProductApapter extends RecyclerView.Adapter<AdminProductApapte
                     }else {
                         holder.product_spStatus.setText("Blocked");
                     }
-                    if (productArrayList.get(position).isEnable()){
-                        holder.productBlock.setText("BLOCK");
-                    }else{
-                        holder.productBlock.setText("UNBLOCK");
+                    if (holder.productBlock.getText() == ""){
+                        if (productArrayList.get(position).isEnable()){
+                            holder.productBlock.setText("BLOCK");
+                        }else{
+                            holder.productBlock.setText("UNBLOCK");
+                        }
                     }
                     holder.productBlock.setOnClickListener(new View.OnClickListener() {
                         @Override
