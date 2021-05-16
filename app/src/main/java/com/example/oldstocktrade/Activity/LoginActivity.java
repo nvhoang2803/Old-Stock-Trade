@@ -3,7 +3,11 @@ package com.example.oldstocktrade.Activity;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 
 import android.os.Bundle;
@@ -47,6 +51,7 @@ public class LoginActivity extends AppCompatActivity {
     private static final int SIGN_IN=1;
     private GoogleSignInClient mGoogleSignInClient;
     private TextView txtForgotPw;
+    Context context;
 
 
     @Override
@@ -64,7 +69,7 @@ public class LoginActivity extends AppCompatActivity {
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .build();
-
+        context = this;
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
         btnGoogleLog = findViewById(R.id.btnGoogleLog);
 
@@ -174,29 +179,42 @@ public class LoginActivity extends AppCompatActivity {
                                 public void onDataChange(DataSnapshot snapshot) {
                                     if (snapshot.hasChild("id")) {
                                         User user = snapshot.getValue(User.class);
-                                        if (user.getType() == 1){
+                                        if (user.getType() == 1 && user.isEnable()){
                                             Intent i = new Intent(LoginActivity.this, AdminActivity.class);
                                             i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                                             startActivity(i);
                                             finish();
-                                        }else{
+                                        }else if (user.isEnable()){
                                             Intent i = new Intent(LoginActivity.this, MainActivity.class);
                                             i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                                             startActivity(i);
                                             finish();
+                                        }else{
+                                            AlertDialog alertDialog = new AlertDialog.Builder(context).
+                                                    setIcon(R.drawable.ic_launcher_background).
+                                                    setTitle("Your Account has been blocked").
+                                                    setMessage("Please contact with admin").
+                                                    setPositiveButton("Close", new DialogInterface.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                                            //set what would happen when positive button is clicked
+                                                            FirebaseAuth.getInstance().signOut();
+                                                            dialogInterface.dismiss();
+                                                        }
+                                                    })
+                                                    .show();
                                         }
                                     }else{
                                         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(getApplicationContext());
                                         if(account != null){
                                             String userid = user.getUid();
-
                                             //reference = FirebaseDatabase.getInstance("https://old-stock-trade-default-rtdb.firebaseio.com/").getReference("Users").child(userid);
-
-                                            HashMap<String,String> hashMap =  new HashMap<>();
+                                            HashMap<String,Object> hashMap =  new HashMap<>();
                                             hashMap.put("id", userid);
                                             hashMap.put("username", account.getDisplayName());
                                             hashMap.put("imageURL", String.valueOf(account.getPhotoUrl()));
                                             hashMap.put("status", "offline");
+                                            hashMap.put("status", true);
 
                                             reference.setValue(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
                                                 @Override
@@ -273,16 +291,30 @@ public class LoginActivity extends AppCompatActivity {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
                                 User user = snapshot.getValue(User.class);
-                                if (user.getType() == 1){
+                                if (user.getType() == 1 && user.isEnable()){
                                     Intent i = new Intent(LoginActivity.this, AdminActivity.class);
                                     i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                                     startActivity(i);
                                     finish();
-                                }else{
+                                }else if (user.isEnable()){
                                     Intent i = new Intent(LoginActivity.this, MainActivity.class);
                                     i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                                     startActivity(i);
                                     finish();
+                                }else{
+                                    AlertDialog alertDialog = new AlertDialog.Builder(context).
+                                            setIcon(R.drawable.ic_launcher_background).
+                                            setTitle("Your Account has been blocked").
+                                            setMessage("Please contact with admin").
+                                            setPositiveButton("Close", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialogInterface, int i) {
+                                                    //set what would happen when positive button is clicked
+                                                    FirebaseAuth.getInstance().signOut();
+                                                    dialogInterface.dismiss();
+                                            }
+                                            })
+                                            .show();
                                 }
 
                             }

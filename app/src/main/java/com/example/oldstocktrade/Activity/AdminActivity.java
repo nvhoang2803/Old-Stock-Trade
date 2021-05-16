@@ -9,6 +9,7 @@ import android.view.MenuItem;
 
 import com.example.oldstocktrade.Fragment.HistoryFragment;
 import com.example.oldstocktrade.Fragment.ManageProductFragment;
+import com.example.oldstocktrade.Fragment.ManageUserFragment;
 import com.example.oldstocktrade.R;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -33,6 +34,7 @@ public class AdminActivity extends AppCompatActivity {
         BottomNavigationView bottomNav = findViewById(R.id.bottom_adminnavi);
         bottomNav.inflateMenu(R.menu.bottom_adminnav);
         bottomNav.setOnNavigationItemSelectedListener(navListenerAdmin);
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,new ManageProductFragment(AdminActivity.this)).commit();
     }
 
     private BottomNavigationView.OnNavigationItemSelectedListener navListenerAdmin = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -42,6 +44,9 @@ public class AdminActivity extends AppCompatActivity {
             switch (item.getItemId()) {
                 case R.id.nav_product:
                     selectedFragment = new ManageProductFragment(AdminActivity.this);
+                    break;
+                case R.id.nav_user:
+                    selectedFragment = new ManageUserFragment(AdminActivity.this);
                     break;
             }
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,selectedFragment).commit();

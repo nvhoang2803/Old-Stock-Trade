@@ -7,8 +7,19 @@ public class User {
     private String status;
     private int type = 0;
     private String phone = "";
-    private String address ="";
 
+
+
+    public boolean isEnable() {
+        return Enable;
+    }
+
+    public void setEnable(boolean enable) {
+        Enable = enable;
+    }
+
+    private String address ="";
+    private boolean Enable;
 
     public User(){
 

@@ -105,6 +105,7 @@ public class RegisterActivity extends AppCompatActivity {
                             hashMap.put("phone", "");
                             hashMap.put("address", "");
                             hashMap.put("type", 0);
+                            hashMap.put("Enable", true);
 
                             reference.setValue(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
