@@ -86,8 +86,14 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.MyViewHo
         holder.proPrice.setText(ChangeMoneyToString(Math.round(mData.get(position).getPrice())));
         Date date = new Date(mData.get(position).getTimestamp());
         holder.proDate.setText(DateFormat.getDateInstance().format(date));
-        Glide.with(holder.proImage).load(mData.get(position).getImageURL().get(0))
-                .into(holder.proImage);
+        if (mData.get(position).getImageURL()!= null){
+            Glide.with(holder.proImage).load(mData.get(position).getImageURL().get(0))
+                    .into(holder.proImage);
+        }
+        else{
+            Glide.with(holder.proImage).load("https://st3.depositphotos.com/23594922/31822/v/600/depositphotos_318221368-stock-illustration-missing-picture-page-for-website.jpg")
+                    .into(holder.proImage);
+        }
         if (!isHidden) {
             holder.btn_buy.setOnClickListener(new View.OnClickListener() {
                 @Override
